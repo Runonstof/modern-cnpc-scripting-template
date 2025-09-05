@@ -4,7 +4,7 @@
 - Supports TypeScript, but is not required
 - ES6 features, like arrow functions, default arguments and much more
 - Importing other files for a clean project structure.
--
+- A few premade utilities in `src/lib/`
 
 
 ## Installation
