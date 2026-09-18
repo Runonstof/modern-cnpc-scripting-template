@@ -6,7 +6,9 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
 
-const ENTRY_TYPES = ['players', 'npcs', 'blocks', 'items', 'forge'];
+const ENTRY_TYPES = ['players', 'npcs', 'blocks', 'items', 'forge', 'debug'];
+/** Debug scripts are player-script hooks for in-world AI verification. */
+const OUTPUT_TYPE = { debug: 'players' };
 
 function getEntries() {
   const files = ENTRY_TYPES.flatMap((type) => [
@@ -16,8 +18,9 @@ function getEntries() {
   const entries = {};
 
   for (const file of files) {
+    const type = path.basename(path.dirname(file));
     const name = path.basename(file, path.extname(file));
-    entries[name] = file;
+    entries[`${type}/${name}`] = file;
   }
 
   return entries;
@@ -79,7 +82,8 @@ const preserveTampermonkeyComments = () => ({
 export default Object.entries(entries).map(([name, input]) => {
 
   const baseDirName = path.basename(path.dirname(input));
-  const dirName = baseDirName === 'src' ? '' : `/${baseDirName}`;
+  const outputType = OUTPUT_TYPE[baseDirName] || baseDirName;
+  const dirName = outputType === 'src' ? '' : `/${outputType}`;
   const fileName = path.basename(input, path.extname(input));
 
   return {
