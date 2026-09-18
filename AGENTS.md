@@ -18,13 +18,13 @@ We are able to call Java methods and classes from scripts using the `Java.type` 
 This can be classes of java itself, classes from Minecraft or Minecraft Forge/Fabric or even Minecraft mods.
 
 ```javascript
-var URL = Java.type("java.net.URL");
+const URL = Java.type("java.net.URL");
 ```
 
 There is also a `Java.from` function to convert, for example, Java iterables to JavaScript arrays.
 
 ```javascript
-var list = Java.from(new ArrayList());
+const list = Java.from(new ArrayList());
 ```
 
 This is useful when you want to call regular javascript methods on the array like `map`, `filter`, `reduce`, etc.
@@ -75,6 +75,11 @@ Here is an example NPC script that says hello when the player interacts with the
 export function interact(e) {
     e.npc.say('Hello there, ' + e.player.name + '!');
 }
+```
+
+A common pattern is to get the global CustomNPCs API instance.
+```javascript
+const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
 ```
 
 Note that it is important to use `export function` syntax on event hooks, else the transpiler tree-shakes the function away.

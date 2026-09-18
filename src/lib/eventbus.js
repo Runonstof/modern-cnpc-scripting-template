@@ -1,17 +1,9 @@
-type EventBusEventListenerCallback = (event: any) => void;
-
-type EventBusEventListener = {
-  callback: EventBusEventListenerCallback;
-  identifier?: string;
-};
-
 class EventBus {
+  constructor() {
+    this.events = {};
+  }
 
-  // private tempdata: IData;
-  private events: { [key: string]: EventBusEventListener[] } = {};
-
-  // constructor
-  static instance(): EventBus {
+  static instance() {
     const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
     const world = API.getIWorld(0);
 
@@ -21,10 +13,10 @@ class EventBus {
       tempdata.put('eventbus', new EventBus());
     }
 
-    return tempdata.get('eventbus') as EventBus;
+    return tempdata.get('eventbus');
   }
 
-  public on(event: string, callback: EventBusEventListenerCallback, identifier?: string) {
+  on(event, callback, identifier) {
     if (!this.events.hasOwnProperty(event)) {
       this.events[event] = [];
     }
@@ -35,7 +27,7 @@ class EventBus {
     });
   }
 
-  public emit(event: string, data: any) {
+  emit(event, data) {
     if (!this.events.hasOwnProperty(event)) {
       return;
     }
@@ -47,7 +39,7 @@ class EventBus {
     });
   }
 
-  public remove(event: string, identifier: string) {
+  remove(event, identifier) {
     if (!this.events.hasOwnProperty(event)) {
       return;
     }
@@ -57,7 +49,7 @@ class EventBus {
     this.events[event] = listeners.filter((listener) => listener.identifier !== identifier);
   }
 
-  public removeAll(event: string) {
+  removeAll(event) {
     if (!this.events.hasOwnProperty(event)) {
       return;
     }
@@ -65,7 +57,7 @@ class EventBus {
     this.events[event] = [];
   }
 
-  public getListeners(event: string) {
+  getListeners(event) {
     if (!this.events.hasOwnProperty(event)) {
       return [];
     }
