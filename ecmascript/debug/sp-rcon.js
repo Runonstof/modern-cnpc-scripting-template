@@ -317,8 +317,11 @@ function isLocal(exchange) {
   }
 }
 function runOnServerThread(player, fn) {
-  var mc = player.getMCEntity().getServer();
-  if (mc.isSameThread()) {
+  var mcEntity = player.getMCEntity();
+  // m_20194_ = net.minecraft.world.entity.Entity#getServer
+  var server = mcEntity.m_20194_();
+  // m_18695_ = net.minecraft.util.thread.BlockableEventLoop#isSameThread
+  if (server.m_18695_()) {
     return fn();
   }
   var box = {
@@ -326,7 +329,7 @@ function runOnServerThread(player, fn) {
     error: null
   };
   var latch = new CountDownLatch(1);
-  mc.execute(function () {
+  server.execute(function () {
     try {
       box.value = fn();
     } catch (err) {

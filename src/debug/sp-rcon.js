@@ -133,13 +133,16 @@ function isLocal(exchange) {
 }
 
 function runOnServerThread(player, fn) {
-  const mc = player.getMCEntity().getServer();
-  if (mc.isSameThread()) {
+  const mcEntity = player.getMCEntity();
+  // m_20194_ = net.minecraft.world.entity.Entity#getServer
+  const server = mcEntity.m_20194_();
+  // m_18695_ = net.minecraft.util.thread.BlockableEventLoop#isSameThread
+  if (server.m_18695_()) {
     return fn();
   }
   const box = { value: null, error: null };
   const latch = new CountDownLatch(1);
-  mc.execute(function () {
+  server.execute(function () {
     try {
       box.value = fn();
     } catch (err) {
