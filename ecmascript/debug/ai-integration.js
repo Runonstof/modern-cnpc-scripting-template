@@ -676,10 +676,15 @@ function startServer(scriptHash) {
     });
   }));
   server.createContext('/reload', route(function (exchange) {
+    var note = parsePayload(exchange, ['note', 'message', 'reason', 'text']);
     debugDd('Reload CustomNPC scripts');
+    if (note) {
+      debugDd(note);
+    }
     send(exchange, 200, {
       ok: true,
-      reloading: true
+      reloading: true,
+      note: note || ''
     });
     new Thread(function () {
       Thread.sleep(50);

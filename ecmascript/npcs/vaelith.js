@@ -1,11 +1,12 @@
 var PotionEffectType = Java.type('noppes.npcs.api.constants.PotionEffectType');
 var EntitiesType = Java.type('noppes.npcs.api.constants.EntitiesType');
 var AnimationType = Java.type('noppes.npcs.api.constants.AnimationType');
-var CAST_WINDUP = 8;
-var CAST_COOLDOWN = 10;
+var CAST_WINDUP = 32;
+var CAST_COOLDOWN = 40;
 var PREFERRED_RANGE = 12;
-var MIN_RANGE = 11;
+var MIN_RANGE = 10;
 var MAX_CAST_RANGE = 20;
+var TACTICAL_NONE = 6;
 var FIREBOLT_DAMAGE = 5;
 var FROST_DAMAGE = 3;
 var STORM_DAMAGE = 7;
@@ -16,11 +17,31 @@ function getCombat(npc) {
     data = {
       cd: 0,
       windup: 0,
-      spell: 0
+      spell: 0,
+      nextSpell: 0,
+      charge: 0
     };
     npc.getTempdata().put('vaelithCombat', data);
   }
   return data;
+}
+function spellTell(spell) {
+  if (spell === 1) {
+    return {
+      main: 'minecraft:snowflake',
+      alt: 'minecraft:cloud'
+    };
+  }
+  if (spell === 2) {
+    return {
+      main: 'minecraft:witch',
+      alt: 'minecraft:electric_spark'
+    };
+  }
+  return {
+    main: 'minecraft:flame',
+    alt: 'minecraft:lava'
+  };
 }
 function burst(world, x, y, z, particle, count, speed) {
   world.spawnParticle(particle, x, y, z, 0.35, 0.6, 0.35, speed, count);
@@ -48,16 +69,49 @@ function lookAt(npc, target) {
   var dz = target.getZ() - npc.getZ();
   npc.setRotation(Math.atan2(-dx, dz) * 180 / Math.PI);
 }
+function applyRangedSpacing(npc) {
+  var melee = npc.getStats().getMelee();
+  melee.setStrength(0);
+  melee.setRange(1);
+  melee.setDelay(100);
+  var ranged = npc.getStats().getRanged();
+  ranged.setStrength(0);
+  ranged.setRange(PREFERRED_RANGE);
+  ranged.setMeleeRange(0);
+  var nbt = npc.getEntityNbt();
+  if (nbt.getInteger('TacticalVariant') !== TACTICAL_NONE || nbt.getInteger('AttackRange') !== 1) {
+    nbt.setInteger('TacticalVariant', TACTICAL_NONE);
+    nbt.setInteger('TacticalRadius', PREFERRED_RANGE);
+    nbt.setInteger('AttackRange', 1);
+    nbt.setInteger('DistanceToMelee', 1);
+    npc.setEntityNbt(nbt);
+  }
+}
 function keepRange(npc, target) {
+  applyRangedSpacing(npc);
   var dist = distance(npc, target);
   var dx = npc.getX() - target.getX();
   var dz = npc.getZ() - target.getZ();
   var len = Math.sqrt(dx * dx + dz * dz) || 1;
+  npc.setMoveForward(0);
+  if (dist < 5) {
+    npc.clearNavigation();
+    npc.getAi().setWalkingSpeed(0);
+    npc.setPosition(target.getX() + dx / len * PREFERRED_RANGE, npc.getY(), target.getZ() + dz / len * PREFERRED_RANGE);
+    return distance(npc, target);
+  }
   if (dist < MIN_RANGE) {
-    npc.navigateTo(npc.getX() + dx / len * 8, npc.getY(), npc.getZ() + dz / len * 8, 1.35);
+    npc.getAi().setWalkingSpeed(5);
+    npc.setMotionX(dx / len * 0.35);
+    npc.setMotionZ(dz / len * 0.35);
+    npc.navigateTo(npc.getX() + dx / len * 8, npc.getY(), npc.getZ() + dz / len * 8, 1.4);
   } else if (dist > MAX_CAST_RANGE) {
+    npc.getAi().setWalkingSpeed(5);
     npc.navigateTo(target.getX() + dx / len * PREFERRED_RANGE, target.getY(), target.getZ() + dz / len * PREFERRED_RANGE, 1.1);
   } else {
+    npc.getAi().setWalkingSpeed(0);
+    npc.setMotionX(0);
+    npc.setMotionZ(0);
     npc.clearNavigation();
   }
   return dist;
@@ -118,42 +172,37 @@ function arcaneStorm(npc, target) {
     target.knockback(2, npc.getRotation());
   }
 }
-function castNext(npc, target) {
-  var combat = getCombat(npc);
-  var spell = combat.spell % 3;
-  combat.spell += 1;
-  if (spell === 0) {
-    firebolt(npc, target);
-  } else if (spell === 1) {
+function castPrepared(npc, target, spell) {
+  if (spell === 1) {
     frostNova(npc, target);
-  } else {
+  } else if (spell === 2) {
     arcaneStorm(npc, target);
+  } else {
+    firebolt(npc, target);
   }
 }
-function windupParticles(npc, target) {
+function swirlCharge(npc, spell, chargeTick) {
   var world = npc.getWorld();
-  burst(world, npc.getX(), npc.getY() + 1.3, npc.getZ(), 'minecraft:enchant', 6, 0.04);
-  burst(world, npc.getX(), npc.getY() + 1.5, npc.getZ(), 'minecraft:witch', 4, 0.03);
-  beam(world, npc.getX(), npc.getY() + 1.5, npc.getZ(), target.getX(), target.getY() + 1.2, target.getZ(), 'minecraft:end_rod', 6);
+  var tell = spellTell(spell);
+  var t = chargeTick * 0.45;
+  var radius = 1.15;
+  var height = npc.getY() + 0.35 + chargeTick % 16 * 0.08;
+  for (var i = 0; i < 3; i++) {
+    var a = t + i * Math.PI * 2 / 3;
+    world.spawnParticle(tell.main, npc.getX() + Math.cos(a) * radius, height, npc.getZ() + Math.sin(a) * radius, 0.02, 0.04, 0.02, 0.01, 2);
+  }
+  world.spawnParticle(tell.alt, npc.getX(), npc.getY() + 1.2, npc.getZ(), 0.2, 0.35, 0.2, 0.02, 3);
 }
 function init(e) {
   var npc = e.npc;
   npc.getTempdata().remove('vaelithCombat');
-  var melee = npc.getStats().getMelee();
-  melee.setStrength(0);
-  melee.setDelay(100);
-  melee.setRange(PREFERRED_RANGE);
-  var ranged = npc.getStats().getRanged();
-  ranged.setStrength(0);
-  ranged.setRange(PREFERRED_RANGE);
-  ranged.setMeleeRange(0);
-  ranged.setDelay(200, 200);
-  npc.getInventory().setProjectile(npc.getWorld().createItem('minecraft:ender_eye', 1));
+  npc.getStats().getMelee().setDelay(100);
+  npc.getStats().getRanged().setDelay(200, 200);
   npc.getStats().setAggroRange(24);
   npc.getAi().setLeapAtTarget(false);
   npc.getAi().setStandingType(2);
-  npc.getAi().setWalkingSpeed(5);
   npc.getAi().setAnimation(AnimationType.NONE);
+  applyRangedSpacing(npc);
 }
 function tick(e) {
   var npc = e.npc;
@@ -171,11 +220,14 @@ function tick(e) {
   }
   if (combat.windup > 0) {
     combat.windup -= 1;
+    combat.charge = (combat.charge || 0) + 1;
     startCastPose(npc);
-    windupParticles(npc, target);
+    swirlCharge(npc, combat.nextSpell, combat.charge);
     if (combat.windup === 0) {
-      castNext(npc, target);
+      castPrepared(npc, target, combat.nextSpell);
+      combat.spell = combat.nextSpell + 1;
       combat.cd = CAST_COOLDOWN;
+      combat.charge = 0;
       npc.getAi().setAnimation(AnimationType.NONE);
     }
     return;
@@ -185,7 +237,9 @@ function tick(e) {
     return;
   }
   combat.cd = 0;
+  combat.nextSpell = (combat.spell || 0) % 3;
   combat.windup = CAST_WINDUP;
+  combat.charge = 0;
   startCastPose(npc);
 }
 function meleeAttack(e) {

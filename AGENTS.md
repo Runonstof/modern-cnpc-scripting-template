@@ -170,9 +170,10 @@ Never run `/noppes script reload` yourself. After `npm run build`, reload with:
 
 ```
 node bin/execute.js reload
+node bin/execute.js reload Vaelith now follows the player
 ```
 
-That talks to ai-integration, which runs `noppes script reload` in-game. It fails if ai-integration is not loaded yet or no player is online; in that case ask the user to enable the debug player script and reload once in-game.
+That talks to ai-integration, which runs `noppes script reload` in-game. Extra text after `reload` is dumped in a second in-game `ddDebug` line; use that for one sentence describing the change that was just built. It fails if ai-integration is not loaded yet or no player is online; in that case ask the user to enable the debug player script and reload once in-game.
 
 Other examples (PowerShell and WSL):
 
@@ -202,5 +203,5 @@ This is useful when you are developing a script and want to see the changes imme
 
 So after you made all your changes:
 1. Run `npm run build` to build the scripts.
-2. Run `node bin/execute.js reload` to reload the scripts in game.
+2. Run `node bin/execute.js reload` to reload the scripts in game. Optionally pass a one-sentence note so the in-game reload dump says what changed.
 

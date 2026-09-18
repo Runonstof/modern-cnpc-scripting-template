@@ -356,8 +356,12 @@ function startServer(scriptHash) {
   server.createContext(
     '/reload',
     route(function (exchange) {
+      const note = parsePayload(exchange, ['note', 'message', 'reason', 'text']);
       debugDd('Reload CustomNPC scripts');
-      send(exchange, 200, { ok: true, reloading: true });
+      if (note) {
+        debugDd(note);
+      }
+      send(exchange, 200, { ok: true, reloading: true, note: note || '' });
       new Thread(function () {
         Thread.sleep(50);
         try {

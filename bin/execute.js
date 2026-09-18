@@ -7,6 +7,7 @@
  *   node bin/execute.js command time set day
  *   node bin/execute.js js "player.setMotionY(.5) || true"
  *   node bin/execute.js reload
+ *   node bin/execute.js reload Vaelith now follows the player
  */
 
 var http = require("http");
@@ -19,7 +20,7 @@ function printHelp() {
     "Usage: node bin/execute.js <command|js|reload> [...]\n" +
       "  command [ /]time set day\n" +
       "  js \"block && block.getName()\"\n" +
-      "  reload\n" +
+      "  reload [one-sentence change note]\n" +
       "Requires ai-integration.js enabled as a player script and a player online.\n"
   );
 }
@@ -116,7 +117,8 @@ if (action === "command") {
   src = src.replace(/;+\s*$/g, "");
   post("/js", { js: src }, printResponse);
 } else if (action === "reload") {
-  post("/reload", { reload: true }, printResponse);
+  var note = args.slice(1).join(" ").replace(/^\s+|\s+$/g, "");
+  post("/reload", note ? { note: note } : { reload: true }, printResponse);
 } else {
   printHelp();
   fail("Unknown action: " + args[0]);
