@@ -100,6 +100,15 @@ const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
 const world = API.getIWorld('minecraft:overworld');
 ```
 
+### Worlddata
+
+The world object (and also player and npc object) have a storeddata and tempdata object.
+Storeddata can only hold scalar values and for world storeddata, it is saved into `world_data.json`. (For NPCs and players, etc, it is saved into their NBT data).
+Storeddata persist across restarts and script reloads
+
+Tempdata on the other hand can hold any type of data, including objects, classes, arrays etc. It is not saved across restarts and script reloads.
+Tempdata is also handy to communicate data between scripts.
+
 ## Importing
 You can import files from the `src` folder using the `~` alias.
 It is recommended to not use file extensions when importing for javascript files.
@@ -112,3 +121,9 @@ Note that it is important to use `export function` syntax on event hooks, else t
 Regular functions can be declared without `export`, as long as they get used inside the script, they will not be tree-shaken away.
 
 For each type of script, there are different events. They are listed in @docs-llm/customnpcs/events.md. The rest of the CustomNPCs API is in `docs-llm/customnpcs/`, grouped by package.
+
+
+## Development Cycle
+Everytime changes are made in `ecmascript/` folder, the scripts need to be reloaded in game in order to take effect.
+This can be done by using the `/noppes script reload` command in game.
+Usually all `init` events in almost all scripts are executed too.
