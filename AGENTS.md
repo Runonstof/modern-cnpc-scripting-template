@@ -59,6 +59,7 @@ The folder structure is as follows:
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(player|npc|block|item|forge)` folders.
 - `docs-llm`: CustomNPCs API reference. Start at `docs-llm/index.md` and `docs-llm/events.md`.
+- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, or `types[].package`; prints matching entries as JSON.
 
 So its important to note that `ecmascript/` should not be modified manually.
 

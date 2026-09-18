@@ -31,6 +31,15 @@ npm run docs:llm
 
 That regenerates `docs-llm/` for the repo. Day-to-day scripting only needs `docs-llm/`.
 
+Look up API types without opening `api.json`:
+
+```
+node bin/get-class-info.js IBlock IPlayer
+node bin/get-class-info.js noppes.npcs.api.gui
+```
+
+Works the same in PowerShell and WSL. Extra args are extra exact, case-insensitive queries against `name`, `fqn`, and `package`.
+
 ### Examples
 
 Please check `src/npcs/my_npc_one.js` and  `src/npcs/my_npc_two.js` for examples

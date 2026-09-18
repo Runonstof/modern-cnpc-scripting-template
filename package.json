@@ -5,7 +5,8 @@
   "scripts": {
     "build": "rollup -c",
     "watch": "rollup -c -w",
-    "docs:llm": "node tools/scrape-docs-llm.js"
+    "docs:llm": "node tools/scrape-docs-llm.js",
+    "get-class-info": "node bin/get-class-info.js"
   },
   "keywords": [],
   "author": "",
