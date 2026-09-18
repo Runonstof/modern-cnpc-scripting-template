@@ -12,6 +12,7 @@ import {
   npcRemoveScript,
   npcSetScriptEnabled,
 } from '~/lib/npc-scripts';
+import { getFieldNames, getMethodNames } from '~/lib/reflection';
 
 export {
   npcAddScript,
@@ -23,6 +24,8 @@ export {
   npcIsScriptEnabled,
   npcRemoveScript,
   npcSetScriptEnabled,
+  getFieldNames,
+  getMethodNames,
 };
 
 const HttpServer = Java.type('com.sun.net.httpserver.HttpServer');

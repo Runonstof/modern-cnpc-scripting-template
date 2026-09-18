@@ -235,6 +235,7 @@ function npcCreateScriptTab() {
 /**
  * Adds a script to the last existing tab, or creates a tab if none exist.
  * Does not fire init; call npc.reset() afterwards if needed.
+ * scriptFile is the ECMAScript path as in the GUI, e.g. `npcs/vaelith.js`.
  */
 function npcAddScript(npc, scriptFile) {
   var npcnbt = npcGetNbt(npc);
@@ -315,6 +316,62 @@ function npcSetScriptEnabled(npc, enabled) {
   var npcnbt = npcGetNbt(npc);
   npcnbt.setBoolean('ScriptEnabled', enabled);
   applyNpcNbt(npc, npcnbt);
+}
+
+var JavaClass = Java.type('java.lang.Class');
+function resolveClass(target) {
+  if (target == null) {
+    throw new Error('reflection: target is null');
+  }
+  if (target instanceof JavaClass) {
+    return target;
+  }
+  if (typeof target.getClass === 'function') {
+    return target.getClass();
+  }
+  throw new Error('reflection: expected a Java instance or Class');
+}
+function collectNames(target, includeInherited, getMembers) {
+  var names = [];
+  var seen = {};
+  var current = resolveClass(target);
+  while (current) {
+    var members = Java.from(getMembers(current));
+    for (var i = 0; i < members.length; i++) {
+      var name = String(members[i].getName());
+      if (seen[name]) {
+        continue;
+      }
+      seen[name] = true;
+      names.push(name);
+    }
+    current = includeInherited ? current.getSuperclass() : null;
+  }
+  return names;
+}
+/**
+ * Unique declared method names on a Java instance or Class.
+ * Walks superclasses unless includeInherited is false.
+ */
+function getMethodNames(target, includeInherited) {
+  if (includeInherited === undefined) {
+    includeInherited = true;
+  }
+  return collectNames(target, includeInherited, function (clazz) {
+    return clazz.getDeclaredMethods();
+  });
+}
+/**
+ * Unique declared field names on a Java instance or Class.
+ * Walks superclasses unless includeInherited is false.
+ */
+function getFieldNames(target, includeInherited) {
+  if (includeInherited === undefined) {
+    includeInherited = true;
+  }
+  return collectNames(target, includeInherited, function (clazz) {
+    return clazz.getDeclaredFields();
+  });
 }
 
 var HttpServer = Java.type('com.sun.net.httpserver.HttpServer');

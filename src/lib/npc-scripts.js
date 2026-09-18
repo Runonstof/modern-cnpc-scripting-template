@@ -43,6 +43,7 @@ export function npcCreateScriptTab() {
 /**
  * Adds a script to the last existing tab, or creates a tab if none exist.
  * Does not fire init; call npc.reset() afterwards if needed.
+ * scriptFile is the ECMAScript path as in the GUI, e.g. `npcs/vaelith.js`.
  */
 export function npcAddScript(npc, scriptFile) {
   const npcnbt = npcGetNbt(npc);

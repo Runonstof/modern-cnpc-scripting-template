@@ -86,8 +86,22 @@ The folder structure is as follows:
 - `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).
 - `docs-llm`: Scraped API reference, one folder per dump. Start at `docs-llm/index.md`; CustomNPCs hooks are in `docs-llm/customnpcs/events.md`.
 - `bin`: Project CLI helpers for agents. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file) into context; always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
+- `.agent`: Agent scratchpad. See **Scratchpad (`.agent`)** below.
 
 So its important to note that `ecmascript/` should not be modified manually.
+
+## Scratchpad (`.agent`)
+
+Use `.agent/` as the local scratchpad for this project.
+
+That includes:
+- Notes and UUIDs (for example `.agent/vaelith-npc.md`)
+- Temporary test scripts for `node bin/execute.js js` (probe, attach, one-off dumps). Write those as `.agent/*.js`, not under `bin/` or `src/`
+- Any other session-only files that should not be committed
+
+Do **not** put throwaway test scripts in `bin/` (`bin/` is only for lasting CLI helpers such as `execute.js` and `mcp.js`). Do not use harness-specific stores for this scratchpad.
+
+`.agent/.gitignore` ignores everything except itself, so scratch files are not committed.
 
 ## Building
 Use `npm run build` to build all scripts once.
@@ -170,6 +184,10 @@ node bin/execute.js js "tempdata.get('probe')"
 ```
 
 `/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
+
+If a `/js` snippet is more than a one-liner, save it under `.agent/` (see **Scratchpad (`.agent`)**) and pass that file into `execute.js`. Do not add those temporary test scripts to `bin/`.
+
+When you spawn an entity through `execute.js` (`js` or `command`), return its UUID in the expression result (for example `npc.getUUID()`). Keep that UUID in the conversation so later `/js` can look the entity up with `world.getEntity(uuid)` instead of guessing from look-target or nearby entities.
 
 ## Development Cycle
 
