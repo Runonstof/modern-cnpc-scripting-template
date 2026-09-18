@@ -124,6 +124,19 @@ For each type of script, there are different events. They are listed in @docs-ll
 
 
 ## Development Cycle
-Everytime changes are made in `ecmascript/` folder, the scripts need to be reloaded in game in order to take effect.
+
+Whever you make changes to the scripts, run `npm run build` first to build the scripts.
+This will put the compiled versions into the `ecmascript/` folder.
+
+When any changes are made in the `ecmascript/` folder, the scripts need to be reloaded in game in order to take effect.
 This can be done by using the `/noppes script reload` command in game.
 Usually all `init` events in almost all scripts are executed too.
+
+You can also run `npm run watch` to watch for changes in the `src/` folder and automatically build the scripts.
+This is useful when you are developing a script and want to see the changes immediately in game.
+
+## Debugging
+
+You can use the `dd` function to debug your scripts.
+This will log the message to the console in game.
+It is recommended to use this function sparingly and only when you are debugging a script.
