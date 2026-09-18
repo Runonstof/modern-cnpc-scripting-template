@@ -7,8 +7,6 @@ import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
 
 const ENTRY_TYPES = ['players', 'npcs', 'blocks', 'items', 'forge', 'debug'];
-/** Debug scripts are player-script hooks for in-world AI verification. */
-const OUTPUT_TYPE = { debug: 'players' };
 
 function getEntries() {
   const files = ENTRY_TYPES.flatMap((type) => [
@@ -82,8 +80,7 @@ const preserveTampermonkeyComments = () => ({
 export default Object.entries(entries).map(([name, input]) => {
 
   const baseDirName = path.basename(path.dirname(input));
-  const outputType = OUTPUT_TYPE[baseDirName] || baseDirName;
-  const dirName = outputType === 'src' ? '' : `/${outputType}`;
+  const dirName = baseDirName === 'src' ? '' : `/${baseDirName}`;
   const fileName = path.basename(input, path.extname(input));
 
   return {

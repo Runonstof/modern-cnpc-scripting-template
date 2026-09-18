@@ -214,7 +214,7 @@ var JString = Java.type('java.lang.String');
 var PORT = 25575;
 var HOST = '127.0.0.1';
 var BASE = 'http://' + HOST + ':' + PORT;
-var SCRIPT_REL = 'scripts/ecmascript/players/sp-rcon.js';
+var SCRIPT_REL = 'scripts/ecmascript/debug/sp-rcon.js';
 var HandlerImpl = Java.extend(HttpHandler);
 var currentPlayer = null;
 function hex(bytes) {

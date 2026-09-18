@@ -18,7 +18,7 @@ const JString = Java.type('java.lang.String');
 const PORT = 25575;
 const HOST = '127.0.0.1';
 const BASE = 'http://' + HOST + ':' + PORT;
-const SCRIPT_REL = 'scripts/ecmascript/players/sp-rcon.js';
+const SCRIPT_REL = 'scripts/ecmascript/debug/sp-rcon.js';
 
 const HandlerImpl = Java.extend(HttpHandler);
 

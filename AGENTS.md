@@ -38,7 +38,7 @@ ES6 code can be written in the `src` folder and will be transpiled to the `ecmas
 CustomNPCs is the mod that leverages Nashorn to execute the scripts.
 This is the most important mod to make this project possible.
 
-In CustomNPCs, there are 5 kinds of scripts that can be created (plus a project-only `debug` entry that compiles as player scripts):
+In CustomNPCs, there are 5 kinds of scripts that can be created (plus a project-only `debug` entry):
 - Player scripts: These are scripts that are executed for each player that is online. They can hook into player events like `chat`, `kill`, `levelUp`, etc.
 You cannot load different scripts for different players. You set them globally for all players and if needed, you can single out a player inside the script.
 
@@ -50,14 +50,14 @@ You cannot load different scripts for different players. You set them globally f
 
 - Forge scripts: The CustomNPCs mod allows you to load scripts globally for Forge. Events in this scripts are triggered by Forge events. Usually the CustomNPCs mod will check all registered Forge events (including those from mods), normalize the class paths and then checks if the script has a hook for the event. It usually takes a few tries to 'guess' the correct function name for the event.
 
-- Debug scripts (`src/debug`): Agent-only player scripts used to verify work in the running Minecraft world (inspect state, probe APIs, confirm a change). Write player event hooks here. The transpiler emits them to `ecmascript/players/` so they load as player scripts. After building, enable them in the player script tab and `/noppes script reload`. Do not put gameplay logic here.
+- Debug scripts (`src/debug`): Agent-only scripts used to verify work in the running Minecraft world (inspect state, probe APIs, confirm a change). Write player event hooks here. The transpiler emits them to `ecmascript/debug/`. After building, enable them in the player script tab and `/noppes script reload`. Do not put gameplay logic here.
 
 
 ## Folder structure
 
 The folder structure is as follows:
 - `src`: This contains the source code for the script.
-- `src/(players|npcs|blocks|items|forge|debug)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code. `debug` is for agent verification scripts and is compiled into `ecmascript/players/`.
+- `src/(players|npcs|blocks|items|forge|debug)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code. `debug` is for agent verification scripts and is compiled into `ecmascript/debug/`.
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge|debug)` folders.
 - `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).

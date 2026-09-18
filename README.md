@@ -16,7 +16,7 @@ Done! You have set up the workspace!
 
 ## Developing scripts
 
-1. Create a new script inside `src/`. It is recommended to keep a nice structure by separating by script type: npcs/players/items/blocks/forge. Agent verification scripts go in `src/debug/` and are built into `ecmascript/players/` so CustomNPCs loads them as player scripts.
+1. Create a new script inside `src/`. It is recommended to keep a nice structure by separating by script type: npcs/players/items/blocks/forge. Agent verification scripts go in `src/debug/` and are built into `ecmascript/debug/`.
 2. Run `npm run watch`
 3. The result will come in `ecmascript/`    folder
 4. If you followed the recommended clone location, you can just do `/noppes script reload` in-game immediately!
