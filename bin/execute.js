@@ -18,7 +18,7 @@ function printHelp() {
   process.stderr.write(
     "Usage: node bin/execute.js <command|js|reload> [...]\n" +
       "  command [ /]time set day\n" +
-      "  js \"player.name\"\n" +
+      "  js \"block && block.getName()\"\n" +
       "  reload\n" +
       "Requires ai-integration.js enabled as a player script and a player online.\n"
   );

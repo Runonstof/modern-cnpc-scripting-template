@@ -216,6 +216,7 @@ var HOST = '127.0.0.1';
 var BASE = 'http://' + HOST + ':' + PORT;
 var SCRIPT_REL = 'scripts/ecmascript/debug/ai-integration.js';
 var CHAT_PREFIX = '§6§l[Debug] §r';
+var LOOK_DISTANCE = 5;
 function debugDd() {
   var prefixed = [];
   for (var i = 0; i < arguments.length; i++) {
@@ -371,6 +372,20 @@ function resolvePlayer() {
   }
   return null;
 }
+function resolveLookTarget(player) {
+  var entities = player.rayTraceEntities(LOOK_DISTANCE, false, false);
+  if (entities && entities.length) {
+    return entities[0];
+  }
+  return null;
+}
+function resolveLookBlock(player) {
+  var trace = player.rayTraceBlock(LOOK_DISTANCE, false, false);
+  if (trace) {
+    return trace.getBlock();
+  }
+  return null;
+}
 function executeCmd(raw) {
   var player = resolvePlayer();
   if (!player) {
@@ -400,8 +415,10 @@ function executeJs(code) {
     var world = player.getWorld();
     var storeddata = world.storeddata;
     var tempdata = world.tempdata;
-    var fn = new Function('player', 'world', 'API', 'dd', 'storeddata', 'tempdata', 'return (' + src + ');');
-    return fn(player, world, API, debugDd, storeddata, tempdata);
+    var target = resolveLookTarget(player);
+    var block = resolveLookBlock(player);
+    var fn = new Function('player', 'world', 'API', 'dd', 'storeddata', 'tempdata', 'target', 'block', 'return (' + src + ');');
+    return fn(player, world, API, debugDd, storeddata, tempdata, target, block);
   });
 }
 function probeExisting() {

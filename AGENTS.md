@@ -169,7 +169,7 @@ node bin/execute.js js "player.setMotionY(.5) || true"
 node bin/execute.js js "tempdata.get('probe')"
 ```
 
-`/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (the last two are the **world** data objects). Nashorn `Java.type` still works.
+`/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
 
 ## Development Cycle
 

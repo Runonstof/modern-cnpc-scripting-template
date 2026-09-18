@@ -20,6 +20,7 @@ const HOST = '127.0.0.1';
 const BASE = 'http://' + HOST + ':' + PORT;
 const SCRIPT_REL = 'scripts/ecmascript/debug/ai-integration.js';
 const CHAT_PREFIX = '§6§l[Debug] §r';
+const LOOK_DISTANCE = 5;
 
 function debugDd(...args) {
   const prefixed = [];
@@ -187,6 +188,22 @@ function resolvePlayer() {
   return null;
 }
 
+function resolveLookTarget(player) {
+  const entities = player.rayTraceEntities(LOOK_DISTANCE, false, false);
+  if (entities && entities.length) {
+    return entities[0];
+  }
+  return null;
+}
+
+function resolveLookBlock(player) {
+  const trace = player.rayTraceBlock(LOOK_DISTANCE, false, false);
+  if (trace) {
+    return trace.getBlock();
+  }
+  return null;
+}
+
 function executeCmd(raw) {
   const player = resolvePlayer();
   if (!player) {
@@ -217,6 +234,8 @@ function executeJs(code) {
     const world = player.getWorld();
     const storeddata = world.storeddata;
     const tempdata = world.tempdata;
+    const target = resolveLookTarget(player);
+    const block = resolveLookBlock(player);
     const fn = new Function(
       'player',
       'world',
@@ -224,9 +243,11 @@ function executeJs(code) {
       'dd',
       'storeddata',
       'tempdata',
+      'target',
+      'block',
       'return (' + src + ');'
     );
-    return fn(player, world, API, debugDd, storeddata, tempdata);
+    return fn(player, world, API, debugDd, storeddata, tempdata, target, block);
   });
 }
 
