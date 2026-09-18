@@ -21,6 +21,16 @@ Done! You have set up the workspace!
 3. The result will come in `ecmascript/`    folder
 4. If you followed the recommended clone location, you can just do `/noppes script reload` in-game immediately!
 
+### Updating CustomNPCs API docs
+
+Replace the Javadoc HTML dump in `docs/`, then run:
+
+```
+npm run docs:llm
+```
+
+That regenerates `docs-llm/` for the repo. Day-to-day scripting only needs `docs-llm/`.
+
 ### Examples
 
 Please check `src/npcs/my_npc_one.js` and  `src/npcs/my_npc_two.js` for examples

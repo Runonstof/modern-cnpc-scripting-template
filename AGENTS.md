@@ -58,7 +58,7 @@ The folder structure is as follows:
 - `src/(player|npc|block|item|forge)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code.
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(player|npc|block|item|forge)` folders.
-- `docs`: This folder contains the javadocs for the CustomNPCs mod.
+- `docs-llm`: CustomNPCs API reference. Start at `docs-llm/index.md` and `docs-llm/events.md`.
 
 So its important to note that `ecmascript/` should not be modified manually.
 
@@ -79,7 +79,7 @@ export function interact(e) {
 Note that it is important to use `export function` syntax on event hooks, else the transpiler tree-shakes the function away.
 Regular functions can be declared without `export`, as long as they get used inside the script, they will not be tree-shaken away.
 
-For each type of script, there are different events. They can be found in: @docs/noppes/npcs/api/event/package-summary.html
+For each type of script, there are different events. They are listed in `docs-llm/events.md`. The rest of the CustomNPCs API is in `docs-llm/`, grouped by package.
 
 
 ## Development Cycle

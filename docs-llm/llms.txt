@@ -1,0 +1,16 @@
+# CustomNPCs scripting API
+
+Use the Markdown packages first. Open api.json only for structured lookup.
+
+- root.md: noppes.npcs.api
+- block.md: noppes.npcs.api.block
+- constants.md: noppes.npcs.api.constants
+- entity.md: noppes.npcs.api.entity
+- entity/data.md: noppes.npcs.api.entity.data
+- entity/data/role.md: noppes.npcs.api.entity.data.role
+- event.md: noppes.npcs.api.event
+- function/gui.md: noppes.npcs.api.function.gui
+- gui.md: noppes.npcs.api.gui
+- handler.md: noppes.npcs.api.handler
+- handler/data.md: noppes.npcs.api.handler.data
+- item.md: noppes.npcs.api.item
