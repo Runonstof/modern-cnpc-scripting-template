@@ -29,7 +29,32 @@ const list = Java.from(new ArrayList());
 
 This is useful when you want to call regular javascript methods on the array like `map`, `filter`, `reduce`, etc.
 
-### JavaScript
+### Minecraft obfuscation
+
+CustomNPCs wrappers (`e.npc`, `e.player`, `IWorld`, …) use readable API names. As soon as you drop to the real Minecraft object, every method and field on that object is **obfuscated** (Searge names like `m_20194_`).
+
+That includes at least:
+- `e.npc.getMCEntity()`
+- `e.player.getMCEntity()`
+- `world.getMCWorld()` (and other `getMC*` accessors)
+
+Do **not** call Mojang names such as `getServer()` on those objects. Look up the Searge name first and call that.
+
+Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with:
+
+```
+node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+```
+
+The query **must** be `fully.qualified.ClassName#memberName` (dots in the class path, `#` before the method or field). Use `member.searge` from the JSON as the name to invoke.
+
+At every callsite that uses an obfuscated method or field, put an inline comment mapping Searge back to the Mojang member. One comment line per obfuscated name, directly above the code. If one line of code uses several obfuscated names, use several comment lines. Splitting into variables is often better so each name can be commented clearly.
+
+```javascript
+const mcEntity = e.npc.getMCEntity();
+// m_20194_ = net.minecraft.world.entity.Entity#getServer
+const server = mcEntity.m_20194_();
+```
 Because Nashorn scripts only can run ES5 code, this project contains a transpiler that converts ES6+ code to ES5.
 ES6 code can be written in the `src` folder and will be transpiled to the `ecmascript` folder.
 
@@ -62,7 +87,7 @@ The folder structure is as follows:
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge|debug)` folders.
 - `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).
 - `docs-llm`: Scraped API reference, one folder per dump. Start at `docs-llm/index.md`; CustomNPCs hooks are in `docs-llm/customnpcs/events.md`.
-- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON.
+- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file) into context; always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
 
 So its important to note that `ecmascript/` should not be modified manually.
 

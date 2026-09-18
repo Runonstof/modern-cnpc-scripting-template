@@ -41,6 +41,14 @@ node bin/get-class-info.js customnpcs
 
 Works the same in PowerShell and WSL. Extra args are extra exact, case-insensitive queries against `name`, `fqn`, `package`, and `source`.
 
+Look up Minecraft MCP / Mojang names without opening `mcp/1.20.1.tiny`:
+
+```
+node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+```
+
+Use `member.searge` as the obfuscated name to call.
+
 ### Examples
 
 Please check `src/npcs/my_npc_one.js` and  `src/npcs/my_npc_two.js` for examples
