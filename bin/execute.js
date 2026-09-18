@@ -11,9 +11,20 @@
  */
 
 var http = require("http");
+var fs = require("fs");
+var path = require("path");
 
 var HOST = "127.0.0.1";
 var PORT = 25575;
+var HEALTH_TIMEOUT_MS = 1500;
+var REQUEST_TIMEOUT_MS = 15000;
+
+var OFFLINE_HINT =
+  "ai-integration is not listening at http://" +
+  HOST +
+  ":" +
+  PORT +
+  ". Enable src/debug/ai-integration.js in the player script tab, then reload once in-game.";
 
 function printHelp() {
   process.stderr.write(
@@ -41,18 +52,28 @@ function fail(message, code) {
   process.exit(code == null ? 1 : code);
 }
 
-function post(pathname, body, done) {
-  var payload = JSON.stringify(body == null ? {} : body);
+function request(method, pathname, body, timeoutMs, done) {
+  var payload = body == null ? "" : JSON.stringify(body);
+  var headers = {};
+  if (payload) {
+    headers["Content-Type"] = "application/json; charset=utf-8";
+    headers["Content-Length"] = Buffer.byteLength(payload);
+  }
+  var settled = false;
+  function finish(err, data, status) {
+    if (settled) {
+      return;
+    }
+    settled = true;
+    done(err, data, status);
+  }
   var req = http.request(
     {
       hostname: HOST,
       port: PORT,
       path: pathname,
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json; charset=utf-8",
-        "Content-Length": Buffer.byteLength(payload),
-      },
+      method: method,
+      headers: headers,
     },
     function (res) {
       var chunks = [];
@@ -65,32 +86,38 @@ function post(pathname, body, done) {
         try {
           parsed = JSON.parse(text);
         } catch (e) {
-          done(new Error("Non-JSON response (" + res.statusCode + "): " + text), null, res.statusCode);
+          finish(new Error("Non-JSON response (" + res.statusCode + "): " + text), null, res.statusCode);
           return;
         }
-        done(null, parsed, res.statusCode);
+        finish(null, parsed, res.statusCode);
       });
     }
   );
+  req.setTimeout(timeoutMs, function () {
+    req.destroy();
+    finish(new Error(OFFLINE_HINT), null, 0);
+  });
   req.on("error", function (err) {
-    if (err && err.code === "ECONNREFUSED") {
-      done(
-        new Error(
-          "Cannot reach ai-integration at http://" +
-            HOST +
-            ":" +
-            PORT +
-            ". Enable src/debug/ai-integration.js in the player script tab, then reload once in-game."
-        ),
-        null,
-        0
-      );
+    if (err && (err.code === "ECONNREFUSED" || err.code === "ECONNRESET" || err.code === "ETIMEDOUT")) {
+      finish(new Error(OFFLINE_HINT), null, 0);
       return;
     }
-    done(err, null, 0);
+    finish(err, null, 0);
   });
-  req.write(payload);
+  if (payload) {
+    req.write(payload);
+  }
   req.end();
+}
+
+function post(pathname, body, done) {
+  request("GET", "/health", null, HEALTH_TIMEOUT_MS, function (err, data) {
+    if (err || !data || data.ok !== true) {
+      done(new Error(OFFLINE_HINT), null, 0);
+      return;
+    }
+    request("POST", pathname, body, REQUEST_TIMEOUT_MS, done);
+  });
 }
 
 function printResponse(err, data, status) {
@@ -113,6 +140,9 @@ if (action === "command") {
   var src = args.slice(1).join(" ").replace(/^\s+|\s+$/g, "");
   if (!src) {
     fail('Missing js. Example: node bin/execute.js js "player.name"');
+  }
+  if (fs.existsSync(src) && fs.statSync(src).isFile()) {
+    src = fs.readFileSync(path.resolve(src), "utf8");
   }
   src = src.replace(/;+\s*$/g, "");
   post("/js", { js: src }, printResponse);

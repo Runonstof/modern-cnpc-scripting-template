@@ -63,6 +63,7 @@ function debugDd(...args) {
 const HandlerImpl = Java.extend(HttpHandler);
 
 let currentPlayer = null;
+let listeningServer = null;
 
 function hex(bytes) {
   const digits = '0123456789abcdef';
@@ -294,6 +295,34 @@ function requestShutdown() {
   Thread.sleep(150);
 }
 
+function stopListeningServer() {
+  const local = listeningServer;
+  listeningServer = null;
+  currentPlayer = null;
+  if (local) {
+    try {
+      local.stop(0);
+    } catch (e) {
+      // already stopped
+    }
+    return;
+  }
+  requestShutdown();
+}
+
+function ensureServer() {
+  const hash = hashScript();
+  const existing = probeExisting();
+  if (existing && existing.hash === hash) {
+    return;
+  }
+  if (existing) {
+    debugDd('ai-integration script changed, restarting listener');
+    requestShutdown();
+  }
+  listeningServer = startServer(hash);
+}
+
 function startServer(scriptHash) {
   const server = HttpServer.create(new InetSocketAddress(HOST, PORT), 0);
 
@@ -339,6 +368,9 @@ function startServer(scriptHash) {
       const toStop = server;
       new Thread(function () {
         Thread.sleep(50);
+        if (listeningServer === toStop) {
+          listeningServer = null;
+        }
         toStop.stop(0);
       }).start();
     })
@@ -390,23 +422,16 @@ function startServer(scriptHash) {
 
 export function init(e) {
   currentPlayer = e.player;
-  const hash = hashScript();
-  const existing = probeExisting();
-
-  if (existing && existing.hash === hash) {
-    return;
-  }
-
-  if (existing) {
-    debugDd('ai-integration script changed, restarting listener');
-    requestShutdown();
-  }
-
-  startServer(hash);
+  ensureServer();
 }
 
 export function login(e) {
   currentPlayer = e.player;
+  ensureServer();
+}
+
+export function logout() {
+  stopListeningServer();
 }
 
 export function tick(e) {

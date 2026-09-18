@@ -186,6 +186,23 @@ node bin/execute.js js "tempdata.get('probe')"
 
 `/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
 
+To keep values between `execute.js js` calls, put them on world `tempdata`. Each `/js` run is a fresh expression: locals from the previous call are gone, but `tempdata` is the same world object and stays readable on the next call (until script reload or world restart). Prefer that over trying to stash state in conversation text or one-off files.
+
+`tempdata` is `IData` (`noppes.npcs.api.entity.data.IData`):
+
+- `void put(String key, Object value)`
+- `Object get(String key)`
+- `void remove(String key)`
+- `boolean has(String key)`
+- `String[] getKeys()`
+- `void clear()` — removes all data
+
+```
+node bin/execute.js js "tempdata.put('npcUuid', npc.getUUID()) || true"
+node bin/execute.js js "tempdata.get('npcUuid')"
+node bin/execute.js js "world.getEntity(tempdata.get('npcUuid'))"
+```
+
 If a `/js` snippet is more than a one-liner, save it under `.agent/` (see **Scratchpad (`.agent`)**) and pass that file into `execute.js`. Do not add those temporary test scripts to `bin/`.
 
 When you spawn an entity through `execute.js` (`js` or `command`), return its UUID in the expression result (for example `npc.getUUID()`). Keep that UUID in the conversation so later `/js` can look the entity up with `world.getEntity(uuid)` instead of guessing from look-target or nearby entities.
