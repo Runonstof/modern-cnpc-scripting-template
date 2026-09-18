@@ -214,7 +214,7 @@ var JString = Java.type('java.lang.String');
 var PORT = 25575;
 var HOST = '127.0.0.1';
 var BASE = 'http://' + HOST + ':' + PORT;
-var SCRIPT_REL = 'scripts/ecmascript/debug/sp-rcon.js';
+var SCRIPT_REL = 'scripts/ecmascript/debug/ai-integration.js';
 var CHAT_PREFIX = '§6§l[Debug] §r';
 function debugDd() {
   var prefixed = [];
@@ -238,7 +238,7 @@ function hex(bytes) {
   }
   return out;
 }
-function hashSpRcon() {
+function hashScript() {
   var file = new File(API.getLevelDir(), SCRIPT_REL);
   if (!file.exists()) {
     return 'missing';
@@ -398,13 +398,10 @@ function executeJs(code) {
   }
   return runOnServerThread(player, function () {
     var world = player.getWorld();
-    var fn;
-    try {
-      fn = new Function('player', 'world', 'API', 'dd', src);
-    } catch (e) {
-      fn = new Function('player', 'world', 'API', 'dd', 'return (' + src + ');');
-    }
-    return fn(player, world, API, debugDd);
+    var storeddata = world.storeddata;
+    var tempdata = world.tempdata;
+    var fn = new Function('player', 'world', 'API', 'dd', 'storeddata', 'tempdata', 'return (' + src + ');');
+    return fn(player, world, API, debugDd, storeddata, tempdata);
   });
 }
 function probeExisting() {
@@ -486,6 +483,21 @@ function startServer(scriptHash) {
       result: stringifyResult(result)
     });
   }));
+  server.createContext('/reload', route(function (exchange) {
+    debugDd('Reload CustomNPC scripts');
+    send(exchange, 200, {
+      ok: true,
+      reloading: true
+    });
+    new Thread(function () {
+      Thread.sleep(50);
+      try {
+        executeCmd('noppes script reload');
+      } catch (err) {
+        debugDd('reload failed: ' + (err && err.message ? err.message : String(err)));
+      }
+    }).start();
+  }));
   server.createContext('/js', route(function (exchange) {
     var code = parsePayload(exchange, ['js', 'code', 'script']);
     var result = executeJs(code);
@@ -496,18 +508,18 @@ function startServer(scriptHash) {
   }));
   server.setExecutor(null);
   server.start();
-  debugDd('sp-rcon listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
+  debugDd('ai-integration listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
   return server;
 }
 function init(e) {
   currentPlayer = e.player;
-  var hash = hashSpRcon();
+  var hash = hashScript();
   var existing = probeExisting();
   if (existing && existing.hash === hash) {
     return;
   }
   if (existing) {
-    debugDd('sp-rcon script changed, restarting listener');
+    debugDd('ai-integration script changed, restarting listener');
     requestShutdown();
   }
   startServer(hash);

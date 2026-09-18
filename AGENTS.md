@@ -160,10 +160,5 @@ This is useful when you are developing a script and want to see the changes imme
 
 So after you made all your changes:
 1. Run `npm run build` to build the scripts.
-2. Run `/noppes script reload` to reload the scripts in game (this may fail is sp-rcon.js is not running)
+2. Run `/noppes script reload` to reload the scripts in game (this may fail if ai-integration.js is not running)
 
-## Debugging
-
-You can use the `dd` function to debug your scripts.
-This will log the message to the console in game.
-It is recommended to use this function sparingly and only when you are debugging a script.
