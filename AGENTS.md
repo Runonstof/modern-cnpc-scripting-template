@@ -58,8 +58,9 @@ The folder structure is as follows:
 - `src/(players|npcs|blocks|items|forge)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code.
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge)` folders.
-- `docs-llm`: CustomNPCs API reference. Start at `docs-llm/index.md` and `docs-llm/events.md`.
-- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, or `types[].package`; prints matching entries as JSON.
+- `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).
+- `docs-llm`: Scraped API reference, one folder per dump. Start at `docs-llm/index.md`; CustomNPCs hooks are in `docs-llm/customnpcs/events.md`.
+- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON.
 
 So its important to note that `ecmascript/` should not be modified manually.
 
@@ -108,4 +109,4 @@ import { dd } from '~/lib/dump';
 Note that it is important to use `export function` syntax on event hooks, else the transpiler tree-shakes the function away.
 Regular functions can be declared without `export`, as long as they get used inside the script, they will not be tree-shaken away.
 
-For each type of script, there are different events. They are listed in @docs-llm/events.md. The rest of the CustomNPCs API is in `docs-llm/`, grouped by package.
+For each type of script, there are different events. They are listed in @docs-llm/customnpcs/events.md. The rest of the CustomNPCs API is in `docs-llm/customnpcs/`, grouped by package.

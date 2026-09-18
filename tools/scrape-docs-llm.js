@@ -1,7 +1,7 @@
 /**
- * Maintainer tool: scrape Javadoc HTML in docs/ into compact docs-llm/.
+ * Maintainer tool: scrape Javadoc HTML dumps in docs/<source>/ into docs-llm/.
  *
- * Usage (after replacing docs/ with a newer Javadoc dump):
+ * Put each Javadoc site in its own folder, e.g. docs/customnpcs/, then:
  *   npm run docs:llm
  *
  * Coding agents should read docs-llm/ only; they do not need this script.
@@ -138,7 +138,7 @@ function stripLeadingHook(description, hook) {
   return cleanText(lines.join("\n"));
 }
 
-function parseClassPage(filePath, html) {
+function parseClassPage(filePath, html, docsRoot) {
   const $ = cheerio.load(html);
   if (!$("body.class-declaration-page").length) return null;
 
@@ -165,7 +165,7 @@ function parseClassPage(filePath, html) {
   const hook = pkg.endsWith(".event") ? extractHook(description) : "";
 
   return {
-    file: path.relative(DOCS, filePath).replace(/\\/g, "/"),
+    file: path.relative(docsRoot, filePath).replace(/\\/g, "/"),
     package: pkg,
     kind,
     name,
@@ -184,8 +184,9 @@ function parseClassPage(filePath, html) {
 function parseConstantValues(html) {
   const $ = cheerio.load(html);
   const values = {};
-  $("[id^='noppes.']").each((_, el) => {
+  $("code[id]").each((_, el) => {
     const id = $(el).attr("id");
+    if (!id || id.indexOf(".") === -1) return;
     const $cell = $(el).closest(".col-first");
     const value = cleanText($cell.nextAll(".col-last").first().text());
     if (id && value) values[id] = value;
@@ -284,58 +285,120 @@ function writeFile(filePath, contents) {
   fs.writeFileSync(filePath, contents.replace(/\n+$/, "\n"));
 }
 
-function main() {
-  fs.rmSync(OUT, { recursive: true, force: true });
-  fs.mkdirSync(OUT, { recursive: true });
+function isJavadocRoot(dir) {
+  return fs.existsSync(path.join(dir, "index.html"))
+    || fs.existsSync(path.join(dir, "constant-values.html"))
+    || fs.existsSync(path.join(dir, "overview-summary.html"));
+}
 
-  const constantsHtml = path.join(DOCS, "constant-values.html");
+function listSources() {
+  if (!fs.existsSync(DOCS)) {
+    throw new Error("Missing docs/ folder");
+  }
+
+  const sources = [];
+  for (const ent of fs.readdirSync(DOCS, { withFileTypes: true })) {
+    if (!ent.isDirectory() || ent.name.startsWith(".")) continue;
+    const dir = path.join(DOCS, ent.name);
+    if (!isJavadocRoot(dir)) continue;
+    sources.push({ id: ent.name, dir });
+  }
+
+  sources.sort((a, b) => a.id.localeCompare(b.id));
+  if (!sources.length) {
+    throw new Error("No Javadoc dumps found. Place each site in docs/<name>/ (for example docs/customnpcs/).");
+  }
+  return sources;
+}
+
+function commonPackagePrefix(packages) {
+  const unique = [...new Set(packages.filter(Boolean))];
+  if (!unique.length) return "";
+  const parts = unique.map((pkg) => pkg.split("."));
+  const first = parts[0];
+  let i = 0;
+  while (i < first.length) {
+    if (!parts.every((p) => p[i] === first[i])) break;
+    i += 1;
+  }
+  if (i === 0) return "";
+  if (unique.length > 1 && i === first.length) i -= 1;
+  return first.slice(0, i).join(".");
+}
+
+function packageSlug(pkg, prefix) {
+  let rest = pkg;
+  if (prefix && (pkg === prefix || pkg.startsWith(prefix + "."))) {
+    rest = pkg.slice(prefix.length).replace(/^\./, "");
+  }
+  return (rest || "root").replace(/\./g, "/");
+}
+
+function scrapeSource(source) {
+  const constantsHtml = path.join(source.dir, "constant-values.html");
   const constants = fs.existsSync(constantsHtml)
     ? parseConstantValues(fs.readFileSync(constantsHtml, "utf8"))
     : {};
 
-  const files = globSync("noppes/**/*.html", {
-    cwd: DOCS,
+  const files = globSync("**/*.html", {
+    cwd: source.dir,
     nodir: true,
     windowsPathsNoEscape: true,
-  }).filter((rel) => !rel.includes("class-use") && !/package-(summary|tree|use)\.html$/i.test(rel));
+    ignore: [
+      "**/class-use/**",
+      "index-files/**",
+      "legal/**",
+      "resource-files/**",
+      "script-files/**",
+    ],
+  }).filter((rel) => !/package-(summary|tree|use)\.html$/i.test(rel));
 
   const types = [];
   for (const rel of files) {
-    const abs = path.join(DOCS, rel);
-    const parsed = parseClassPage(abs, fs.readFileSync(abs, "utf8"));
-    if (parsed) types.push(parsed);
+    const abs = path.join(source.dir, rel);
+    const parsed = parseClassPage(abs, fs.readFileSync(abs, "utf8"), source.dir);
+    if (!parsed) continue;
+    parsed.source = source.id;
+    types.push(parsed);
   }
   types.sort((a, b) => a.fqn.localeCompare(b.fqn));
   applyConstants(types, constants);
+  return types;
+}
 
+function writeSourceMarkdown(source, types) {
+  const outDir = path.join(OUT, source.id);
   const byPackage = new Map();
   for (const type of types) {
     if (!byPackage.has(type.package)) byPackage.set(type.package, []);
     byPackage.get(type.package).push(type);
   }
 
-    const indexLines = [
-    "# CustomNPCs API",
+  const prefix = commonPackagePrefix([...byPackage.keys()]);
+  const indexLines = [
+    "# " + source.id,
     "",
-    "API reference for CustomNPCs scripting.",
-    "",
-    "- [Event hooks](events.md) — script function names and event fields",
-    "- [api.json](api.json) — machine-readable dump",
-    "",
-    "## Packages",
+    "API reference scraped from `docs/" + source.id + "/`.",
     "",
   ];
+  const events = types.filter((type) => type.package.endsWith(".event"));
+  if (events.length) {
+    indexLines.push("- [Event hooks](events.md) — script function names and event fields");
+  }
+  indexLines.push("- [api.json](../api.json) — machine-readable dump (all sources)");
+  indexLines.push("");
+  indexLines.push("## Packages");
+  indexLines.push("");
 
   const llmsLines = [
-    "# CustomNPCs scripting API",
+    "# " + source.id + " API",
     "",
-    "Use the Markdown packages first. Open api.json only for structured lookup.",
+    "Use the Markdown packages first. Open ../api.json only for structured lookup.",
     "",
   ];
 
   for (const pkg of [...byPackage.keys()].sort()) {
-    const slug = pkg.replace(/^noppes\.npcs\.api\.?/, "") || "root";
-    const fileName = slug.replace(/\./g, "/") + ".md";
+    const fileName = packageSlug(pkg, prefix) + ".md";
     const rel = fileName.replace(/\\/g, "/");
     const header = [
       "# " + pkg,
@@ -344,17 +407,72 @@ function main() {
       "",
     ];
     const body = byPackage.get(pkg).map(renderType).join("\n");
-    writeFile(path.join(OUT, rel), header.join("\n") + body);
+    writeFile(path.join(outDir, rel), header.join("\n") + body);
     indexLines.push("- [`" + pkg + "`](" + rel + ") — " + byPackage.get(pkg).length + " types");
     llmsLines.push("- " + rel + ": " + pkg);
   }
 
+  writeFile(path.join(outDir, "index.md"), indexLines.join("\n") + "\n");
+  writeFile(path.join(outDir, "llms.txt"), llmsLines.join("\n") + "\n");
+  if (events.length) {
+    writeFile(path.join(outDir, "events.md"), renderEvents(types));
+  }
+
+  return { typeCount: types.length, packageCount: byPackage.size, hasEvents: events.length > 0 };
+}
+
+function main() {
+  const sources = listSources();
+  fs.rmSync(OUT, { recursive: true, force: true });
+  fs.mkdirSync(OUT, { recursive: true });
+
+  const allTypes = [];
+  const summaries = [];
+
+  for (const source of sources) {
+    const types = scrapeSource(source);
+    const summary = writeSourceMarkdown(source, types);
+    allTypes.push(...types);
+    summaries.push({ source, ...summary });
+    console.log("Wrote " + types.length + " types from docs/" + source.id + "/");
+  }
+
+  const indexLines = [
+    "# Scripting API docs",
+    "",
+    "Each folder under `docs/` is a Javadoc dump. This tree is generated from all of them.",
+    "",
+    "## Sources",
+    "",
+  ];
+  const llmsLines = [
+    "# Scripting API docs",
+    "",
+    "Use Markdown under each source folder first. Open api.json only for structured lookup.",
+    "",
+  ];
+
+  for (const item of summaries) {
+    const id = item.source.id;
+    indexLines.push("- [" + id + "](" + id + "/index.md) — " + item.typeCount + " types, " + item.packageCount + " packages");
+    llmsLines.push("- " + id + "/index.md: " + id);
+    if (item.hasEvents) {
+      indexLines.push("  - [Event hooks](" + id + "/events.md)");
+    }
+  }
+
+  indexLines.push("");
+  indexLines.push("- [api.json](api.json) — machine-readable dump");
+
   writeFile(path.join(OUT, "index.md"), indexLines.join("\n") + "\n");
   writeFile(path.join(OUT, "llms.txt"), llmsLines.join("\n") + "\n");
-  writeFile(path.join(OUT, "events.md"), renderEvents(types));
-  writeFile(path.join(OUT, "api.json"), JSON.stringify({ generatedFrom: "docs/", types }, null, 2) + "\n");
-
-  console.log("Wrote " + types.length + " types to " + path.relative(ROOT, OUT));
+  writeFile(
+    path.join(OUT, "api.json"),
+    JSON.stringify({
+      generatedFrom: sources.map((s) => "docs/" + s.id + "/"),
+      types: allTypes,
+    }, null, 2) + "\n"
+  );
 }
 
 function typesForToc(list) {

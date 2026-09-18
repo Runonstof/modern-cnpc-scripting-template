@@ -1,5 +1,7 @@
 {
-  "generatedFrom": "docs/",
+  "generatedFrom": [
+    "docs/customnpcs/"
+  ],
   "types": [
     {
       "file": "noppes/npcs/api/block/IBlock.html",
@@ -265,7 +267,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/block/IBlockFluidContainer.html",
@@ -357,7 +360,8 @@
             "setTileEntityNBT"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/block/IBlockScripted.html",
@@ -720,7 +724,8 @@
             "setTileEntityNBT"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/block/IBlockScriptedDoor.html",
@@ -870,7 +875,8 @@
             "setTileEntityNBT"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/block/ITextPlane.html",
@@ -1034,7 +1040,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/AnimationType.html",
@@ -1298,7 +1305,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/EntitiesType.html",
@@ -1444,7 +1452,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/GuiComponentType.html",
@@ -1570,7 +1579,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/ItemType.html",
@@ -1656,7 +1666,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/JobType.html",
@@ -1802,7 +1813,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/MarkType.html",
@@ -1888,7 +1900,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/OptionType.html",
@@ -1954,7 +1967,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/ParticleType.html",
@@ -2070,7 +2084,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/PotionEffectType.html",
@@ -2436,7 +2451,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/QuestType.html",
@@ -2512,7 +2528,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/RoleType.html",
@@ -2618,7 +2635,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/constants/SideType.html",
@@ -2694,7 +2712,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/CustomNPCsException.html",
@@ -2728,7 +2747,8 @@
             "toString"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/IData.html",
@@ -2798,7 +2818,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/ILine.html",
@@ -2868,7 +2889,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/IMark.html",
@@ -2938,7 +2960,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCAdvanced.html",
@@ -3011,7 +3034,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCAi.html",
@@ -3398,7 +3422,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCDisplay.html",
@@ -3749,7 +3774,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCInventory.html",
@@ -3911,7 +3937,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCJob.html",
@@ -3936,7 +3963,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCMelee.html",
@@ -4060,7 +4088,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCRanged.html",
@@ -4532,7 +4561,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCRole.html",
@@ -4557,7 +4587,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/INPCStats.html",
@@ -4783,7 +4814,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/IPixelmonPlayerData.html",
@@ -4817,7 +4849,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/IPlayerMail.html",
@@ -4914,7 +4947,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobBard.html",
@@ -4948,7 +4982,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobBuilder.html",
@@ -4973,7 +5008,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobFarmer.html",
@@ -4998,7 +5034,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobFollower.html",
@@ -5064,7 +5101,8 @@
             "getType"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobPuppet.html",
@@ -5143,7 +5181,8 @@
             "getType"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobPuppet.IJobPuppetPart.html",
@@ -5202,7 +5241,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IJobSpawner.html",
@@ -5238,7 +5278,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IRoleDialog.html",
@@ -5312,7 +5353,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IRoleFollower.html",
@@ -5450,7 +5492,8 @@
             "getType"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IRoleTrader.html",
@@ -5553,7 +5596,8 @@
             "getType"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IRoleTransporter.html",
@@ -5592,7 +5636,8 @@
             "getType"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/data/role/IRoleTransporter.ITransportLocation.html",
@@ -5678,7 +5723,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IAnimal.html",
@@ -5825,7 +5871,8 @@
             "navigateTo"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IArrow.html",
@@ -5924,7 +5971,8 @@
             "typeOf"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/ICustomNpc.html",
@@ -6321,7 +6369,8 @@
             "navigateTo"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IEntity.html",
@@ -7002,7 +7051,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IEntityItem.html",
@@ -7199,7 +7249,8 @@
             "typeOf"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IEntityLiving.html",
@@ -7596,7 +7647,8 @@
             "typeOf"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IMob.html",
@@ -7790,7 +7842,8 @@
             "swingOffhand"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IMonster.html",
@@ -7937,7 +7990,8 @@
             "navigateTo"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IPixelmon.html",
@@ -8095,7 +8149,8 @@
             "navigateTo"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IPlayer.html",
@@ -8770,7 +8825,8 @@
             "swingOffhand"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IProjectile.html",
@@ -8966,7 +9022,8 @@
             "typeOf"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IThrowable.html",
@@ -9065,7 +9122,8 @@
             "typeOf"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/entity/IVillager.html",
@@ -9212,7 +9270,8 @@
             "navigateTo"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.html",
@@ -9244,7 +9303,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.BreakEvent.html",
@@ -9279,7 +9339,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.ClickedEvent.html",
@@ -9324,7 +9385,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.CollidedEvent.html",
@@ -9369,7 +9431,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.DoorToggleEvent.html",
@@ -9404,7 +9467,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.EntityFallenUponEvent.html",
@@ -9458,7 +9522,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.ExplodedEvent.html",
@@ -9493,7 +9558,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.HarvestedEvent.html",
@@ -9538,7 +9604,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.InitEvent.html",
@@ -9573,7 +9640,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.InteractEvent.html",
@@ -9654,7 +9722,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.NeighborChangedEvent.html",
@@ -9699,7 +9768,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.RainFillEvent.html",
@@ -9734,7 +9804,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.RedstoneEvent.html",
@@ -9788,7 +9859,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.TimerEvent.html",
@@ -9833,7 +9905,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/BlockEvent.UpdateEvent.html",
@@ -9868,7 +9941,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.html",
@@ -9909,7 +9983,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.ButtonEvent.html",
@@ -9964,7 +10039,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.CloseEvent.html",
@@ -10000,7 +10076,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.ScrollEvent.html",
@@ -10082,7 +10159,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.SlotClickEvent.html",
@@ -10145,7 +10223,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomGuiEvent.SlotEvent.html",
@@ -10209,7 +10288,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/CustomNPCsEvent.html",
@@ -10234,7 +10314,8 @@
       ],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/DialogEvent.html",
@@ -10281,7 +10362,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/DialogEvent.CloseEvent.html",
@@ -10323,7 +10405,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/DialogEvent.OpenEvent.html",
@@ -10365,7 +10448,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/DialogEvent.OptionEvent.html",
@@ -10417,7 +10501,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ForgeEvent.html",
@@ -10449,7 +10534,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ForgeEvent.EntityEvent.html",
@@ -10494,7 +10580,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ForgeEvent.InitEvent.html",
@@ -10529,7 +10616,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ForgeEvent.LevelEvent.html",
@@ -10574,7 +10662,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/HandlerEvent.html",
@@ -10589,7 +10678,8 @@
       "fields": [],
       "methods": [],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/HandlerEvent.FactionsLoadedEvent.html",
@@ -10628,7 +10718,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/HandlerEvent.RecipesLoadedEvent.html",
@@ -10667,7 +10758,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.html",
@@ -10699,7 +10791,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.AttackEvent.html",
@@ -10771,7 +10864,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.InitEvent.html",
@@ -10806,7 +10900,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.InteractEvent.html",
@@ -10869,7 +10964,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.PickedUpEvent.html",
@@ -10923,7 +11019,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.SpawnEvent.html",
@@ -10968,7 +11065,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.TossedEvent.html",
@@ -11022,7 +11120,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ItemEvent.UpdateEvent.html",
@@ -11067,7 +11166,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.html",
@@ -11099,7 +11199,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.CollideEvent.html",
@@ -11144,7 +11245,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.DamagedEvent.html",
@@ -11216,7 +11318,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.DiedEvent.html",
@@ -11306,7 +11409,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.InitEvent.html",
@@ -11341,7 +11445,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.InteractEvent.html",
@@ -11386,7 +11491,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.KilledEntityEvent.html",
@@ -11431,7 +11537,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.MeleeAttackEvent.html",
@@ -11485,7 +11592,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.RangedLaunchedEvent.html",
@@ -11548,7 +11656,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.TargetEvent.html",
@@ -11593,7 +11702,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.TargetLostEvent.html",
@@ -11638,7 +11748,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.TimerEvent.html",
@@ -11683,7 +11794,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/NpcEvent.UpdateEvent.html",
@@ -11718,7 +11830,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.html",
@@ -11750,7 +11863,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.AttackEvent.html",
@@ -11813,7 +11927,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.BreakEvent.html",
@@ -11867,7 +11982,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.ChatEvent.html",
@@ -11912,7 +12028,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.ContainerClosed.html",
@@ -11957,7 +12074,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.ContainerOpen.html",
@@ -12002,7 +12120,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.DamagedEntityEvent.html",
@@ -12065,7 +12184,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.DamagedEvent.html",
@@ -12137,7 +12257,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.DiedEvent.html",
@@ -12200,7 +12321,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.FactionUpdateEvent.html",
@@ -12263,7 +12385,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.InitEvent.html",
@@ -12298,7 +12421,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.InteractEvent.html",
@@ -12352,7 +12476,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.KeyPressedEvent.html",
@@ -12442,7 +12567,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.KeyReleasedEvent.html",
@@ -12532,7 +12658,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.KilledEntityEvent.html",
@@ -12577,7 +12704,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.LevelUpEvent.html",
@@ -12622,7 +12750,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.LoginEvent.html",
@@ -12657,7 +12786,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.LogoutEvent.html",
@@ -12692,7 +12822,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.PickUpEvent.html",
@@ -12737,7 +12868,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.PlaySoundEvent.html",
@@ -12800,7 +12932,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.RangedLaunchedEvent.html",
@@ -12835,7 +12968,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.TimerEvent.html",
@@ -12880,7 +13014,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.TossEvent.html",
@@ -12925,7 +13060,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/PlayerEvent.UpdateEvent.html",
@@ -12960,7 +13096,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ProjectileEvent.html",
@@ -12992,7 +13129,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ProjectileEvent.ImpactEvent.html",
@@ -13046,7 +13184,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/ProjectileEvent.UpdateEvent.html",
@@ -13081,7 +13220,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/QuestEvent.html",
@@ -13122,7 +13262,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/QuestEvent.QuestCompletedEvent.html",
@@ -13158,7 +13299,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/QuestEvent.QuestStartEvent.html",
@@ -13194,7 +13336,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/QuestEvent.QuestTurnedInEvent.html",
@@ -13249,7 +13392,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.html",
@@ -13290,7 +13434,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.BankUnlockedEvent.html",
@@ -13336,7 +13481,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.BankUpgradedEvent.html",
@@ -13382,7 +13528,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.FollowerFinishedEvent.html",
@@ -13418,7 +13565,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.FollowerHireEvent.html",
@@ -13464,7 +13612,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.MailmanEvent.html",
@@ -13510,7 +13659,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.TradeFailedEvent.html",
@@ -13583,7 +13733,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.TraderEvent.html",
@@ -13647,7 +13798,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.TransporterUnlockedEvent.html",
@@ -13683,7 +13835,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/RoleEvent.TransporterUseEvent.html",
@@ -13729,7 +13882,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/WorldEvent.html",
@@ -13761,7 +13915,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/event/WorldEvent.ScriptTriggerEvent.html",
@@ -13833,7 +13988,8 @@
           ]
         }
       ],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/function/gui/GuiComponentClicked.html",
@@ -13858,7 +14014,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/function/gui/GuiComponentUpdate.html",
@@ -13883,7 +14040,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/function/gui/GuiItemSlotUpdate.html",
@@ -13908,7 +14066,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IAssetsSelector.html",
@@ -14029,7 +14188,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IButton.html",
@@ -14211,7 +14371,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IButtonList.html",
@@ -14333,7 +14494,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IComponentsScrollableWrapper.html",
@@ -14397,7 +14559,8 @@
             "showPlayerInventory"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IComponentsWrapper.html",
@@ -14766,7 +14929,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ICustomGui.html",
@@ -14983,7 +15147,8 @@
             "showPlayerInventory"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ICustomGuiComponent.html",
@@ -15161,7 +15326,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IEntityDisplay.html",
@@ -15280,7 +15446,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IItemSlot.html",
@@ -15401,7 +15568,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ILabel.html",
@@ -15520,7 +15688,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/IScroll.html",
@@ -15693,7 +15862,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ISlider.html",
@@ -15839,7 +16009,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ITextArea.html",
@@ -15925,7 +16096,8 @@
             "setText"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ITextField.html",
@@ -16111,7 +16283,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ITexturedButton.html",
@@ -16219,7 +16392,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/gui/ITexturedRect.html",
@@ -16338,7 +16512,8 @@
             "setVisible"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IAvailability.html",
@@ -16510,7 +16685,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IDialog.html",
@@ -16654,7 +16830,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IDialogCategory.html",
@@ -16697,7 +16874,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IDialogOption.html",
@@ -16740,7 +16918,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IFaction.html",
@@ -16909,7 +17088,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IQuest.html",
@@ -17089,7 +17269,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IQuestCategory.html",
@@ -17132,7 +17313,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IQuestObjective.html",
@@ -17204,7 +17386,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/data/IRecipe.html",
@@ -17357,7 +17540,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/ICloneHandler.html",
@@ -17409,7 +17593,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/IDialogHandler.html",
@@ -17443,7 +17628,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/IFactionHandler.html",
@@ -17495,7 +17681,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/IQuestHandler.html",
@@ -17529,7 +17716,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/handler/IRecipeHandler.html",
@@ -17590,7 +17778,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IContainer.html",
@@ -17673,7 +17862,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IDamageSource.html",
@@ -17743,7 +17933,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IDimension.html",
@@ -17768,7 +17959,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/INbt.html",
@@ -18124,7 +18316,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IPos.html",
@@ -18361,7 +18554,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IRayTrace.html",
@@ -18404,7 +18598,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IScoreboard.html",
@@ -18580,7 +18775,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IScoreboardObjective.html",
@@ -18688,7 +18884,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IScoreboardScore.html",
@@ -18731,7 +18928,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IScoreboardTeam.html",
@@ -18877,7 +19075,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/item/IItemArmor.html",
@@ -18963,7 +19162,8 @@
             "setStackSize"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/item/IItemBlock.html",
@@ -19040,7 +19240,8 @@
             "setStackSize"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/item/IItemBook.html",
@@ -19162,7 +19363,8 @@
             "setStackSize"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/item/IItemScripted.html",
@@ -19366,7 +19568,8 @@
             "setStackSize"
           ]
         }
-      ]
+      ],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/item/IItemStack.html",
@@ -19757,7 +19960,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/ITimers.html",
@@ -19835,7 +20039,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/IWorld.html",
@@ -20287,7 +20492,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     },
     {
       "file": "noppes/npcs/api/NpcAPI.html",
@@ -20592,7 +20798,8 @@
         }
       ],
       "inheritedFields": [],
-      "inheritedMethods": []
+      "inheritedMethods": [],
+      "source": "customnpcs"
     }
   ]
 }

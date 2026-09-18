@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
- * Look up CustomNPCs API types from docs-llm/api.json.
+ * Look up API types from docs-llm/api.json (all Javadoc sources).
  *
  * Usage (PowerShell or WSL):
  *   node bin/get-class-info.js IBlock IPlayer
  *   node bin/get-class-info.js noppes.npcs.api.gui
+ *   node bin/get-class-info.js customnpcs
  *
  * Each argument is an exact, case-insensitive match against types[].name,
- * types[].fqn, or types[].package. Matching type entries are printed as JSON.
+ * types[].fqn, types[].package, or types[].source. Matching entries print as JSON.
  */
 
 var fs = require("fs");
@@ -20,7 +21,7 @@ var queries = process.argv.slice(2).filter(function (arg) {
 if (queries.length === 0 || process.argv.indexOf("--help") !== -1 || process.argv.indexOf("-h") !== -1) {
   process.stderr.write(
     "Usage: node bin/get-class-info.js <name|fqn|package> [...]\n" +
-      "Matches types in docs-llm/api.json on name, fqn, or package.\n"
+      "Matches types in docs-llm/api.json on name, fqn, package, or source.\n"
   );
   process.exit(queries.length === 0 ? 1 : 0);
 }
@@ -45,11 +46,12 @@ for (var i = 0; i < types.length; i++) {
   var name = String(type.name || "").toLowerCase();
   var fqn = String(type.fqn || "").toLowerCase();
   var pkg = String(type.package || "").toLowerCase();
+  var source = String(type.source || "").toLowerCase();
   var hit = false;
 
   for (var j = 0; j < needles.length; j++) {
     var needle = needles[j];
-    if (name === needle || fqn === needle || pkg === needle) {
+    if (name === needle || fqn === needle || pkg === needle || source === needle) {
       hit = true;
       break;
     }
@@ -59,7 +61,7 @@ for (var i = 0; i < types.length; i++) {
     continue;
   }
 
-  var key = type.fqn || type.name || String(i);
+  var key = (type.source || "") + "\0" + (type.fqn || type.name || String(i));
   if (seen[key]) {
     continue;
   }

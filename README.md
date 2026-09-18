@@ -21,24 +21,25 @@ Done! You have set up the workspace!
 3. The result will come in `ecmascript/`    folder
 4. If you followed the recommended clone location, you can just do `/noppes script reload` in-game immediately!
 
-### Updating CustomNPCs API docs
+### Updating API docs
 
-Replace the Javadoc HTML dump in `docs/`, then run:
+Put each Javadoc HTML dump in its own folder under `docs/` (CustomNPCs is `docs/customnpcs/`), then run:
 
 ```
 npm run docs:llm
 ```
 
-That regenerates `docs-llm/` for the repo. Day-to-day scripting only needs `docs-llm/`.
+That regenerates `docs-llm/` (one subfolder per dump, plus a merged `api.json`). Day-to-day scripting only needs `docs-llm/`.
 
 Look up API types without opening `api.json`:
 
 ```
 node bin/get-class-info.js IBlock IPlayer
 node bin/get-class-info.js noppes.npcs.api.gui
+node bin/get-class-info.js customnpcs
 ```
 
-Works the same in PowerShell and WSL. Extra args are extra exact, case-insensitive queries against `name`, `fqn`, and `package`.
+Works the same in PowerShell and WSL. Extra args are extra exact, case-insensitive queries against `name`, `fqn`, `package`, and `source`.
 
 ### Examples
 
