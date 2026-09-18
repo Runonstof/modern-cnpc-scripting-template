@@ -73,7 +73,7 @@ You cannot load different scripts for different players. You set them globally f
 
 - Forge scripts: The CustomNPCs mod allows you to load scripts globally for Forge. Events in this scripts are triggered by Forge events. Usually the CustomNPCs mod will check all registered Forge events (including those from mods), normalize the class paths and then checks if the script has a hook for the event. It usually takes a few tries to 'guess' the correct function name for the event.
 
-- Debug scripts (`src/debug`): Agent-only scripts used to verify work in the running Minecraft world (inspect state, probe APIs, confirm a change). Write player event hooks here. The transpiler emits them to `ecmascript/debug/`. After building, enable them in the player script tab and `/noppes script reload`. Do not put gameplay logic here.
+- Debug scripts (`src/debug`): Agent-only scripts used to verify work in the running Minecraft world (inspect state, probe APIs, confirm a change). Write player event hooks here. The transpiler emits them to `ecmascript/debug/`. After building, enable them in the player script tab and reload with `node bin/execute.js reload`. Do not put gameplay logic here.
 
 
 ## Folder structure
@@ -85,7 +85,7 @@ The folder structure is as follows:
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge|debug)` folders.
 - `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).
 - `docs-llm`: Scraped API reference, one folder per dump. Start at `docs-llm/index.md`; CustomNPCs hooks are in `docs-llm/customnpcs/events.md`.
-- `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file) into context; always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
+- `bin`: Project CLI helpers for agents. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file) into context; always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
 
 So its important to note that `ecmascript/` should not be modified manually.
 
@@ -132,6 +132,8 @@ Storeddata persist across restarts and script reloads
 Tempdata on the other hand can hold any type of data, including objects, classes, arrays etc. It is not saved across restarts and script reloads.
 Tempdata is also handy to communicate data between scripts.
 
+For agent debugging, write probes into **world** `tempdata` (via `tempdata.put(key, value)` in gameplay or `/js`). Then ask the user to reproduce the script path in-game so that value is actually written. After they confirm, read it back with `node bin/execute.js js` (for example `tempdata.get("myKey")` or `tempdata.getKeys()`). Do not assume the user already triggered the path.
+
 ## Importing
 You can import files from the `src` folder using the `~` alias.
 It is recommended to not use file extensions when importing for javascript files.
@@ -146,19 +148,41 @@ Regular functions can be declared without `export`, as long as they get used ins
 For each type of script, there are different events. They are listed in @docs-llm/customnpcs/events.md. The rest of the CustomNPCs API is in `docs-llm/customnpcs/`, grouped by package.
 
 
+## In-game CLI
+
+`src/debug/ai-integration.js` (enable it in the player script tab) exposes a localhost HTTP API. Agents must drive the world through `node bin/execute.js`, not by typing Minecraft commands for the user.
+
+Never run `/noppes script reload` yourself. After `npm run build`, reload with:
+
+```
+node bin/execute.js reload
+```
+
+That talks to ai-integration, which runs `noppes script reload` in-game. It fails if ai-integration is not loaded yet or no player is online; in that case ask the user to enable the debug player script and reload once in-game.
+
+Other examples (PowerShell and WSL):
+
+```
+node bin/execute.js command /time set day
+node bin/execute.js command time set day
+node bin/execute.js js "player.setMotionY(.5) || true"
+node bin/execute.js js "tempdata.get('probe')"
+```
+
+`/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (the last two are the **world** data objects). Nashorn `Java.type` still works.
+
 ## Development Cycle
 
-Whever you make changes to the scripts, run `npm run build` first to build the scripts.
+Whenever you make changes to the scripts, run `npm run build` first to build the scripts.
 This will put the compiled versions into the `ecmascript/` folder.
 
 When any changes are made in the `ecmascript/` folder, the scripts need to be reloaded in game in order to take effect.
-This can be done by using the `/noppes script reload` command in game.
-Usually all `init` events in almost all scripts are executed too.
+Do that with `node bin/execute.js reload`. Usually all `init` events in almost all scripts are executed too.
 
 You can also run `npm run watch` to watch for changes in the `src/` folder and automatically build the scripts.
 This is useful when you are developing a script and want to see the changes immediately in game.
 
 So after you made all your changes:
 1. Run `npm run build` to build the scripts.
-2. Run `/noppes script reload` to reload the scripts in game (this may fail if ai-integration.js is not running)
+2. Run `node bin/execute.js reload` to reload the scripts in game.
 
