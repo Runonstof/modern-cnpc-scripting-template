@@ -6,29 +6,18 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import babel from '@rollup/plugin-babel';
 
-function getEntries() {
-  const files = [
-    ...globSync('src/players/*.js'),
-    ...globSync('src/npcs/*.js'),
-    ...globSync('src/blocks/*.js'),
-    ...globSync('src/items/*.js'),
-    ...globSync('src/forge/*.js'),
-    ...globSync('src/*.js'),
+const ENTRY_TYPES = ['players', 'npcs', 'blocks', 'items', 'forge'];
 
-    ...globSync('src/players/*.ts'),
-    ...globSync('src/npcs/*.ts'),
-    ...globSync('src/blocks/*.ts'),
-    ...globSync('src/items/*.ts'),
-    ...globSync('src/forge/*.ts'),
-    ...globSync('src/*.ts'),
-  ];
+function getEntries() {
+  const files = ENTRY_TYPES.flatMap((type) => [
+    ...globSync(`src/${type}/*.{js,ts}`),
+  ]);
 
   const entries = {};
 
   for (const file of files) {
     const name = path.basename(file, path.extname(file));
     entries[name] = file;
-    console.log({name, entries});
   }
 
   return entries;
@@ -110,7 +99,7 @@ export default Object.entries(entries).map(([name, input]) => {
       }),
       resolve(),
       commonjs(),
-      typescript(),
+      typescript({ tsconfig: './tsconfig.json' }),
       babel({
         babelHelpers: 'bundled',
         presets: [['@babel/preset-env', { targets: { ie: '11' } }]],

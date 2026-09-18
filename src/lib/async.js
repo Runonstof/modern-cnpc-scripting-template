@@ -1,4 +1,4 @@
-import { dd } from '~/lib/customnpcs';
+import { dd } from '~/lib/dump';
 
 export const Thread = Java.type('java.lang.Thread');
 

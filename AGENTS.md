@@ -55,9 +55,9 @@ You cannot load different scripts for different players. You set them globally f
 
 The folder structure is as follows:
 - `src`: This contains the source code for the script.
-- `src/(player|npc|block|item|forge)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code.
+- `src/(players|npcs|blocks|items|forge)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code.
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
-- `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(player|npc|block|item|forge)` folders.
+- `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge)` folders.
 - `docs-llm`: CustomNPCs API reference. Start at `docs-llm/index.md` and `docs-llm/events.md`.
 - `bin`: Project CLI helpers for agents. Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, or `types[].package`; prints matching entries as JSON.
 
@@ -77,15 +77,35 @@ export function interact(e) {
 }
 ```
 
-A common pattern is to get the global CustomNPCs API instance.
+Functions may be defined without export if you export them in the same file.
 ```javascript
+function interact(e) {
+    e.npc.say('Hello there, ' + e.player.name + '!');
+}
+export { interact };
+```
+
+For event hooks in entry points, it is recommended to use the `export function` syntax.
+For utils and helpers, it does not matter which pattern is used, as long as the necessary functions are exported.
+
+
+```javascript
+// A common pattern for this is to get the global CustomNPCs API instance
 const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
+
+// And to get the overworld instance
+const world = API.getIWorld('minecraft:overworld');
+```
+
+## Importing
+You can import files from the `src` folder using the `~` alias.
+It is recommended to not use file extensions when importing for javascript files.
+
+```javascript
+import { dd } from '~/lib/dump';
 ```
 
 Note that it is important to use `export function` syntax on event hooks, else the transpiler tree-shakes the function away.
 Regular functions can be declared without `export`, as long as they get used inside the script, they will not be tree-shaken away.
 
-For each type of script, there are different events. They are listed in `docs-llm/events.md`. The rest of the CustomNPCs API is in `docs-llm/`, grouped by package.
-
-
-## Development Cycle
+For each type of script, there are different events. They are listed in @docs-llm/events.md. The rest of the CustomNPCs API is in `docs-llm/`, grouped by package.

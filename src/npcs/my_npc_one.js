@@ -1,4 +1,4 @@
-import { dd } from '~/lib/customnpcs.js';
+import { dd } from '~/lib/dump';
 
 function interact(e) {
     e.npc.say('Hello, how can I help you?');

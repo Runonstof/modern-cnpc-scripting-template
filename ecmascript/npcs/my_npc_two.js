@@ -154,7 +154,6 @@ var URL = Java.type("java.net.URL");
 var OutputStreamWriter = Java.type("java.io.OutputStreamWriter");
 var BufferedReader = Java.type("java.io.BufferedReader");
 var InputStreamReader = Java.type("java.io.InputStreamReader");
-
 // Custom error class
 var HttpError = /*#__PURE__*/function (_Error) {
   function HttpError(response, responseCode) {
