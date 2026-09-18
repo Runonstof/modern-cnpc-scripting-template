@@ -135,6 +135,10 @@ Usually all `init` events in almost all scripts are executed too.
 You can also run `npm run watch` to watch for changes in the `src/` folder and automatically build the scripts.
 This is useful when you are developing a script and want to see the changes immediately in game.
 
+So after you made all your changes:
+1. Run `npm run build` to build the scripts.
+2. Run `/noppes script reload` to reload the scripts in game (this may fail is sp-rcon.js is not running)
+
 ## Debugging
 
 You can use the `dd` function to debug your scripts.

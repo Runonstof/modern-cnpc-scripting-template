@@ -19,6 +19,19 @@ const PORT = 25575;
 const HOST = '127.0.0.1';
 const BASE = 'http://' + HOST + ':' + PORT;
 const SCRIPT_REL = 'scripts/ecmascript/debug/sp-rcon.js';
+const CHAT_PREFIX = '§6§l[Debug] §r';
+
+function debugDd(...args) {
+  const prefixed = [];
+  for (let i = 0; i < args.length; i++) {
+    let arg = args[i];
+    if (!(arg instanceof Error) && typeof arg === 'object') {
+      arg = JSON.stringify(arg, null, 2);
+    }
+    prefixed.push(CHAT_PREFIX + arg);
+  }
+  dd.apply(null, prefixed);
+}
 
 const HandlerImpl = Java.extend(HttpHandler);
 
@@ -205,7 +218,7 @@ function executeJs(code) {
     } catch (e) {
       fn = new Function('player', 'world', 'API', 'dd', 'return (' + src + ');');
     }
-    return fn(player, world, API, dd);
+    return fn(player, world, API, debugDd);
   });
 }
 
@@ -296,7 +309,7 @@ function startServer(scriptHash) {
 
   server.setExecutor(null);
   server.start();
-  dd('sp-rcon listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
+  debugDd('sp-rcon listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
   return server;
 }
 
@@ -310,7 +323,7 @@ export function init(e) {
   }
 
   if (existing) {
-    dd('sp-rcon script changed, restarting listener');
+    debugDd('sp-rcon script changed, restarting listener');
     requestShutdown();
   }
 
