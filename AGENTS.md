@@ -40,13 +40,11 @@ That includes at least:
 
 Do **not** call Mojang names such as `getServer()` on those objects. Look up the Searge name first and call that.
 
-Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with:
+Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with `node bin/mcp.js`. Preferred query is `fully.qualified.ClassName#memberName`; other forms also work (tiny-style `Class/member`, member name only like `isSameThread`, or reverse lookup of a Searge name like `m_20194_`). Output is minified JSON. Use `member.searge` as the name to invoke.
 
 ```
 node bin/mcp.js net.minecraft.world.entity.Entity#getServer
 ```
-
-The query **must** be `fully.qualified.ClassName#memberName` (dots in the class path, `#` before the method or field). Use `member.searge` from the JSON as the name to invoke.
 
 At every callsite that uses an obfuscated method or field, put an inline comment mapping Searge back to the Mojang member. One comment line per obfuscated name, directly above the code. If one line of code uses several obfuscated names, use several comment lines. Splitting into variables is often better so each name can be commented clearly.
 

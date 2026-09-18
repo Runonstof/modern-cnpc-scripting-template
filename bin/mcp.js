@@ -5,9 +5,13 @@
  *
  * Usage (PowerShell or WSL):
  *   node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+ *   node bin/mcp.js net/minecraft/world/entity/Entity/getServer
+ *   node bin/mcp.js isSameThread
+ *   node bin/mcp.js m_20194_
  *   node bin/mcp.js --file mcp/1.20.1.tiny net.minecraft.world.entity.Entity#getServer
  *
- * Query form: fully.qualified.ClassName#memberName
+ * Preferred query: fully.qualified.ClassName#memberName
+ * Also: tiny-style Class/member, member name only, or Searge (m_20194_).
  * Call the obfuscated name from member.searge. Do not load the .tiny file into chat.
  */
 
@@ -20,8 +24,8 @@ var defaultMap = path.join(root, "mcp", "1.20.1.tiny");
 
 function printHelp() {
   process.stderr.write(
-    "Usage: node bin/mcp.js [--file mcp/1.20.1.tiny] <Class.path#member> [...]\n" +
-      "Query must be fully.qualified.ClassName#methodOrField. Use member.searge at callsites.\n"
+    "Usage: node bin/mcp.js [--file mcp/1.20.1.tiny] <query> [...]\n" +
+      "Queries: Class.path#member, Class/member, member name (isSameThread), or Searge (m_20194_).\n"
   );
 }
 
@@ -74,22 +78,52 @@ function isSeargeToken(token) {
 }
 
 function parseQuery(raw) {
-  var n = normPath(raw);
-  var parts = n.split("/").filter(Boolean);
-  var last = parts[parts.length - 1] || "";
+  var trimmed = String(raw || "").trim();
   var parsed = {
     raw: raw,
-    path: n,
-    classPath: n,
+    classPath: null,
     member: null,
-    searge: isSeargeToken(last) ? last : null,
+    searge: null,
+    memberOnly: false,
+    seargeOnly: false,
+    classOnly: false,
   };
 
-  if (parts.length >= 2 && !/^c_\d+_$/.test(last)) {
-    parsed.member = last;
-    parsed.classPath = parts.slice(0, -1).join("/");
+  if (isSeargeToken(trimmed)) {
+    parsed.searge = trimmed.toLowerCase();
+    parsed.seargeOnly = true;
+    parsed.member = parsed.searge;
+    return parsed;
   }
 
+  var hash = trimmed.indexOf("#");
+  if (hash !== -1) {
+    parsed.classPath = normPath(trimmed.slice(0, hash));
+    parsed.member = normPath(trimmed.slice(hash + 1));
+    if (isSeargeToken(parsed.member)) {
+      parsed.searge = parsed.member;
+    }
+    return parsed;
+  }
+
+  if (trimmed.indexOf("/") !== -1) {
+    var slashParts = normPath(trimmed).split("/").filter(Boolean);
+    parsed.member = slashParts.pop();
+    parsed.classPath = slashParts.join("/");
+    if (isSeargeToken(parsed.member)) {
+      parsed.searge = parsed.member;
+    }
+    return parsed;
+  }
+
+  if (trimmed.indexOf(".") !== -1) {
+    parsed.classPath = normPath(trimmed);
+    parsed.classOnly = true;
+    return parsed;
+  }
+
+  parsed.member = trimmed.toLowerCase();
+  parsed.memberOnly = true;
   return parsed;
 }
 
@@ -108,15 +142,12 @@ function namesFromCols(cols, ns) {
 }
 
 function classMatches(q, cls) {
-  if (q.searge && q.member === q.searge && q.classPath === q.searge) {
-    return (
-      String(cls.searge || "").toLowerCase() === q.searge ||
-      String(cls.source || "").toLowerCase() === q.searge
-    );
+  if (!q.classPath) {
+    return false;
   }
 
   var candidates = [cls.mojang, cls.yarn, cls.searge, cls.intermediary, cls.spigot].map(normPath);
-  var want = q.member ? q.classPath : q.path;
+  var want = q.classPath;
 
   for (var i = 0; i < candidates.length; i++) {
     var c = candidates[i];
@@ -217,8 +248,14 @@ rl.on("line", function (line) {
     currentClass = namesFromCols(classCols, ns);
     for (var qi = 0; qi < parsedQueries.length; qi++) {
       var q = parsedQueries[qi];
-      if (!q.member) {
-        if (classMatches(q, currentClass)) {
+      if (q.classOnly && classMatches(q, currentClass)) {
+        pushMatch({ kind: "class", class: currentClass, query: q.raw });
+      } else if (q.seargeOnly) {
+        var classSearge = String(currentClass.searge || "").toLowerCase();
+        if (
+          classSearge === q.searge ||
+          classSearge.endsWith("/" + q.searge)
+        ) {
           pushMatch({ kind: "class", class: currentClass, query: q.raw });
         }
       }
@@ -236,12 +273,9 @@ rl.on("line", function (line) {
 
   for (var i = 0; i < parsedQueries.length; i++) {
     var query = parsedQueries[i];
-    var seargeOnly = query.searge && query.path === query.searge;
-    var classOk = seargeOnly || classMatches(query, currentClass);
-    if (!classOk) {
-      continue;
-    }
-    if (!query.member && !seargeOnly) {
+    var classOk =
+      query.memberOnly || query.seargeOnly || classMatches(query, currentClass);
+    if (!classOk || !query.member) {
       continue;
     }
     if (memberMatches(query, memberNames)) {
@@ -256,6 +290,6 @@ rl.on("line", function (line) {
 });
 
 rl.on("close", function () {
-  process.stdout.write(JSON.stringify(matches, null, 2) + "\n");
+  process.stdout.write(JSON.stringify(matches) + "\n");
   process.exit(matches.length === 0 ? 2 : 0);
 });

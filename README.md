@@ -45,9 +45,12 @@ Look up Minecraft MCP / Mojang names without opening `mcp/1.20.1.tiny`:
 
 ```
 node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+node bin/mcp.js net/minecraft/world/entity/Entity/getServer
+node bin/mcp.js isSameThread
+node bin/mcp.js m_20194_
 ```
 
-Use `member.searge` as the obfuscated name to call.
+Preferred form is `Class.path#member`. Use `member.searge` as the obfuscated name to call. Output is minified JSON.
 
 ### Examples
 
