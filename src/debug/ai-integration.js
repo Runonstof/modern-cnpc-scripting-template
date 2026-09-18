@@ -1,6 +1,29 @@
 import { API, dd } from '~/lib/dump';
 import http from '~/lib/http';
 import { Thread } from '~/lib/async';
+import {
+  npcAddScript,
+  npcCreateScriptTab,
+  npcGetNbt,
+  npcGetScripts,
+  npcGetScriptsArray,
+  npcHasScript,
+  npcIsScriptEnabled,
+  npcRemoveScript,
+  npcSetScriptEnabled,
+} from '~/lib/npc-scripts';
+
+export {
+  npcAddScript,
+  npcCreateScriptTab,
+  npcGetNbt,
+  npcGetScripts,
+  npcGetScriptsArray,
+  npcHasScript,
+  npcIsScriptEnabled,
+  npcRemoveScript,
+  npcSetScriptEnabled,
+};
 
 const HttpServer = Java.type('com.sun.net.httpserver.HttpServer');
 const HttpHandler = Java.type('com.sun.net.httpserver.HttpHandler');

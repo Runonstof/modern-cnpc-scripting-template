@@ -199,6 +199,124 @@ var http = {
 
 var Thread = Java.type('java.lang.Thread');
 
+var INbt = Java.type('noppes.npcs.api.INbt');
+var ICustomNpc = Java.type('noppes.npcs.api.entity.ICustomNpc');
+var NBT_COMPOUND = 10;
+function escapeNbtString(value) {
+  return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+}
+function toJsArray(list) {
+  if (!list) {
+    return [];
+  }
+  return Java.from(list);
+}
+function applyNpcNbt(npcOrNbt, nbt) {
+  if (npcOrNbt instanceof ICustomNpc) {
+    npcOrNbt.setEntityNbt(nbt);
+  }
+}
+/**
+ * Resolve entity NBT. Accepts ICustomNpc or INbt so callers can reuse one NBT
+ * for several edits. Throws if given a non-CustomNPC entity (e.g. /js `target`).
+ */
+function npcGetNbt(npcOrNbt) {
+  if (npcOrNbt instanceof INbt) {
+    return npcOrNbt;
+  }
+  if (!(npcOrNbt instanceof ICustomNpc)) {
+    throw new Error('Target is not a CustomNPC');
+  }
+  return npcOrNbt.getEntityNbt();
+}
+function npcCreateScriptTab() {
+  return API.stringToNbt('{Script:"",Console:[],ScriptList:[]}');
+}
+/**
+ * Adds a script to the last existing tab, or creates a tab if none exist.
+ * Does not fire init; call npc.reset() afterwards if needed.
+ */
+function npcAddScript(npc, scriptFile) {
+  var npcnbt = npcGetNbt(npc);
+  var scripts = toJsArray(npcnbt.getList('Scripts', NBT_COMPOUND));
+  if (!scripts.length) {
+    scripts.push(npcCreateScriptTab());
+  }
+  var scriptNbt = scripts[scripts.length - 1];
+  var scriptFiles = toJsArray(scriptNbt.getList('ScriptList', NBT_COMPOUND));
+  scriptFiles.push(API.stringToNbt('{Line:"' + escapeNbtString(scriptFile) + '"}'));
+  scriptNbt.setList('ScriptList', scriptFiles);
+  npcnbt.setList('Scripts', scripts);
+  npcnbt.setBoolean('ScriptEnabled', true);
+  applyNpcNbt(npc, npcnbt);
+  return true;
+}
+function npcRemoveScript(npc, scriptFile) {
+  var npcnbt = npcGetNbt(npc);
+  var scripts = toJsArray(npcnbt.getList('Scripts', NBT_COMPOUND));
+  if (!scripts.length) {
+    return false;
+  }
+  var removed = false;
+  for (var i = 0; i < scripts.length; i++) {
+    var scriptList = toJsArray(scripts[i].getList('ScriptList', NBT_COMPOUND));
+    var kept = [];
+    var tabChanged = false;
+    for (var j = 0; j < scriptList.length; j++) {
+      if (scriptList[j].getString('Line') === scriptFile) {
+        removed = true;
+        tabChanged = true;
+      } else {
+        kept.push(scriptList[j]);
+      }
+    }
+    if (tabChanged) {
+      scripts[i].setList('ScriptList', kept);
+    }
+  }
+  if (removed) {
+    npcnbt.setList('Scripts', scripts);
+    applyNpcNbt(npc, npcnbt);
+  }
+  return removed;
+}
+/** Scripts keyed by tab index (starting at 0). */
+function npcGetScripts(npc) {
+  var npcnbt = npcGetNbt(npc);
+  var scripts = toJsArray(npcnbt.getList('Scripts', NBT_COMPOUND));
+  var npcScripts = {};
+  for (var i = 0; i < scripts.length; i++) {
+    var scriptList = toJsArray(scripts[i].getList('ScriptList', NBT_COMPOUND));
+    for (var j = 0; j < scriptList.length; j++) {
+      if (!npcScripts[i]) {
+        npcScripts[i] = [];
+      }
+      npcScripts[i].push(scriptList[j].getString('Line'));
+    }
+  }
+  return npcScripts;
+}
+function npcGetScriptsArray(npc) {
+  var scripts = [];
+  var npcScripts = npcGetScripts(npc);
+  var keys = Object.keys(npcScripts);
+  for (var i = 0; i < keys.length; i++) {
+    scripts.push.apply(scripts, npcScripts[keys[i]]);
+  }
+  return scripts;
+}
+function npcHasScript(npc, scriptFile) {
+  return npcGetScriptsArray(npc).indexOf(scriptFile) > -1;
+}
+function npcIsScriptEnabled(npc) {
+  return !!npcGetNbt(npc).getBoolean('ScriptEnabled');
+}
+function npcSetScriptEnabled(npc, enabled) {
+  var npcnbt = npcGetNbt(npc);
+  npcnbt.setBoolean('ScriptEnabled', enabled);
+  applyNpcNbt(npc, npcnbt);
+}
+
 var HttpServer = Java.type('com.sun.net.httpserver.HttpServer');
 var HttpHandler = Java.type('com.sun.net.httpserver.HttpHandler');
 var InetSocketAddress = Java.type('java.net.InetSocketAddress');
