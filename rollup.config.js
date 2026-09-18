@@ -1,5 +1,5 @@
 import path from 'path';
-import glob from 'glob';
+import { globSync } from 'glob';
 import alias from '@rollup/plugin-alias';
 import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
@@ -8,19 +8,19 @@ import babel from '@rollup/plugin-babel';
 
 function getEntries() {
   const files = [
-    ...glob.sync('src/players/*.js'),
-    ...glob.sync('src/npcs/*.js'),
-    ...glob.sync('src/blocks/*.js'),
-    ...glob.sync('src/items/*.js'),
-    ...glob.sync('src/forge/*.js'),
-    ...glob.sync('src/*.js'),
+    ...globSync('src/players/*.js'),
+    ...globSync('src/npcs/*.js'),
+    ...globSync('src/blocks/*.js'),
+    ...globSync('src/items/*.js'),
+    ...globSync('src/forge/*.js'),
+    ...globSync('src/*.js'),
 
-    ...glob.sync('src/players/*.ts'),
-    ...glob.sync('src/npcs/*.ts'),
-    ...glob.sync('src/blocks/*.ts'),
-    ...glob.sync('src/items/*.ts'),
-    ...glob.sync('src/forge/*.ts'),
-    ...glob.sync('src/*.ts'),
+    ...globSync('src/players/*.ts'),
+    ...globSync('src/npcs/*.ts'),
+    ...globSync('src/blocks/*.ts'),
+    ...globSync('src/items/*.ts'),
+    ...globSync('src/forge/*.ts'),
+    ...globSync('src/*.ts'),
   ];
 
   const entries = {};
