@@ -6,6 +6,7 @@
     "build": "rollup -c",
     "watch": "rollup -c -w",
     "docs:llm": "node tools/scrape-docs-llm.js",
+    "docs:download": "node bin/download-javadoc.js",
     "get-class-info": "node bin/get-class-info.js"
   },
   "keywords": [],
