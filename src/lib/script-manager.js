@@ -7,9 +7,28 @@ const StandardCharsets = Java.type('java.nio.charset.StandardCharsets');
 const JString = Java.type('java.lang.String');
 
 export const MINECRAFT_VERSION = '1.20.1';
+export const CATEGORIES = [
+  'Combat',
+  'Magic',
+  'NPCs',
+  'Creatures',
+  'Items',
+  'World',
+  'Movement',
+  'GUI',
+  'Utility',
+  'Fun',
+];
+export const SORTS = [
+  { key: '', label: 'Relevance' },
+  { key: 'ratings', label: 'Ratings' },
+  { key: 'created', label: 'Newest' },
+  { key: 'updated', label: 'Recently updated' },
+  { key: 'name', label: 'Name' },
+];
 export const AUTHOR_LIST_SCRIPT_ID = 549558;
 export const SCRIPT_MANAGER_ID = 548277;
-export const LOCAL_VERSION = '2.0.0';
+export const LOCAL_VERSION = '2.1.0';
 export const REPO_BASE_URL = 'https://greasyfork.org';
 export const REPO_BASE_CDN_URL = 'https://update.greasyfork.org';
 export const REPO_BASE_API_URL = 'https://api.greasyfork.org';
@@ -101,6 +120,65 @@ export function isCompatibleMcVersion(properties) {
   return metadataValues(properties, 'minecraft').indexOf(MINECRAFT_VERSION) !== -1;
 }
 
+export function isCustomNpcsScript(properties) {
+  const matches = metadataValues(properties, 'match').concat(metadataValues(properties, 'include'));
+  for (let i = 0; i < matches.length; i++) {
+    if (String(matches[i]).toLowerCase().indexOf('customnpcs.com') !== -1) {
+      return true;
+    }
+  }
+  return false;
+}
+
+export function normalizeCategory(value) {
+  const want = String(value || '').toLowerCase().replace(/^\s+|\s+$/g, '');
+  if (!want || want === 'all') {
+    return '';
+  }
+  for (let i = 0; i < CATEGORIES.length; i++) {
+    if (CATEGORIES[i].toLowerCase() === want) {
+      return CATEGORIES[i];
+    }
+  }
+  return '';
+}
+
+export function readCategories(metadata) {
+  const found = {};
+  const values = metadataValues(metadata, 'category');
+  for (let i = 0; i < values.length; i++) {
+    const parts = String(values[i]).split(',');
+    for (let j = 0; j < parts.length; j++) {
+      const cat = normalizeCategory(parts[j]);
+      if (cat) {
+        found[cat] = true;
+      }
+    }
+  }
+  const out = [];
+  for (let i = 0; i < CATEGORIES.length; i++) {
+    if (found[CATEGORIES[i]]) {
+      out.push(CATEGORIES[i]);
+    }
+  }
+  return out;
+}
+
+export function attachScriptCategories(scripts) {
+  for (let i = 0; i < scripts.length; i++) {
+    const script = scripts[i];
+    if (script.categories) {
+      continue;
+    }
+    try {
+      script.categories = readCategories(fetchScriptMetadata(script.id));
+    } catch (err) {
+      script.categories = [];
+    }
+  }
+  return scripts;
+}
+
 export function compareVersions(version1, version2) {
   const v1 = String(version1 || '0').split('.');
   const v2 = String(version2 || '0').split('.');
@@ -169,6 +247,8 @@ function normalizeScript(data) {
     total_installs: data.total_installs || 0,
     url: data.url || REPO_BASE_URL + '/en/scripts/' + data.id,
     license: data.license || '',
+    createdAt: data.created_at || data.created || '',
+    updatedAt: data.code_updated_at || data.updated_at || data.updated || '',
   };
 }
 
@@ -192,9 +272,20 @@ function catalogEntries(raw) {
   return [];
 }
 
-export function fetchCatalog() {
+function catalogSortQuery(sort) {
+  for (let i = 0; i < SORTS.length; i++) {
+    if (SORTS[i].key && SORTS[i].key === sort) {
+      return '&sort=' + SORTS[i].key;
+    }
+  }
+  return '';
+}
+
+export function fetchCatalog(sort) {
   const raw = catalogEntries(
-    http.getJson(REPO_BASE_API_URL + '/scripts/by-site/customnpcs.com.json?filter_locale=0')
+    http.getJson(
+      REPO_BASE_API_URL + '/scripts/by-site/customnpcs.com.json?filter_locale=0' + catalogSortQuery(sort)
+    )
   );
   const scripts = [];
   for (let i = 0; i < raw.length; i++) {
@@ -270,6 +361,41 @@ export function saveInstalled(scripts) {
   writeText(installedFile(), JSON.stringify({ scripts: scripts }, null, 2));
 }
 
+export function registerSelfInstalled() {
+  const existing = getInstalled(SCRIPT_MANAGER_ID);
+  const record = {
+    id: SCRIPT_MANAGER_ID,
+    name: existing && existing.name ? existing.name : 'ScriptManager',
+    version: LOCAL_VERSION,
+    author: existing && existing.author ? existing.author : 'Runonstof',
+    authorId: existing && existing.authorId ? existing.authorId : 1210996,
+    path: existing && existing.path ? existing.path : 'players/script-manager.js',
+    installedAt: existing && existing.installedAt ? existing.installedAt : Date.now(),
+  };
+  if (
+    existing &&
+    existing.version === record.version &&
+    existing.path === record.path &&
+    existing.name === record.name
+  ) {
+    return existing;
+  }
+  const scripts = loadInstalled();
+  let replaced = false;
+  for (let i = 0; i < scripts.length; i++) {
+    if (parseInt(scripts[i].id, 10) === SCRIPT_MANAGER_ID) {
+      scripts[i] = record;
+      replaced = true;
+      break;
+    }
+  }
+  if (!replaced) {
+    scripts.push(record);
+  }
+  saveInstalled(scripts);
+  return record;
+}
+
 export function getInstalled(id) {
   const scripts = loadInstalled();
   const want = parseInt(id, 10);
@@ -309,27 +435,34 @@ export function isUpdateAvailable(script) {
   return compareVersions(installed.version, script.version) < 0;
 }
 
-export function filterCatalog(scripts, query) {
+export function filterCatalog(scripts, query, category) {
   const q = String(query || '').toLowerCase().replace(/^\s+|\s+$/g, '');
-  if (!q) {
-    return scripts.slice();
-  }
+  const cat = normalizeCategory(category);
   const out = [];
   for (let i = 0; i < scripts.length; i++) {
     const script = scripts[i];
-    const author = scriptAuthor(script);
-    const hay = (
-      script.name +
-      ' ' +
-      script.description +
-      ' ' +
-      script.id +
-      ' ' +
-      (author ? author.name : '')
-    ).toLowerCase();
-    if (hay.indexOf(q) !== -1) {
-      out.push(script);
+    if (cat) {
+      const cats = script.categories || [];
+      if (cats.indexOf(cat) === -1) {
+        continue;
+      }
     }
+    if (q) {
+      const author = scriptAuthor(script);
+      const hay = (
+        script.name +
+        ' ' +
+        script.description +
+        ' ' +
+        script.id +
+        ' ' +
+        (author ? author.name : '')
+      ).toLowerCase();
+      if (hay.indexOf(q) === -1) {
+        continue;
+      }
+    }
+    out.push(script);
   }
   return out;
 }
@@ -439,8 +572,8 @@ export function installedListLabel(record) {
   return record.name + ' §7v' + record.version;
 }
 
-export function codeUrl(id) {
-  return REPO_BASE_URL + '/en/scripts/' + id + '/code';
+export function scriptUrl(id) {
+  return REPO_BASE_URL + '/en/scripts/' + id;
 }
 
 export function reportUrl(id) {

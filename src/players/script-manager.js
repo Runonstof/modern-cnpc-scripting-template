@@ -2,13 +2,14 @@
 // @id                 548277
 // @namespace          runonstof
 // @name               ScriptManager
-// @version            2.0.0
+// @version            2.1.0
 // @description        Download and manage CustomNPCs scripts in-game, without having to access any files!
 // @author             Runonstof
 // @license            MIT
 // @minecraft          1.20.1
 // @match              https://customnpcs.com
 // @scripttype         player
+// @category           Utility
 // @downloadURL https://update.greasyfork.org/scripts/548277/ScriptManager.user.js
 // @updateURL https://update.greasyfork.org/scripts/548277/ScriptManager.meta.js
 // ==/UserScript==
@@ -17,9 +18,12 @@ import { API, world } from '~/lib/dump';
 import { doAsync } from '~/lib/async';
 import {
   AUTHOR_LIST_SCRIPT_ID,
+  CATEGORIES,
   SCRIPT_MANAGER_ID,
+  SORTS,
+  attachScriptCategories,
   checkSelfUpdate,
-  codeUrl,
+  scriptUrl,
   emptyAuthors,
   fetchCatalog,
   fetchScriptInfo,
@@ -30,17 +34,22 @@ import {
   installedListLabel,
   isBlacklisted,
   isCompatibleMcVersion,
+  isCustomNpcsScript,
   isFeatured,
   isInstalled,
   isTrusted,
   isUpdateAvailable,
   loadAuthors,
   loadInstalled,
+  MINECRAFT_VERSION,
   metadataValues,
+  readCategories,
+  registerSelfInstalled,
   reloadCustomNpcScripts,
   reportUrl,
   scriptAuthor,
   scriptListLabel,
+  slugify,
   uninstallScript,
   wrapLines,
 } from '~/lib/script-manager';
@@ -52,10 +61,17 @@ const PREFIX = '§e§l[ScriptManager] §r';
 const ID_BTN_BROWSE = 10;
 const ID_BTN_INSTALLED = 11;
 const ID_BTN_SELF_UPDATE = 12;
+const ID_BTN_CREATE = 13;
 const ID_SEARCH = 101;
 const ID_BTN_SEARCH = 102;
 const ID_SCRIPT_ID = 103;
 const ID_BTN_OPEN_ID = 104;
+const ID_SORT_PREV = 130;
+const ID_SORT_NEXT = 131;
+const ID_SORT_LABEL = 132;
+const ID_CAT_PREV = 133;
+const ID_CAT_NEXT = 134;
+const ID_CAT_LABEL = 135;
 const ID_SCROLL = 110;
 const ID_BTN_BACK = 50;
 const ID_BTN_INSTALL = 51;
@@ -64,8 +80,30 @@ const ID_BTN_YES = 53;
 const ID_BTN_NO = 54;
 const ID_BTN_UNINSTALL = 55;
 const ID_BTN_REPORT = 56;
+const ID_BTN_CREATE_OK = 57;
+const ID_BTN_UPLOAD = 58;
+const ID_BTN_CONTINUE = 59;
+const ID_CREATE_TITLE = 201;
+const ID_CREATE_DESC = 202;
+const ID_CREATE_MC = 203;
+const ID_CREATE_AUTHOR = 204;
+const ID_CREATE_TYPE = 205;
+const ID_CREATE_HEADER = 206;
+const ID_CREATE_CATEGORY = 207;
 const ID_DESC_LINE = 310;
 const ID_CONFIRM_LINE = 410;
+const ID_CREATE_HELP = 510;
+const ID_WARN_LINE = 610;
+
+const GREASYFORK_NEW_URL = 'https://greasyfork.org/en/script_versions/new';
+const SCRIPT_TYPES = [
+  { key: 'player', label: 'Player' },
+  { key: 'npc', label: 'NPC' },
+  { key: 'item', label: 'Item' },
+  { key: 'block', label: 'Block' },
+  { key: 'forge', label: 'Forge' },
+  { key: 'door', label: 'Door' },
+];
 
 const sessions = {};
 
@@ -78,6 +116,9 @@ function sessionFor(player) {
       loading: false,
       message: '',
       query: '',
+      category: 'All',
+      sort: '',
+      catalogSort: null,
       idInput: '',
       catalog: [],
       filtered: [],
@@ -88,6 +129,13 @@ function sessionFor(player) {
       selfUpdate: null,
       selfUpdateChecked: false,
       selfUpdateWarned: false,
+      createTitle: '',
+      createDescription: '',
+      createMinecraft: MINECRAFT_VERSION,
+      createAuthor: '',
+      createType: 'player',
+      createCategory: 'Utility',
+      createHeader: '',
     };
   }
   return sessions[uuid];
@@ -164,6 +212,152 @@ function rememberInputs(state, gui) {
   if (gui.getComponent(ID_SCRIPT_ID)) {
     state.idInput = fieldText(gui, ID_SCRIPT_ID, state.idInput);
   }
+  if (gui.getComponent(ID_CREATE_TITLE)) {
+    state.createTitle = fieldText(gui, ID_CREATE_TITLE, state.createTitle);
+  }
+  if (gui.getComponent(ID_CREATE_DESC)) {
+    state.createDescription = fieldText(gui, ID_CREATE_DESC, state.createDescription);
+  }
+  if (gui.getComponent(ID_CREATE_MC)) {
+    state.createMinecraft = fieldText(gui, ID_CREATE_MC, state.createMinecraft);
+  }
+  if (gui.getComponent(ID_CREATE_AUTHOR)) {
+    state.createAuthor = fieldText(gui, ID_CREATE_AUTHOR, state.createAuthor);
+  }
+  const typeList = gui.getComponent(ID_CREATE_TYPE);
+  if (typeList && typeof typeList.getSelected === 'function') {
+    const index = typeList.getSelected();
+    if (SCRIPT_TYPES[index]) {
+      state.createType = SCRIPT_TYPES[index].key;
+    }
+  }
+  const createCat = gui.getComponent(ID_CREATE_CATEGORY);
+  if (createCat && typeof createCat.getSelected === 'function') {
+    const index = createCat.getSelected();
+    if (CATEGORIES[index]) {
+      state.createCategory = CATEGORIES[index];
+    }
+  }
+}
+
+function browseCategoryLabels() {
+  return ['All'].concat(CATEGORIES);
+}
+
+function sortIndex(key) {
+  for (let i = 0; i < SORTS.length; i++) {
+    if (SORTS[i].key === key) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+function browseCategoryIndex(value) {
+  const labels = browseCategoryLabels();
+  for (let i = 0; i < labels.length; i++) {
+    if (labels[i] === value) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+function categoryIndex(value) {
+  for (let i = 0; i < CATEGORIES.length; i++) {
+    if (CATEGORIES[i] === value) {
+      return i;
+    }
+  }
+  return CATEGORIES.indexOf('Utility') !== -1 ? CATEGORIES.indexOf('Utility') : 0;
+}
+
+function hideIfLoading(component, state) {
+  if (!component || !busy(state) || typeof component.setVisible !== 'function') {
+    return component;
+  }
+  component.setVisible(false);
+  if (typeof component.getTextureRect === 'function') {
+    const inner = component.getTextureRect();
+    if (inner && typeof inner.setVisible === 'function') {
+      inner.setVisible(false);
+    }
+  }
+  if (typeof component.getLeftTexture === 'function') {
+    const left = component.getLeftTexture();
+    if (left && typeof left.setVisible === 'function') {
+      left.setVisible(false);
+    }
+    const right = component.getRightTexture();
+    if (right && typeof right.setVisible === 'function') {
+      right.setVisible(false);
+    }
+  }
+  return component;
+}
+
+function fitButtonList(list) {
+  if (!list || typeof list.getTextureRect !== 'function') {
+    return list;
+  }
+  const inner = list.getTextureRect();
+  if (!inner) {
+    return list;
+  }
+  const left = list.getLeftTexture();
+  const right = list.getRightTexture();
+  const leftW = left ? left.getWidth() : 16;
+  const rightW = right ? right.getWidth() : 16;
+  inner.setPos(leftW, 0);
+  inner.setSize(list.getWidth() - leftW - rightW, list.getHeight());
+  return list;
+}
+
+function addCycleRow(gui, ids, x, y, width, label, hover, player, enabled) {
+  const prev = bindButton(gui.addButton(ids.prev, '<', x, y, 16, 16), player);
+  prev.setEnabled(enabled);
+  prev.setHoverText(hover);
+  const text = gui.addLabel(ids.label, label, x + 18, y + 4, width - 36, 16, 0xffffff);
+  text.setCentered(true);
+  hideIfLoading(text, sessionFor(player));
+  const next = bindButton(gui.addButton(ids.next, '>', x + width - 16, y, 16, 16), player);
+  next.setEnabled(enabled);
+  next.setHoverText(hover);
+}
+
+function typeIndex(key) {
+  for (let i = 0; i < SCRIPT_TYPES.length; i++) {
+    if (SCRIPT_TYPES[i].key === key) {
+      return i;
+    }
+  }
+  return 0;
+}
+
+function metaLine(key, value) {
+  let line = '// @' + key;
+  while (line.length < 23) {
+    line += ' ';
+  }
+  return line + value;
+}
+
+function buildCreateHeader(state) {
+  const author = state.createAuthor || 'Unknown';
+  return [
+    '// ==UserScript==',
+    metaLine('namespace', slugify(author)),
+    metaLine('name', state.createTitle),
+    metaLine('version', '1.0.0'),
+    metaLine('description', state.createDescription),
+    metaLine('author', author),
+    metaLine('license', 'MIT'),
+    metaLine('minecraft', state.createMinecraft || MINECRAFT_VERSION),
+    metaLine('match', 'https://customnpcs.com'),
+    metaLine('scripttype', state.createType || 'player'),
+    metaLine('category', state.createCategory || 'Utility'),
+    '// ==/UserScript==',
+  ].join('\n');
 }
 
 function bindButton(button, player) {
@@ -200,7 +394,9 @@ function addTopBar(gui, state) {
   browse.setEnabled(!busy(state) && state.page !== 'browse');
   const installed = bindButton(gui.addButton(ID_BTN_INSTALLED, 'Installed', 84, 24, 72, 16), player);
   installed.setEnabled(!busy(state) && state.page !== 'installed');
-  if (state.selfUpdate && state.selfUpdate.available && state.page !== 'confirm') {
+  const create = bindButton(gui.addButton(ID_BTN_CREATE, 'Create', 160, 24, 72, 16), player);
+  create.setEnabled(!busy(state) && state.page !== 'create' && state.page !== 'create-upload');
+  if (state.selfUpdate && state.selfUpdate.available && state.page !== 'confirm' && state.page !== 'not-cnpc') {
     gui.addLabel(
       14,
       '§eUpdate v' + state.selfUpdate.remote + ' available',
@@ -241,6 +437,12 @@ function openGui(player, state) {
     renderConfirm(gui, state);
   } else if (state.page === 'installed') {
     renderInstalled(gui, state);
+  } else if (state.page === 'create') {
+    renderCreate(gui, state);
+  } else if (state.page === 'create-upload') {
+    renderCreateUpload(gui, state);
+  } else if (state.page === 'not-cnpc') {
+    renderNotCustomNpcs(gui, state);
   } else {
     renderBrowse(gui, state);
   }
@@ -256,17 +458,59 @@ function renderBrowse(gui, state) {
   const player = gui.getPlayer();
   addTopBar(gui, state);
   gui.addLabel(3, 'Browse scripts', 8, 46, 180, 12, 0xffffff);
-  const search = gui.addTextArea(ID_SEARCH, 8, 58, 180, 16);
+  const sortX = 8;
+  const sortW = 120;
+  const catX = 132;
+  const catW = 112;
+  const filterY = 80;
+  const search = gui.addTextArea(ID_SEARCH, sortX, 58, sortW, 16);
   search.setText(state.query || '');
-  const searchBtn = bindButton(gui.addButton(ID_BTN_SEARCH, 'Search', 192, 56, 56, 20), player);
+  hideIfLoading(search, state);
+  const searchBtn = bindButton(gui.addButton(ID_BTN_SEARCH, 'Search', catX, 58, catW, 16), player);
   searchBtn.setEnabled(!busy(state));
+  searchBtn.setHoverText('Search by script title or author');
 
   gui.addLabel(4, 'Open by ID', 256, 46, 120, 12, 0xffffff);
   const idField = gui.addTextArea(ID_SCRIPT_ID, 256, 58, 64, 16);
   idField.setText(state.idInput || '');
+  hideIfLoading(idField, state);
   const openBtn = bindButton(gui.addButton(ID_BTN_OPEN_ID, 'Open', 324, 56, 52, 20), player);
   openBtn.setEnabled(!busy(state));
 
+  if (!busy(state)) {
+    addCycleRow(
+      gui,
+      { prev: ID_SORT_PREV, next: ID_SORT_NEXT, label: ID_SORT_LABEL },
+      sortX,
+      filterY,
+      sortW,
+      SORTS[sortIndex(state.sort || '')].label,
+      'Sort scripts. Press Search to apply.',
+      player,
+      true
+    );
+    addCycleRow(
+      gui,
+      { prev: ID_CAT_PREV, next: ID_CAT_NEXT, label: ID_CAT_LABEL },
+      catX,
+      filterY,
+      catW,
+      browseCategoryLabels()[browseCategoryIndex(state.category || 'All')],
+      'Filter by category. Press Search to apply.',
+      player,
+      true
+    );
+  }
+
+  const labels = browseScrollLabels(state);
+  const scroll = bindScroll(gui.addScroll(ID_SCROLL, 8, 98, 368, 116, labels), player);
+  if (typeof scroll.setHasSearch === 'function') {
+    scroll.setHasSearch(false);
+  }
+  scroll.setEnabled(!busy(state) && !!state.filtered.length);
+}
+
+function browseScrollLabels(state) {
   const labels = [];
   for (let i = 0; i < state.filtered.length; i++) {
     labels.push(scriptListLabel(state.filtered[i]));
@@ -274,8 +518,118 @@ function renderBrowse(gui, state) {
   if (!labels.length) {
     labels.push('No scripts found');
   }
-  const scroll = bindScroll(gui.addScroll(ID_SCROLL, 8, 80, 368, 118, labels), player);
+  return labels;
+}
+
+function formatScriptDate(value) {
+  if (!value) {
+    return '—';
+  }
+  try {
+    const Instant = Java.type('java.time.Instant');
+    const DateTimeFormatter = Java.type('java.time.format.DateTimeFormatter');
+    const ZoneId = Java.type('java.time.ZoneId');
+    return DateTimeFormatter.ofPattern('d MMM yyyy')
+      .withZone(ZoneId.systemDefault())
+      .format(Instant.parse(String(value)));
+  } catch (err) {
+    const text = String(value);
+    const day = text.split('T')[0];
+    return day || text;
+  }
+}
+
+function cycleChoice(values, current, delta) {
+  let index = 0;
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] === current) {
+      index = i;
+      break;
+    }
+  }
+  return values[(index + delta + values.length) % values.length];
+}
+
+function updateBrowseScroll(gui, state) {
+  const scroll = gui.getComponent(ID_SCROLL);
+  if (!scroll || typeof scroll.setList !== 'function') {
+    refresh(gui.getPlayer());
+    return;
+  }
+  const labels = browseScrollLabels(state);
+  scroll.setList(labels);
   scroll.setEnabled(!busy(state) && !!state.filtered.length);
+  gui.update(scroll);
+}
+
+function renderCreate(gui, state) {
+  const player = gui.getPlayer();
+  addTopBar(gui, state);
+  gui.addLabel(3, '§nCreate and upload script', 8, 46, 360, 12, 0xffffff);
+
+  gui.addLabel(601, 'Script title', 8, 62, 180, 10, 0xffffff);
+  hideIfLoading(gui.addTextArea(ID_CREATE_TITLE, 8, 74, 368, 16).setText(state.createTitle || ''), state);
+
+  gui.addLabel(602, 'Script description', 8, 94, 180, 10, 0xffffff);
+  hideIfLoading(gui.addTextArea(ID_CREATE_DESC, 8, 106, 368, 16).setText(state.createDescription || ''), state);
+
+  gui.addLabel(603, 'Minecraft version', 8, 126, 176, 10, 0xffffff);
+  hideIfLoading(gui.addTextArea(ID_CREATE_MC, 8, 138, 176, 16).setText(state.createMinecraft || MINECRAFT_VERSION), state);
+
+  gui.addLabel(604, 'Author', 196, 126, 180, 10, 0xffffff);
+  hideIfLoading(gui.addTextArea(ID_CREATE_AUTHOR, 196, 138, 180, 16).setText(state.createAuthor || player.getName()), state);
+
+  gui.addLabel(605, 'Script type', 8, 158, 176, 10, 0xffffff);
+  gui.addLabel(606, 'Category', 196, 158, 180, 10, 0xffffff);
+  if (!busy(state)) {
+    const types = gui.addButtonList(ID_CREATE_TYPE, 8, 170, 176, 16);
+    types.setValues('Player', 'NPC', 'Item', 'Block', 'Forge', 'Door');
+    types.setSelected(typeIndex(state.createType || 'player'));
+    fitButtonList(types);
+
+    const cats = gui.addButtonList(ID_CREATE_CATEGORY, 196, 170, 180, 16);
+    cats.setValues(
+      'Combat',
+      'Magic',
+      'NPCs',
+      'Creatures',
+      'Items',
+      'World',
+      'Movement',
+      'GUI',
+      'Utility',
+      'Fun'
+    );
+    cats.setSelected(categoryIndex(state.createCategory || 'Utility'));
+    fitButtonList(cats);
+  }
+
+  const ok = bindButton(gui.addButton(ID_BTN_CREATE_OK, 'OK', 304, 188, 72, 20), player);
+  ok.setEnabled(!busy(state));
+}
+
+function renderCreateUpload(gui, state) {
+  const player = gui.getPlayer();
+  addTopBar(gui, state);
+  gui.addLabel(3, '§nCreate and upload script', 8, 46, 360, 12, 0xffffff);
+
+  const header = gui.addTextArea(ID_CREATE_HEADER, 8, 60, 368, 86);
+  header.setText(state.createHeader || buildCreateHeader(state));
+  hideIfLoading(header, state);
+
+  const help = wrapLines(
+    'Copy the text above and paste it at the very top of your script. Then press the button, open the link, and upload that file. After that it will show up in Script Manager.',
+    62
+  );
+  for (let i = 0; i < help.length; i++) {
+    gui.addLabel(ID_CREATE_HELP + i, help[i], 8, 150 + i * 10, 368, 10, 0xffffff);
+  }
+
+  const back = bindButton(gui.addButton(ID_BTN_BACK, '← Back', 8, 192, 72, 20), player);
+  back.setEnabled(!busy(state));
+  const upload = bindButton(gui.addButton(ID_BTN_UPLOAD, 'Open upload page', 216, 192, 160, 20), player);
+  upload.setEnabled(!busy(state));
+  upload.setHoverText('A clickable link will appear in chat');
 }
 
 function renderInstalled(gui, state) {
@@ -289,6 +643,9 @@ function renderInstalled(gui, state) {
     labels.push('Nothing installed yet');
   }
   const scroll = bindScroll(gui.addScroll(ID_SCROLL, 8, 60, 368, 138, labels), gui.getPlayer());
+  if (typeof scroll.setHasSearch === 'function') {
+    scroll.setHasSearch(false);
+  }
   scroll.setEnabled(!busy(state) && !!state.installed.length);
 }
 
@@ -296,7 +653,7 @@ function renderDetails(gui, state) {
   const player = gui.getPlayer();
   addTopBar(gui, state);
   const script = state.selected;
-  const back = bindButton(gui.addButton(ID_BTN_BACK, 'Back', 300, 24, 76, 16), player);
+  const back = bindButton(gui.addButton(ID_BTN_BACK, '← Back', 300, 24, 76, 16), player);
   back.setEnabled(!busy(state));
   if (!script) {
     gui.addLabel(3, 'No script selected', 8, 50, 360, 12, 0xff5555);
@@ -310,6 +667,7 @@ function renderDetails(gui, state) {
   const meta = state.metadata || {};
   const versions = metadataValues(meta, 'minecraft');
   const compatible = versions.length ? isCompatibleMcVersion(meta) : true;
+  const cats = readCategories(meta);
   const desc = wrapLines(script.description, 52).slice(0, 5);
 
   gui.addLabel(3, '§3§n' + script.name, 8, 46, 280, 16, 0xffffff);
@@ -319,11 +677,13 @@ function renderDetails(gui, state) {
   }
   gui.addLabel(
     5,
-    update
+    (update
       ? '§e↑ v' + script.version + '  §7installed v' + installed.version
       : installed
         ? '§a✔ v' + script.version
-        : '§6v' + script.version,
+        : '§6v' + script.version) +
+      '  §7ID ' +
+      script.id,
     8,
     76,
     280,
@@ -341,13 +701,19 @@ function renderDetails(gui, state) {
     12,
     0xffffff
   );
+  let descY = 106;
+  if (cats.length) {
+    gui.addLabel(16, '§7Category: §f' + cats.join(', '), 8, 100, 280, 12, 0xffffff);
+    descY = 114;
+  }
   for (let i = 0; i < desc.length; i++) {
-    gui.addLabel(ID_DESC_LINE + i, desc[i], 8, 106 + i * 10, 280, 10, 0xffffff);
+    gui.addLabel(ID_DESC_LINE + i, desc[i], 8, descY + i * 10, 280, 10, 0xffffff);
   }
 
-  gui.addLabel(7, '§a✔ ×' + script.good_ratings, 300, 46, 76, 12, 0xffffff).setHoverText('§aGood');
-  gui.addLabel(8, '§eO ×' + script.ok_ratings, 300, 58, 76, 12, 0xffffff).setHoverText('§eOk');
-  gui.addLabel(9, '§c✖ ×' + script.bad_ratings, 300, 70, 76, 12, 0xffffff).setHoverText('§cBad');
+  gui.addLabel(17, '§7Created', 300, 46, 76, 10, 0xffffff);
+  gui.addLabel(18, '§f' + formatScriptDate(script.createdAt), 300, 56, 76, 10, 0xffffff);
+  gui.addLabel(19, '§7Updated', 300, 70, 76, 10, 0xffffff);
+  gui.addLabel(20, '§f' + formatScriptDate(script.updatedAt), 300, 80, 76, 10, 0xffffff);
 
   const blocked = author && isBlacklisted(state.authors, author.id);
   const install = bindButton(
@@ -363,7 +729,7 @@ function renderDetails(gui, state) {
   );
   install.setEnabled(!busy(state) && !blocked && (!installed || update));
 
-  const code = bindButton(gui.addButton(ID_BTN_CODE, 'See code', 300, 126, 76, 20), player);
+  const code = bindButton(gui.addButton(ID_BTN_CODE, 'More info', 300, 126, 76, 20), player);
   code.setEnabled(!busy(state));
   code.setHoverText('A clickable link will appear in chat');
 
@@ -400,10 +766,49 @@ function renderConfirm(gui, state) {
   const player = gui.getPlayer();
   const no = bindButton(gui.addButton(ID_BTN_NO, 'No', 8, 186, 72, 20), player);
   no.setEnabled(!busy(state));
-  const code = bindButton(gui.addButton(ID_BTN_CODE, 'See code', 148, 186, 88, 20), player);
+  const code = bindButton(gui.addButton(ID_BTN_CODE, 'More info', 148, 186, 88, 20), player);
   code.setEnabled(!busy(state));
   const yes = bindButton(gui.addButton(ID_BTN_YES, 'Yes', 304, 186, 72, 20), player);
   yes.setEnabled(!busy(state));
+}
+
+function renderNotCustomNpcs(gui, state) {
+  const script = state.selected;
+  const player = gui.getPlayer();
+  gui.addLabel(1, '§eThis may not be a CustomNPCs script', 8, 8, 368, 16, 0xffffff);
+  const warn = wrapLines(
+    (script ? script.name : 'This script') +
+      ' does not look like it was made for CustomNPCs. It is missing the CustomNPCs site tag.',
+    62
+  );
+  for (let i = 0; i < warn.length; i++) {
+    gui.addLabel(ID_WARN_LINE + i, '§c' + warn[i], 8, 32 + i * 10, 368, 10, 0xffffff);
+  }
+  const intro = wrapLines(
+    'If it actually is, the author should add this line at the top of the script:',
+    62
+  );
+  const outro = wrapLines(
+    'Then it will show up when people browse scripts. You can still open it if you are sure.',
+    62
+  );
+  let adviceY = 32 + warn.length * 10 + 8;
+  for (let i = 0; i < intro.length; i++) {
+    gui.addLabel(ID_WARN_LINE + 20 + i, intro[i], 8, adviceY, 368, 10, 0xffffff);
+    adviceY += 10;
+  }
+  gui.addLabel(ID_WARN_LINE + 40, '§a// @match https://customnpcs.com', 8, adviceY + 2, 368, 10, 0xffffff);
+  adviceY += 14;
+  for (let i = 0; i < outro.length; i++) {
+    gui.addLabel(ID_WARN_LINE + 41 + i, outro[i], 8, adviceY, 368, 10, 0xffffff);
+    adviceY += 10;
+  }
+  const back = bindButton(gui.addButton(ID_BTN_BACK, '← Back', 8, 186, 72, 20), player);
+  back.setEnabled(!busy(state));
+  const code = bindButton(gui.addButton(ID_BTN_CODE, 'More info', 148, 186, 88, 20), player);
+  code.setEnabled(!busy(state) && !!script);
+  const cont = bindButton(gui.addButton(ID_BTN_CONTINUE, 'Continue', 280, 186, 96, 20), player);
+  cont.setEnabled(!busy(state));
 }
 
 function refresh(player) {
@@ -467,18 +872,10 @@ function applyBrowseList(state) {
   state.page = 'browse';
   state.selected = null;
   state.metadata = null;
-  state.filtered = filterCatalog(state.catalog, state.query);
+  state.filtered = filterCatalog(state.catalog, state.query, state.category);
 }
 
-function ensureCatalog(player, then) {
-  const state = sessionFor(player);
-  if (state.catalog.length) {
-    if (then) {
-      then(state);
-    }
-    refresh(player);
-    return;
-  }
+function loadCatalog(player, then) {
   runJob(
     player,
     'Looking up scripts...',
@@ -488,13 +885,27 @@ function ensureCatalog(player, then) {
       } catch (err) {
         next.authors = emptyAuthors();
       }
-      next.catalog = fetchCatalog();
+      next.catalog = fetchCatalog(next.sort);
+      next.catalogSort = next.sort || '';
+      attachScriptCategories(next.catalog);
       next.installed = loadInstalled();
       refreshSelfUpdate(next);
       applyBrowseList(next);
     },
     then
   );
+}
+
+function ensureCatalog(player, then) {
+  const state = sessionFor(player);
+  if (state.catalog.length && state.catalogSort === (state.sort || '')) {
+    if (then) {
+      then(state);
+    }
+    refresh(player);
+    return;
+  }
+  loadCatalog(player, then);
 }
 
 function goBrowse(player) {
@@ -505,6 +916,26 @@ function goBrowse(player) {
     return;
   }
   ensureCatalog(player);
+}
+
+function goCreate(player) {
+  const state = sessionFor(player);
+  state.page = 'create';
+  state.selected = null;
+  state.metadata = null;
+  if (!state.createMinecraft) {
+    state.createMinecraft = MINECRAFT_VERSION;
+  }
+  if (!state.createAuthor) {
+    state.createAuthor = player.getName();
+  }
+  if (!state.createType) {
+    state.createType = 'player';
+  }
+  if (!state.createCategory) {
+    state.createCategory = 'Utility';
+  }
+  openGui(player, state);
 }
 
 function openScriptById(player, id) {
@@ -530,10 +961,10 @@ function openScriptById(player, id) {
       }
       state.selected = script;
       state.metadata = metadata;
-      if (state.page !== 'details' && state.page !== 'confirm') {
+      if (state.page !== 'details' && state.page !== 'confirm' && state.page !== 'not-cnpc') {
         state.returnPage = state.page;
       }
-      state.page = 'details';
+      state.page = isCustomNpcsScript(metadata) ? 'details' : 'not-cnpc';
     }
   );
 }
@@ -545,7 +976,11 @@ function selectFromBrowse(player, index) {
     return;
   }
   runJob(player, 'Opening script...', function (next) {
-    next.selected = script;
+    try {
+      next.selected = fetchScriptInfo(script.id);
+    } catch (err) {
+      next.selected = script;
+    }
     try {
       next.metadata = fetchScriptMetadata(script.id);
     } catch (err) {
@@ -634,6 +1069,7 @@ export function chat(e) {
 }
 
 export function init(e) {
+  registerSelfInstalled();
   checkSelfUpdateLater(e.player);
 }
 
@@ -675,15 +1111,74 @@ function onButton(player, gui, buttonId) {
     openGui(player, state);
     return;
   }
+  if (buttonId === ID_BTN_CREATE) {
+    goCreate(player);
+    return;
+  }
+  if (buttonId === ID_BTN_CREATE_OK) {
+    if (!state.createTitle) {
+      setStatus(state, '§cEnter a script title');
+      openGui(player, state);
+      return;
+    }
+    if (!state.createDescription) {
+      setStatus(state, '§cEnter a script description');
+      openGui(player, state);
+      return;
+    }
+    if (!state.createAuthor) {
+      state.createAuthor = player.getName();
+    }
+    if (!state.createMinecraft) {
+      state.createMinecraft = MINECRAFT_VERSION;
+    }
+    setStatus(state, '');
+    state.createHeader = buildCreateHeader(state);
+    state.page = 'create-upload';
+    openGui(player, state);
+    return;
+  }
+  if (buttonId === ID_BTN_UPLOAD) {
+    showLink(
+      player,
+      '§f§nClick here§r to upload your script on GreasyFork',
+      GREASYFORK_NEW_URL,
+      '§eOpen the GreasyFork upload page'
+    );
+    gui.close();
+    return;
+  }
+  if (buttonId === ID_SORT_PREV || buttonId === ID_SORT_NEXT) {
+    const keys = [];
+    for (let i = 0; i < SORTS.length; i++) {
+      keys.push(SORTS[i].key);
+    }
+    state.sort = cycleChoice(keys, state.sort || '', buttonId === ID_SORT_NEXT ? 1 : -1);
+    openGui(player, state);
+    return;
+  }
+  if (buttonId === ID_CAT_PREV || buttonId === ID_CAT_NEXT) {
+    const labels = browseCategoryLabels();
+    state.category = cycleChoice(labels, state.category || 'All', buttonId === ID_CAT_NEXT ? 1 : -1);
+    openGui(player, state);
+    return;
+  }
   if (buttonId === ID_BTN_SEARCH) {
-    ensureCatalog(player, function (next) {
-      next.filtered = filterCatalog(next.catalog, next.query);
-      next.page = 'browse';
-    });
+    if (state.catalog.length && state.catalogSort === (state.sort || '')) {
+      applyBrowseList(state);
+      updateBrowseScroll(gui, state);
+      return;
+    }
+    loadCatalog(player);
     return;
   }
   if (buttonId === ID_BTN_OPEN_ID) {
     openScriptById(player, state.idInput);
+    return;
+  }
+  if (buttonId === ID_BTN_CONTINUE) {
+    state.page = 'details';
+    openGui(player, state);
     return;
   }
   if (buttonId === ID_BTN_NO) {
@@ -692,6 +1187,11 @@ function onButton(player, gui, buttonId) {
     return;
   }
   if (buttonId === ID_BTN_BACK) {
+    if (state.page === 'create-upload') {
+      state.page = 'create';
+      openGui(player, state);
+      return;
+    }
     state.page = state.returnPage || 'browse';
     state.selected = null;
     state.metadata = null;
@@ -715,7 +1215,12 @@ function onButton(player, gui, buttonId) {
     return;
   }
   if (buttonId === ID_BTN_CODE && state.selected) {
-    showLink(player, '§f§nClick here§r to see the code on GreasyFork', codeUrl(state.selected.id), '§eOpen GreasyFork');
+    showLink(
+      player,
+      '§f§nClick here§r for more info on GreasyFork',
+      state.selected.url || scriptUrl(state.selected.id),
+      '§eOpen GreasyFork'
+    );
     gui.close();
     return;
   }
