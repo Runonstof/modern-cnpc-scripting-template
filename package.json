@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "build": "rollup -c",
-    "watch": "rollup -c -w",
+    "build": "node bin/build.js",
+    "watch": "node bin/build.js --watch",
     "docs:llm": "node tools/scrape-docs-llm.js",
     "get-class-info": "node bin/get-class-info.js"
   },

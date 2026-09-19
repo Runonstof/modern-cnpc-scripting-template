@@ -19,6 +19,37 @@ var HOST = "127.0.0.1";
 var PORT = 25575;
 var HEALTH_TIMEOUT_MS = 1500;
 var REQUEST_TIMEOUT_MS = 15000;
+var AUTH_FILE = path.join(__dirname, "auth.json");
+var PASSWORD_HEADER = "X-AI-Password";
+
+function loadAuth() {
+  var out = { password: "", host: HOST, port: PORT };
+  if (!fs.existsSync(AUTH_FILE)) {
+    return out;
+  }
+  try {
+    var data = JSON.parse(fs.readFileSync(AUTH_FILE, "utf8"));
+    if (data && data.password) {
+      out.password = String(data.password);
+    }
+    if (data && data.host) {
+      out.host = String(data.host);
+    }
+    if (data && data.port) {
+      var parsed = parseInt(data.port, 10);
+      if (parsed >= 1 && parsed <= 65535) {
+        out.port = parsed;
+      }
+    }
+  } catch (e) {
+    process.stderr.write("Could not parse " + AUTH_FILE + "\n");
+  }
+  return out;
+}
+
+var AUTH = loadAuth();
+HOST = AUTH.host || HOST;
+PORT = AUTH.port || PORT;
 
 var OFFLINE_HINT =
   "ai-integration is not listening at http://" +
@@ -26,6 +57,8 @@ var OFFLINE_HINT =
   ":" +
   PORT +
   ". Enable src/debug/ai-integration.js in the player script tab, then reload once in-game.";
+var AUTH_HINT =
+  "Password rejected. Set the same password in-game with !ai-integration (creative) and locally with: node bin/auth.js <password>";
 
 function printHelp() {
   process.stderr.write(
@@ -57,6 +90,9 @@ function fail(message, code) {
 function request(method, pathname, body, timeoutMs, done) {
   var payload = body == null ? "" : JSON.stringify(body);
   var headers = {};
+  if (AUTH.password) {
+    headers[PASSWORD_HEADER] = AUTH.password;
+  }
   if (payload) {
     headers["Content-Type"] = "application/json; charset=utf-8";
     headers["Content-Length"] = Buffer.byteLength(payload);
@@ -125,6 +161,9 @@ function post(pathname, body, done) {
 function printResponse(err, data, status) {
   if (err) {
     fail(err.message || String(err));
+  }
+  if (status === 401 || status === 403) {
+    fail((data && data.error) || AUTH_HINT);
   }
   process.stdout.write(JSON.stringify(data, null, 2) + "\n");
   if (status >= 400 || (data && data.ok === false)) {

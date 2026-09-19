@@ -120,7 +120,17 @@ Do **not** put throwaway test scripts in `bin/` (`bin/` is only for lasting CLI 
 `.agent/.gitignore` ignores everything except itself, so scratch files are not committed.
 
 ## Building
-Use `npm run build` to build all scripts once.
+Use `npm run build` to build all entry points, or pass the ones you changed:
+
+```
+npm run build -- npcs/aldric
+npm run build -- aldric mount items/creeper-cow-spawner
+npm run build -- npcs
+```
+
+Filters match an entry key (`npcs/aldric`), basename (`aldric`), type folder (`npcs`), or a `src/...` path. Helpers under `src/lib` are not entry points: build every entry that imports them, or run a full `npm run build`.
+
+Agents must only build the entry points they touched. Do not do a full build for a single NPC/player/item/debug script.
 
 
 ## Events
@@ -182,7 +192,7 @@ For each type of script, there are different events. They are listed in @docs-ll
 
 `src/debug/ai-integration.js` (enable it in the player script tab) exposes a localhost HTTP API. Agents must drive the world through `node bin/execute.js`, not by typing Minecraft commands for the user.
 
-Never run `/noppes script reload` yourself. After `npm run build`, reload with:
+Never run `/noppes script reload` yourself. After building the touched entries, reload with:
 
 ```
 node bin/execute.js reload
@@ -230,7 +240,13 @@ When you spawn an entity through `execute.js` (`js` or `command`), return its UU
 
 ## Development Cycle
 
-Whenever you make changes to the scripts, run `npm run build` first to build the scripts.
+Whenever you make changes to the scripts, build only the entry points you touched:
+
+```
+npm run build -- npcs/aldric
+```
+
+Use a full `npm run build` only when many entries changed or a shared helper is imported by several of them.
 This will put the compiled versions into the `ecmascript/` folder.
 
 When any changes are made in the `ecmascript/` folder, the scripts need to be reloaded in game in order to take effect.
@@ -240,7 +256,7 @@ You can also run `npm run watch` to watch for changes in the `src/` folder and a
 This is useful when you are developing a script and want to see the changes immediately in game.
 
 So after you made all your changes:
-1. Run `npm run build` to build the scripts.
+1. Run `npm run build -- <entry>...` for the files you touched (full `npm run build` only if needed).
 2. Run `node bin/execute.js reload` to reload the scripts in game. Optionally pass a one-sentence note so the in-game reload dump says what changed.
 3. If you changed an NPC script, call `npc.reset()` on that NPC after the reload.
 

@@ -24,7 +24,63 @@ function getEntries() {
   return entries;
 }
 
-const entries = getEntries();
+function requestedFilters() {
+  const fromEnv = process.env.BUILD_FILTERS;
+  if (!fromEnv) {
+    return [];
+  }
+
+  return fromEnv.split('\n').filter(Boolean);
+}
+
+function normalize(value) {
+  return value.replace(/\\/g, '/').replace(/^\.\//, '');
+}
+
+function entryMatches(key, file, filter) {
+  const query = normalize(filter).replace(/\.(js|ts)$/, '');
+  const fileNorm = normalize(file);
+  const base = path.basename(file, path.extname(file));
+  const type = path.basename(path.dirname(file));
+
+  return (
+    query === key ||
+    query === fileNorm ||
+    query === `src/${key}` ||
+    query === base ||
+    query === type ||
+    query === `src/${type}` ||
+    key.endsWith(`/${query}`) ||
+    fileNorm.endsWith(`/${query}`) ||
+    fileNorm.endsWith(`/${query}.js`) ||
+    fileNorm.endsWith(`/${query}.ts`)
+  );
+}
+
+function filterEntries(entries, filters) {
+  if (filters.length === 0) {
+    return entries;
+  }
+
+  const filtered = {};
+
+  for (const [key, file] of Object.entries(entries)) {
+    if (filters.some((filter) => entryMatches(key, file, filter))) {
+      filtered[key] = file;
+    }
+  }
+
+  if (Object.keys(filtered).length === 0) {
+    const available = Object.keys(entries).join(', ');
+    throw new Error(
+      `No entry points matched: ${filters.join(', ')}. Available: ${available}`
+    );
+  }
+
+  return filtered;
+}
+
+const entries = filterEntries(getEntries(), requestedFilters());
 
 const stripExports = () => ({
   name: 'strip-exports',

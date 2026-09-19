@@ -1,6 +1,5 @@
 import { dd } from '~/lib/dump';
 
-dd('hello');
 
 const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
 

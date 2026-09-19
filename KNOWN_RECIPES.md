@@ -40,7 +40,7 @@ Write `.agent/spawn-<name>.js` and run `node bin/execute.js js .agent/spawn-<nam
 
 Size 5 is default; 6 is slightly bigger. Prefer `textures.minecraft.net` URLs. After spawn, keep the UUID in the chat and on `tempdata`. Later: `world.getEntity(tempdata.get('npcUuid'))`.
 
-Gameplay behavior belongs in `src/npcs/<name>.js`, then `npm run build` and attach (below). Do not put lasting logic only in the spawn snippet.
+Gameplay behavior belongs in `src/npcs/<name>.js`, then `npm run build -- npcs/<name>` and attach (below). Do not put lasting logic only in the spawn snippet.
 
 ## Attach a script to a living NPC
 

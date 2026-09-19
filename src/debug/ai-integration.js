@@ -41,12 +41,24 @@ const BufferedReader = Java.type('java.io.BufferedReader');
 const StringWriter = Java.type('java.io.StringWriter');
 const JString = Java.type('java.lang.String');
 
-const PORT = 25575;
-const HOST = '127.0.0.1';
-const BASE = 'http://' + HOST + ':' + PORT;
+const DEFAULT_PORT = 25575;
+const LOCAL_HOST = '127.0.0.1';
 const SCRIPT_REL = 'scripts/ecmascript/debug/ai-integration.js';
 const CHAT_PREFIX = '§6§l[Debug] §r';
 const LOOK_DISTANCE = 5;
+const PASSWORD_KEY = 'ai-integration-password';
+const PORT_KEY = 'ai-integration-port';
+const PASSWORD_HEADER = 'X-AI-Password';
+const GUI_CONTROL = 25575;
+const GUI_SETTINGS = 25576;
+const ID_START = 1;
+const ID_STOP = 2;
+const ID_OPEN_SETTINGS = 3;
+const ID_PASSWORD_FIELD = 1;
+const ID_SAVE = 2;
+const ID_CANCEL = 3;
+const ID_PORT_FIELD = 4;
+const GAMEMODE_CREATIVE = 1;
 
 function debugDd(...args) {
   const prefixed = [];
@@ -64,6 +76,7 @@ const HandlerImpl = Java.extend(HttpHandler);
 
 let currentPlayer = null;
 let listeningServer = null;
+let boundPort = DEFAULT_PORT;
 
 function hex(bytes) {
   const digits = '0123456789abcdef';
@@ -158,6 +171,94 @@ function isLocal(exchange) {
   } catch (e) {
     return false;
   }
+}
+
+function getStoredPassword() {
+  try {
+    const value = API.getIWorld('minecraft:overworld').storeddata.get(PASSWORD_KEY);
+    if (value == null) {
+      return '';
+    }
+    return String(value);
+  } catch (e) {
+    return '';
+  }
+}
+
+function setStoredPassword(value) {
+  const stored = API.getIWorld('minecraft:overworld').storeddata;
+  const trimmed = String(value == null ? '' : value).replace(/^\s+|\s+$/g, '');
+  if (!trimmed) {
+    stored.remove(PASSWORD_KEY);
+    return '';
+  }
+  stored.put(PASSWORD_KEY, trimmed);
+  return trimmed;
+}
+
+function requestPassword(exchange) {
+  try {
+    const header = exchange.getRequestHeaders().getFirst(PASSWORD_HEADER);
+    return header == null ? '' : String(header);
+  } catch (e) {
+    return '';
+  }
+}
+
+function authorize(exchange, pathname) {
+  const local = isLocal(exchange);
+  const expected = getStoredPassword();
+  if (!expected) {
+    if (local) {
+      return true;
+    }
+    send(exchange, 403, { ok: false, error: 'remote access requires a password' });
+    return false;
+  }
+  if (local && (pathname === '/health' || pathname === '/shutdown')) {
+    return true;
+  }
+  if (requestPassword(exchange) === expected) {
+    return true;
+  }
+  send(exchange, 401, { ok: false, error: 'invalid or missing ' + PASSWORD_HEADER + ' header' });
+  return false;
+}
+
+function parsePort(value) {
+  const n = parseInt(String(value == null ? '' : value).replace(/^\s+|\s+$/g, ''), 10);
+  if (!(n >= 1 && n <= 65535)) {
+    return 0;
+  }
+  return n;
+}
+
+function getStoredPort() {
+  try {
+    const parsed = parsePort(API.getIWorld('minecraft:overworld').storeddata.get(PORT_KEY));
+    return parsed || DEFAULT_PORT;
+  } catch (e) {
+    return DEFAULT_PORT;
+  }
+}
+
+function setStoredPort(value) {
+  const stored = API.getIWorld('minecraft:overworld').storeddata;
+  const parsed = parsePort(value);
+  if (!parsed) {
+    stored.remove(PORT_KEY);
+    return DEFAULT_PORT;
+  }
+  stored.put(PORT_KEY, parsed);
+  return parsed;
+}
+
+function localBase(port) {
+  return 'http://' + LOCAL_HOST + ':' + (port || getStoredPort());
+}
+
+function bindHost() {
+  return getStoredPassword() ? '0.0.0.0' : LOCAL_HOST;
 }
 
 function runOnServerThread(player, fn) {
@@ -324,27 +425,37 @@ function executeJs(code) {
   });
 }
 
-function probeExisting() {
+function probeExisting(port) {
   try {
-    return JSON.parse(http.get(BASE + '/health'));
+    return JSON.parse(http.get(localBase(port) + '/health'));
   } catch (e) {
     return null;
   }
 }
 
-function requestShutdown() {
+function requestShutdown(port) {
   try {
-    http.post(BASE + '/shutdown', { stop: true });
+    http.post(localBase(port) + '/shutdown', { stop: true });
   } catch (e) {
     // old instance may already be gone
   }
   Thread.sleep(150);
 }
 
-function stopListeningServer() {
+function isListening() {
+  if (listeningServer) {
+    return true;
+  }
+  const existing = probeExisting(boundPort) || probeExisting(getStoredPort());
+  return !!(existing && existing.ok);
+}
+
+function stopListeningServer(clearPlayer) {
   const local = listeningServer;
   listeningServer = null;
-  currentPlayer = null;
+  if (clearPlayer) {
+    currentPlayer = null;
+  }
   if (local) {
     try {
       local.stop(0);
@@ -353,31 +464,78 @@ function stopListeningServer() {
     }
     return;
   }
-  requestShutdown();
+  requestShutdown(boundPort);
 }
 
 function ensureServer() {
   const hash = hashScript();
-  const existing = probeExisting();
-  if (existing && existing.hash === hash) {
+  const port = getStoredPort();
+  const existing = probeExisting(port) || probeExisting(boundPort);
+  if (existing && existing.hash === hash && existing.port === port) {
     return;
   }
   if (existing) {
     debugDd('ai-integration script changed, restarting listener');
-    requestShutdown();
+    requestShutdown(existing.port || boundPort);
   }
   listeningServer = startServer(hash);
 }
 
-function startServer(scriptHash) {
-  const server = HttpServer.create(new InetSocketAddress(HOST, PORT), 0);
+function restartListeningServer() {
+  const local = listeningServer;
+  listeningServer = null;
+  if (local) {
+    try {
+      local.stop(0);
+    } catch (e) {
+      // already stopped
+    }
+  } else {
+    requestShutdown(boundPort);
+    Thread.sleep(150);
+  }
+  listeningServer = startServer(hashScript());
+}
 
-  function route(handler) {
+function openControlGui(player) {
+  const running = isListening();
+  const gui = API.createCustomGui(GUI_CONTROL, 240, 90, false, player);
+  gui.setDoesPauseGame(false);
+  gui.addLabel(0, running ? 'AI integration: running' : 'AI integration: stopped', 10, 10, 220, 12, 0xffffff);
+  const startBtn = gui.addButton(ID_START, 'Start', 10, 36, 68, 20);
+  startBtn.setEnabled(!running);
+  const stopBtn = gui.addButton(ID_STOP, 'Stop', 86, 36, 68, 20);
+  stopBtn.setEnabled(running);
+  gui.addButton(ID_OPEN_SETTINGS, 'Settings', 162, 36, 68, 20);
+  player.showCustomGui(gui);
+}
+
+function openSettingsGui(player) {
+  const gui = API.createCustomGui(GUI_SETTINGS, 240, 128, false, player);
+  gui.setDoesPauseGame(false);
+  gui.addLabel(0, 'Password', 10, 8, 220, 12, 0xffffff);
+  const password = gui.addTextArea(ID_PASSWORD_FIELD, 10, 20, 220, 18);
+  password.setText(getStoredPassword());
+  gui.addLabel(5, 'Port', 10, 44, 220, 12, 0xffffff);
+  const port = gui.addTextArea(ID_PORT_FIELD, 10, 56, 220, 18);
+  port.setText(String(getStoredPort()));
+  password.setFocused(true);
+  gui.addButton(ID_SAVE, 'Save', 10, 84, 100, 20);
+  gui.addButton(ID_CANCEL, 'Cancel', 130, 84, 100, 20);
+  player.showCustomGui(gui);
+}
+
+function startServer(scriptHash) {
+  const host = bindHost();
+  const port = getStoredPort();
+  boundPort = port;
+  const server = HttpServer.create(new InetSocketAddress(host, port), 0);
+
+  function route(pathname, handler) {
     return new HandlerImpl({
       handle: function (exchange) {
         try {
-          if (!isLocal(exchange)) {
-            send(exchange, 403, { ok: false, error: 'localhost only' });
+          if (!authorize(exchange, pathname)) {
             return;
           }
           handler(exchange);
@@ -402,14 +560,20 @@ function startServer(scriptHash) {
 
   server.createContext(
     '/health',
-    route(function (exchange) {
-      send(exchange, 200, { ok: true, hash: scriptHash, port: PORT });
+    route('/health', function (exchange) {
+      send(exchange, 200, {
+        ok: true,
+        hash: scriptHash,
+        port: port,
+        bind: host,
+        password: !!getStoredPassword(),
+      });
     })
   );
 
   server.createContext(
     '/shutdown',
-    route(function (exchange) {
+    route('/shutdown', function (exchange) {
       send(exchange, 200, { ok: true, stopping: true });
       const toStop = server;
       new Thread(function () {
@@ -424,7 +588,7 @@ function startServer(scriptHash) {
 
   server.createContext(
     '/cmd',
-    route(function (exchange) {
+    route('/cmd', function (exchange) {
       const cmd = parsePayload(exchange, ['cmd', 'command']);
       const result = executeCmd(cmd);
       send(exchange, 200, { ok: true, result: stringifyResult(result) });
@@ -433,7 +597,7 @@ function startServer(scriptHash) {
 
   server.createContext(
     '/reload',
-    route(function (exchange) {
+    route('/reload', function (exchange) {
       const note = parsePayload(exchange, ['note', 'message', 'reason', 'text']);
       debugDd('Reload CustomNPC scripts');
       if (note) {
@@ -453,7 +617,7 @@ function startServer(scriptHash) {
 
   server.createContext(
     '/js',
-    route(function (exchange) {
+    route('/js', function (exchange) {
       const code = parsePayload(exchange, ['js', 'code', 'script']);
       const result = executeJs(code);
       send(exchange, 200, { ok: true, result: stringifyResult(result) });
@@ -462,7 +626,7 @@ function startServer(scriptHash) {
 
   server.createContext(
     '/npclogs/read',
-    route(function (exchange) {
+    route('/npclogs/read', function (exchange) {
       const uuid = parsePayload(exchange, ['uuid', 'entity', 'id']);
       const result = readNpcLogs(uuid);
       send(exchange, 200, { ok: true, uuid: result.uuid, name: result.name, logs: result.logs });
@@ -471,7 +635,16 @@ function startServer(scriptHash) {
 
   server.setExecutor(null);
   server.start();
-  debugDd('ai-integration listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
+  debugDd(
+    'ai-integration listening on ' +
+      host +
+      ':' +
+      port +
+      ' (hash ' +
+      scriptHash.substring(0, 8) +
+      (getStoredPassword() ? ', password on' : '') +
+      ')'
+  );
   return server;
 }
 
@@ -486,9 +659,80 @@ export function login(e) {
 }
 
 export function logout() {
-  stopListeningServer();
+  stopListeningServer(true);
 }
 
 export function tick(e) {
   currentPlayer = e.player;
+}
+
+export function chat(e) {
+  const msg = String(e.message || '').replace(/^\s+|\s+$/g, '');
+  if (msg !== '!ai-integration') {
+    return;
+  }
+  try {
+    e.setCanceled(true);
+  } catch (err) {
+    // chat may not be cancellable
+  }
+  if (e.player.getGamemode() !== GAMEMODE_CREATIVE) {
+    return;
+  }
+  openControlGui(e.player);
+}
+
+export function customGuiButton(e) {
+  if (!e.gui) {
+    return;
+  }
+  const guiId = e.gui.getID();
+  if (guiId === GUI_CONTROL) {
+    if (e.buttonId === ID_START) {
+      if (!isListening()) {
+        ensureServer();
+        debugDd('ai-integration started');
+      }
+      openControlGui(e.player);
+      return;
+    }
+    if (e.buttonId === ID_STOP) {
+      if (isListening()) {
+        stopListeningServer(false);
+        debugDd('ai-integration stopped');
+      }
+      openControlGui(e.player);
+      return;
+    }
+    if (e.buttonId === ID_OPEN_SETTINGS) {
+      openSettingsGui(e.player);
+    }
+    return;
+  }
+  if (guiId !== GUI_SETTINGS) {
+    return;
+  }
+  if (e.buttonId === ID_CANCEL) {
+    openControlGui(e.player);
+    return;
+  }
+  if (e.buttonId !== ID_SAVE) {
+    return;
+  }
+  const passwordField = e.gui.getComponent(ID_PASSWORD_FIELD);
+  const portField = e.gui.getComponent(ID_PORT_FIELD);
+  const password = passwordField && passwordField.getText ? passwordField.getText() : '';
+  const portText = portField && portField.getText ? portField.getText() : '';
+  const saved = setStoredPassword(password);
+  const port = parsePort(portText) ? setStoredPort(portText) : setStoredPort(DEFAULT_PORT);
+  if (!parsePort(portText)) {
+    debugDd('invalid port, using ' + DEFAULT_PORT);
+  }
+  if (isListening()) {
+    restartListeningServer();
+  }
+  debugDd(
+    (saved ? 'password saved' : 'password cleared') + ', port ' + port
+  );
+  openControlGui(e.player);
 }

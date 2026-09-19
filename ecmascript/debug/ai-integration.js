@@ -386,12 +386,24 @@ var InputStreamReader = Java.type('java.io.InputStreamReader');
 var BufferedReader = Java.type('java.io.BufferedReader');
 var StringWriter = Java.type('java.io.StringWriter');
 var JString = Java.type('java.lang.String');
-var PORT = 25575;
-var HOST = '127.0.0.1';
-var BASE = 'http://' + HOST + ':' + PORT;
+var DEFAULT_PORT = 25575;
+var LOCAL_HOST = '127.0.0.1';
 var SCRIPT_REL = 'scripts/ecmascript/debug/ai-integration.js';
 var CHAT_PREFIX = '§6§l[Debug] §r';
 var LOOK_DISTANCE = 5;
+var PASSWORD_KEY = 'ai-integration-password';
+var PORT_KEY = 'ai-integration-port';
+var PASSWORD_HEADER = 'X-AI-Password';
+var GUI_CONTROL = 25575;
+var GUI_SETTINGS = 25576;
+var ID_START = 1;
+var ID_STOP = 2;
+var ID_OPEN_SETTINGS = 3;
+var ID_PASSWORD_FIELD = 1;
+var ID_SAVE = 2;
+var ID_CANCEL = 3;
+var ID_PORT_FIELD = 4;
+var GAMEMODE_CREATIVE = 1;
 function debugDd() {
   var prefixed = [];
   for (var i = 0; i < arguments.length; i++) {
@@ -406,6 +418,7 @@ function debugDd() {
 var HandlerImpl = Java.extend(HttpHandler);
 var currentPlayer = null;
 var listeningServer = null;
+var boundPort = DEFAULT_PORT;
 function hex(bytes) {
   var digits = '0123456789abcdef';
   var out = '';
@@ -492,6 +505,91 @@ function isLocal(exchange) {
   } catch (e) {
     return false;
   }
+}
+function getStoredPassword() {
+  try {
+    var value = API.getIWorld('minecraft:overworld').storeddata.get(PASSWORD_KEY);
+    if (value == null) {
+      return '';
+    }
+    return String(value);
+  } catch (e) {
+    return '';
+  }
+}
+function setStoredPassword(value) {
+  var stored = API.getIWorld('minecraft:overworld').storeddata;
+  var trimmed = String(value == null ? '' : value).replace(/^\s+|\s+$/g, '');
+  if (!trimmed) {
+    stored.remove(PASSWORD_KEY);
+    return '';
+  }
+  stored.put(PASSWORD_KEY, trimmed);
+  return trimmed;
+}
+function requestPassword(exchange) {
+  try {
+    var header = exchange.getRequestHeaders().getFirst(PASSWORD_HEADER);
+    return header == null ? '' : String(header);
+  } catch (e) {
+    return '';
+  }
+}
+function authorize(exchange, pathname) {
+  var local = isLocal(exchange);
+  var expected = getStoredPassword();
+  if (!expected) {
+    if (local) {
+      return true;
+    }
+    send(exchange, 403, {
+      ok: false,
+      error: 'remote access requires a password'
+    });
+    return false;
+  }
+  if (local && (pathname === '/health' || pathname === '/shutdown')) {
+    return true;
+  }
+  if (requestPassword(exchange) === expected) {
+    return true;
+  }
+  send(exchange, 401, {
+    ok: false,
+    error: 'invalid or missing ' + PASSWORD_HEADER + ' header'
+  });
+  return false;
+}
+function parsePort(value) {
+  var n = parseInt(String(value == null ? '' : value).replace(/^\s+|\s+$/g, ''), 10);
+  if (!(n >= 1 && n <= 65535)) {
+    return 0;
+  }
+  return n;
+}
+function getStoredPort() {
+  try {
+    var parsed = parsePort(API.getIWorld('minecraft:overworld').storeddata.get(PORT_KEY));
+    return parsed || DEFAULT_PORT;
+  } catch (e) {
+    return DEFAULT_PORT;
+  }
+}
+function setStoredPort(value) {
+  var stored = API.getIWorld('minecraft:overworld').storeddata;
+  var parsed = parsePort(value);
+  if (!parsed) {
+    stored.remove(PORT_KEY);
+    return DEFAULT_PORT;
+  }
+  stored.put(PORT_KEY, parsed);
+  return parsed;
+}
+function localBase(port) {
+  return 'http://' + LOCAL_HOST + ':' + (port || getStoredPort());
+}
+function bindHost() {
+  return getStoredPassword() ? '0.0.0.0' : LOCAL_HOST;
 }
 function runOnServerThread(player, fn) {
   var mcEntity = player.getMCEntity();
@@ -641,16 +739,16 @@ function executeJs(code) {
     return fn(player, world, API, debugDd, storeddata, tempdata, target, block);
   });
 }
-function probeExisting() {
+function probeExisting(port) {
   try {
-    return JSON.parse(http.get(BASE + '/health'));
+    return JSON.parse(http.get(localBase(port) + '/health'));
   } catch (e) {
     return null;
   }
 }
-function requestShutdown() {
+function requestShutdown(port) {
   try {
-    http.post(BASE + '/shutdown', {
+    http.post(localBase(port) + '/shutdown', {
       stop: true
     });
   } catch (e) {
@@ -658,10 +756,19 @@ function requestShutdown() {
   }
   Thread.sleep(150);
 }
-function stopListeningServer() {
+function isListening() {
+  if (listeningServer) {
+    return true;
+  }
+  var existing = probeExisting(boundPort) || probeExisting(getStoredPort());
+  return !!(existing && existing.ok);
+}
+function stopListeningServer(clearPlayer) {
   var local = listeningServer;
   listeningServer = null;
-  currentPlayer = null;
+  if (clearPlayer) {
+    currentPlayer = null;
+  }
   if (local) {
     try {
       local.stop(0);
@@ -670,31 +777,72 @@ function stopListeningServer() {
     }
     return;
   }
-  requestShutdown();
+  requestShutdown(boundPort);
 }
 function ensureServer() {
   var hash = hashScript();
-  var existing = probeExisting();
-  if (existing && existing.hash === hash) {
+  var port = getStoredPort();
+  var existing = probeExisting(port) || probeExisting(boundPort);
+  if (existing && existing.hash === hash && existing.port === port) {
     return;
   }
   if (existing) {
     debugDd('ai-integration script changed, restarting listener');
-    requestShutdown();
+    requestShutdown(existing.port || boundPort);
   }
   listeningServer = startServer(hash);
 }
+function restartListeningServer() {
+  var local = listeningServer;
+  listeningServer = null;
+  if (local) {
+    try {
+      local.stop(0);
+    } catch (e) {
+      // already stopped
+    }
+  } else {
+    requestShutdown(boundPort);
+    Thread.sleep(150);
+  }
+  listeningServer = startServer(hashScript());
+}
+function openControlGui(player) {
+  var running = isListening();
+  var gui = API.createCustomGui(GUI_CONTROL, 240, 90, false, player);
+  gui.setDoesPauseGame(false);
+  gui.addLabel(0, running ? 'AI integration: running' : 'AI integration: stopped', 10, 10, 220, 12, 0xffffff);
+  var startBtn = gui.addButton(ID_START, 'Start', 10, 36, 68, 20);
+  startBtn.setEnabled(!running);
+  var stopBtn = gui.addButton(ID_STOP, 'Stop', 86, 36, 68, 20);
+  stopBtn.setEnabled(running);
+  gui.addButton(ID_OPEN_SETTINGS, 'Settings', 162, 36, 68, 20);
+  player.showCustomGui(gui);
+}
+function openSettingsGui(player) {
+  var gui = API.createCustomGui(GUI_SETTINGS, 240, 128, false, player);
+  gui.setDoesPauseGame(false);
+  gui.addLabel(0, 'Password', 10, 8, 220, 12, 0xffffff);
+  var password = gui.addTextArea(ID_PASSWORD_FIELD, 10, 20, 220, 18);
+  password.setText(getStoredPassword());
+  gui.addLabel(5, 'Port', 10, 44, 220, 12, 0xffffff);
+  var port = gui.addTextArea(ID_PORT_FIELD, 10, 56, 220, 18);
+  port.setText(String(getStoredPort()));
+  password.setFocused(true);
+  gui.addButton(ID_SAVE, 'Save', 10, 84, 100, 20);
+  gui.addButton(ID_CANCEL, 'Cancel', 130, 84, 100, 20);
+  player.showCustomGui(gui);
+}
 function startServer(scriptHash) {
-  var server = HttpServer.create(new InetSocketAddress(HOST, PORT), 0);
-  function route(handler) {
+  var host = bindHost();
+  var port = getStoredPort();
+  boundPort = port;
+  var server = HttpServer.create(new InetSocketAddress(host, port), 0);
+  function route(pathname, handler) {
     return new HandlerImpl({
       handle: function handle(exchange) {
         try {
-          if (!isLocal(exchange)) {
-            send(exchange, 403, {
-              ok: false,
-              error: 'localhost only'
-            });
+          if (!authorize(exchange, pathname)) {
             return;
           }
           handler(exchange);
@@ -720,14 +868,16 @@ function startServer(scriptHash) {
       }
     });
   }
-  server.createContext('/health', route(function (exchange) {
+  server.createContext('/health', route('/health', function (exchange) {
     send(exchange, 200, {
       ok: true,
       hash: scriptHash,
-      port: PORT
+      port: port,
+      bind: host,
+      password: !!getStoredPassword()
     });
   }));
-  server.createContext('/shutdown', route(function (exchange) {
+  server.createContext('/shutdown', route('/shutdown', function (exchange) {
     send(exchange, 200, {
       ok: true,
       stopping: true
@@ -741,7 +891,7 @@ function startServer(scriptHash) {
       toStop.stop(0);
     }).start();
   }));
-  server.createContext('/cmd', route(function (exchange) {
+  server.createContext('/cmd', route('/cmd', function (exchange) {
     var cmd = parsePayload(exchange, ['cmd', 'command']);
     var result = executeCmd(cmd);
     send(exchange, 200, {
@@ -749,7 +899,7 @@ function startServer(scriptHash) {
       result: stringifyResult(result)
     });
   }));
-  server.createContext('/reload', route(function (exchange) {
+  server.createContext('/reload', route('/reload', function (exchange) {
     var note = parsePayload(exchange, ['note', 'message', 'reason', 'text']);
     debugDd('Reload CustomNPC scripts');
     if (note) {
@@ -769,7 +919,7 @@ function startServer(scriptHash) {
       }
     }).start();
   }));
-  server.createContext('/js', route(function (exchange) {
+  server.createContext('/js', route('/js', function (exchange) {
     var code = parsePayload(exchange, ['js', 'code', 'script']);
     var result = executeJs(code);
     send(exchange, 200, {
@@ -777,7 +927,7 @@ function startServer(scriptHash) {
       result: stringifyResult(result)
     });
   }));
-  server.createContext('/npclogs/read', route(function (exchange) {
+  server.createContext('/npclogs/read', route('/npclogs/read', function (exchange) {
     var uuid = parsePayload(exchange, ['uuid', 'entity', 'id']);
     var result = readNpcLogs(uuid);
     send(exchange, 200, {
@@ -789,7 +939,7 @@ function startServer(scriptHash) {
   }));
   server.setExecutor(null);
   server.start();
-  debugDd('ai-integration listening on ' + BASE + ' (hash ' + scriptHash.substring(0, 8) + ')');
+  debugDd('ai-integration listening on ' + host + ':' + port + ' (hash ' + scriptHash.substring(0, 8) + (getStoredPassword() ? ', password on' : '') + ')');
   return server;
 }
 function init(e) {
@@ -801,9 +951,76 @@ function login(e) {
   ensureServer();
 }
 function logout() {
-  stopListeningServer();
+  stopListeningServer(true);
 }
 function tick(e) {
   currentPlayer = e.player;
+}
+function chat(e) {
+  var msg = String(e.message || '').replace(/^\s+|\s+$/g, '');
+  if (msg !== '!ai-integration') {
+    return;
+  }
+  try {
+    e.setCanceled(true);
+  } catch (err) {
+    // chat may not be cancellable
+  }
+  if (e.player.getGamemode() !== GAMEMODE_CREATIVE) {
+    return;
+  }
+  openControlGui(e.player);
+}
+function customGuiButton(e) {
+  if (!e.gui) {
+    return;
+  }
+  var guiId = e.gui.getID();
+  if (guiId === GUI_CONTROL) {
+    if (e.buttonId === ID_START) {
+      if (!isListening()) {
+        ensureServer();
+        debugDd('ai-integration started');
+      }
+      openControlGui(e.player);
+      return;
+    }
+    if (e.buttonId === ID_STOP) {
+      if (isListening()) {
+        stopListeningServer(false);
+        debugDd('ai-integration stopped');
+      }
+      openControlGui(e.player);
+      return;
+    }
+    if (e.buttonId === ID_OPEN_SETTINGS) {
+      openSettingsGui(e.player);
+    }
+    return;
+  }
+  if (guiId !== GUI_SETTINGS) {
+    return;
+  }
+  if (e.buttonId === ID_CANCEL) {
+    openControlGui(e.player);
+    return;
+  }
+  if (e.buttonId !== ID_SAVE) {
+    return;
+  }
+  var passwordField = e.gui.getComponent(ID_PASSWORD_FIELD);
+  var portField = e.gui.getComponent(ID_PORT_FIELD);
+  var password = passwordField && passwordField.getText ? passwordField.getText() : '';
+  var portText = portField && portField.getText ? portField.getText() : '';
+  var saved = setStoredPassword(password);
+  var port = parsePort(portText) ? setStoredPort(portText) : setStoredPort(DEFAULT_PORT);
+  if (!parsePort(portText)) {
+    debugDd('invalid port, using ' + DEFAULT_PORT);
+  }
+  if (isListening()) {
+    restartListeningServer();
+  }
+  debugDd((saved ? 'password saved' : 'password cleared') + ', port ' + port);
+  openControlGui(e.player);
 }
 

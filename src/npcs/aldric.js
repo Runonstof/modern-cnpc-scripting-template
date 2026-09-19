@@ -1,7 +1,8 @@
+import { subscribe, unsubscribe, stopThreadsNamed } from '~/lib/fast-tick';
+
 const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
 const Display = Java.type('net.minecraft.world.entity.Display');
 const Integer = Java.type('java.lang.Integer');
-const Thread = Java.type('java.lang.Thread');
 const Vector3f = Java.type('org.joml.Vector3f');
 const System = Java.type('java.lang.System');
 
@@ -32,16 +33,16 @@ const THROW_SCALE = 0.8;
 const ORBIT_TAG = 'aldric_orbit';
 const SHOT_TAG = 'aldric_shot';
 const ORBIT_TIMER = 10;
-const THREAD_KEY = 'orbitThread';
-const GEN_KEY = 'orbitGen';
 const START_KEY = 'orbitStartNanos';
 const SLOTS_KEY = 'orbitSlots';
 const CAST_KEY = 'magmaCast';
 const ELEMENT_KEY = 'orbitElement';
 const REFILL_KEY = 'orbitRefill';
-const THREAD_SLEEP_MS = 20;
+const PAUSE_KEY = 'orbitPause';
+const ORBIT_PERIOD_MS = 20;
 const PAUSE_AFTER_NS = 100 * 1e6;
-const ATTACK_RANGE = 12;
+const ATTACK_RANGE = 22;
+const MIN_RANGE = 16;
 const LIFT_SEC = 4;
 const HOLD_SEC = 0.5;
 const REFILL_JOIN_SEC = 0.8;
@@ -339,9 +340,6 @@ function updateOrbit(npc) {
 }
 
 function getCombatTarget(npc) {
-  if (!npc.isAttacking()) {
-    return null;
-  }
   const target = npc.getAttackTarget();
   if (!target || !target.isAlive()) {
     return null;
@@ -380,17 +378,23 @@ function applyCombat(npc) {
 
   const ai = npc.getAi();
   ai.setRetaliateType(0);
-  ai.setReturnsHome(true);
+  ai.setReturnsHome(false);
+  ai.setLeapAtTarget(false);
   ai.setStopOnInteract(false);
   ai.setAttackLOS(true);
   ai.setWalkingSpeed(WALK_SPEED);
   const nbt = npc.getEntityNbt();
-  nbt.setInteger('FactionID', 2);
   nbt.setBoolean('AttackOtherFactions', true);
+  if (!npc.getTempdata().get('duelNoDamage')) {
+    nbt.setInteger('FactionID', 2);
+  }
   npc.setEntityNbt(nbt);
 }
 
 function needsFactionReset(npc) {
+  if (npc.getTempdata().get('duelNoDamage')) {
+    return false;
+  }
   const faction = npc.getFaction();
   return !faction || faction.getId() !== 2;
 }
@@ -567,11 +571,38 @@ function pointLeftArmAt(npc, wx, wy, wz) {
   setLeftArm(npc, aim.x, aim.y, aim.z);
 }
 
+function yawToward(from, to) {
+  const dx = to.getX() - from.getX();
+  const dz = to.getZ() - from.getZ();
+  return (Math.atan2(-dx, dz) * 180) / Math.PI;
+}
+
 function holdOrChase(npc, target) {
-  if (distanceTo(npc, target) <= ATTACK_RANGE) {
+  const dist = distanceTo(npc, target);
+  npc.setRotation(yawToward(npc, target));
+  if (npc.getTempdata().get('duelNoDamage')) {
+    const ai = npc.getAi();
+    ai.setReturnsHome(false);
+    ai.setLeapAtTarget(false);
+    ai.setRetaliateType(3);
+  }
+  if (dist < MIN_RANGE) {
+    npc.getAi().setWalkingSpeed(WALK_SPEED);
+    npc.clearNavigation();
+    npc.setMoveForward(-1);
+    const dx = npc.getX() - target.getX();
+    const dz = npc.getZ() - target.getZ();
+    const len = Math.sqrt(dx * dx + dz * dz) || 1;
+    npc.setMotionX((dx / len) * 0.25);
+    npc.setMotionZ((dz / len) * 0.25);
+    return;
+  }
+  if (dist <= ATTACK_RANGE) {
     npc.getAi().setWalkingSpeed(0);
     npc.clearNavigation();
     npc.setMoveForward(0);
+    npc.setMotionX(0);
+    npc.setMotionZ(0);
     return;
   }
   npc.getAi().setWalkingSpeed(WALK_SPEED);
@@ -913,31 +944,13 @@ function tryStartCast(npc) {
   startCast(npc, target);
 }
 
-function interruptThread(thread) {
-  if (!thread) {
-    return;
-  }
-  try {
-    thread.interrupt();
-  } catch (err) {}
+function orbitJobId(npc) {
+  return 'aldric-orbit:' + npc.getUUID();
 }
 
-function stopNamedOrbitThreads(uuid) {
-  const name = threadName(uuid);
-  const threads = Java.from(Thread.getAllStackTraces().keySet().toArray());
-  for (let i = 0; i < threads.length; i++) {
-    const thread = threads[i];
-    if (thread && thread.getName() === name && thread !== Thread.currentThread()) {
-      interruptThread(thread);
-    }
-  }
-}
-
-function stopOrbitThread(npc) {
-  const stored = npc.getTempdata().get(THREAD_KEY);
-  interruptThread(stored);
-  npc.getTempdata().remove(THREAD_KEY);
-  stopNamedOrbitThreads(npc.getUUID());
+function stopOrbitLoop(npc) {
+  unsubscribe(npc.getWorld(), orbitJobId(npc));
+  stopThreadsNamed(threadName(npc.getUUID()));
 }
 
 function getServer(world) {
@@ -982,80 +995,48 @@ function shiftPausedClocks(npc, delta) {
   }
 }
 
-function startOrbitThread(npc) {
-  stopOrbitThread(npc);
+function updateOrbitLoop(npc) {
+  const server = getServer(npc.getWorld());
+  if (!server) {
+    return;
+  }
+  const tick = serverTickCount(server);
+  const now = System.nanoTime();
+  const pause = npc.getTempdata().get(PAUSE_KEY) || {
+    lastTick: -1,
+    lastTickNanos: now,
+    pausedSince: 0,
+  };
+  if (tick !== pause.lastTick) {
+    pause.lastTick = tick;
+    pause.lastTickNanos = now;
+  }
+  if (now - pause.lastTickNanos > PAUSE_AFTER_NS) {
+    if (!pause.pausedSince) {
+      pause.pausedSince = now;
+    }
+    npc.getTempdata().put(PAUSE_KEY, pause);
+    return;
+  }
+  if (pause.pausedSince) {
+    shiftPausedClocks(npc, now - pause.pausedSince);
+    pause.pausedSince = 0;
+  }
+  npc.getTempdata().put(PAUSE_KEY, pause);
+  tryStartCast(npc);
+  updateCast(npc);
+  updateRefill(npc);
+  updateOrbit(npc);
+}
+
+function startOrbitLoop(npc) {
+  stopOrbitLoop(npc);
   if (npc.getTimers().has(ORBIT_TIMER)) {
     npc.getTimers().stop(ORBIT_TIMER);
   }
-
-  const uuid = npc.getUUID();
-  const world = npc.getWorld();
-  const server = getServer(world);
-  const gen = (npc.getTempdata().get(GEN_KEY) || 0) + 1;
-  npc.getTempdata().put(GEN_KEY, gen);
   npc.getTempdata().put(START_KEY, System.nanoTime());
-  world.getTempdata().remove('orbitThreadError');
-
-  const Runnable = Java.type('java.lang.Runnable');
-  const thread = new Thread(
-    new Runnable({
-      run: function () {
-        try {
-          let lastTick = -1;
-          let lastTickNanos = System.nanoTime();
-          let pausedSince = 0;
-          while (!Thread.currentThread().isInterrupted()) {
-            if (!server) {
-              break;
-            }
-            const tick = serverTickCount(server);
-            const now = System.nanoTime();
-            if (tick !== lastTick) {
-              lastTick = tick;
-              lastTickNanos = now;
-            }
-            const paused = now - lastTickNanos > PAUSE_AFTER_NS;
-            if (paused) {
-              if (!pausedSince) {
-                pausedSince = now;
-              }
-              Thread.sleep(THREAD_SLEEP_MS);
-              continue;
-            }
-            if (pausedSince) {
-              const pausedFor = now - pausedSince;
-              pausedSince = 0;
-              server.execute(function () {
-                const current = world.getEntity(uuid);
-                if (current && current.isAlive() && current.getTempdata().get(GEN_KEY) === gen) {
-                  shiftPausedClocks(current, pausedFor);
-                }
-              });
-            }
-            server.execute(function () {
-              const current = world.getEntity(uuid);
-              if (!current || !current.isAlive() || current.getTempdata().get(GEN_KEY) !== gen) {
-                return;
-              }
-              tryStartCast(current);
-              updateCast(current);
-              updateRefill(current);
-              updateOrbit(current);
-            });
-            Thread.sleep(THREAD_SLEEP_MS);
-          }
-        } catch (err) {
-          if (String(err).indexOf('InterruptedException') === -1) {
-            world.getTempdata().put('orbitThreadError', String(err));
-          }
-        }
-      },
-    })
-  );
-  thread.setName(threadName(uuid));
-  thread.setDaemon(true);
-  npc.getTempdata().put(THREAD_KEY, thread);
-  thread.start();
+  npc.getTempdata().remove(PAUSE_KEY);
+  subscribe(npc.getWorld(), orbitJobId(npc), npc, ORBIT_PERIOD_MS, updateOrbitLoop);
 }
 
 function clearVanillaShots(projectiles) {
@@ -1077,7 +1058,7 @@ function clearNearbyVanillaShots(npc) {
     if (!ent || !ent.despawn) {
       continue;
     }
-    if (ent.hasTag && (ent.hasTag(orbitTag(npc)) || ent.hasTag(shotTag(npc)))) {
+    if (ent.hasTag && (ent.hasTag(ORBIT_TAG) || ent.hasTag(SHOT_TAG))) {
       continue;
     }
     ent.despawn();
@@ -1085,7 +1066,7 @@ function clearNearbyVanillaShots(npc) {
 }
 
 export function init(e) {
-  stopOrbitThread(e.npc);
+  stopOrbitLoop(e.npc);
   applyCombat(e.npc);
   ensurePuppetJob(e.npc);
   if (needsFactionReset(e.npc) || needsPuppetReset(e.npc)) {
@@ -1098,7 +1079,7 @@ export function init(e) {
     setElement(e.npc, ELEMENT_MAGMA);
   }
   recoverOrbit(e.npc);
-  startOrbitThread(e.npc);
+  startOrbitLoop(e.npc);
 }
 
 export function tick(e) {
@@ -1127,8 +1108,18 @@ export function meleeAttack(e) {
   e.damage = 0;
 }
 
+export function damaged(e) {
+  if (!e.npc.getTempdata().get('duelNoDamage')) {
+    return;
+  }
+  e.damage = 0;
+  try {
+    e.setCanceled(true);
+  } catch (err) {}
+}
+
 export function died(e) {
-  stopOrbitThread(e.npc);
+  stopOrbitLoop(e.npc);
   if (e.npc.getTimers().has(ORBIT_TIMER)) {
     e.npc.getTimers().stop(ORBIT_TIMER);
   }
