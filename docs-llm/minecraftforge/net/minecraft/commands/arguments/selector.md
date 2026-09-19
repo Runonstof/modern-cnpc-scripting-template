@@ -1,0 +1,191 @@
+# net.minecraft.commands.arguments.selector
+
+- [EntitySelector](#entityselector)
+- [EntitySelectorParser](#entityselectorparser)
+## EntitySelector
+
+*class* `net.minecraft.commands.arguments.selector.EntitySelector`
+
+### Fields
+- `public static final int INFINITE` (= 2147483647)
+- `public static final BiConsumer<Vec3,List<? extends Entity>> ORDER_ARBITRARY`
+- `private static final EntityTypeTest<Entity,?> ANY_TYPE`
+- `private final int maxResults`
+- `private final boolean includesEntities`
+- `private final boolean worldLimited`
+- `private final Predicate<Entity> predicate`
+- `private final MinMaxBounds.Doubles range`
+- `private final Function<Vec3,Vec3> position`
+- `@Nullable private final AABB aabb`
+- `private final BiConsumer<Vec3,List<? extends Entity>> order`
+- `private final boolean currentEntity`
+- `@Nullable private final String playerName`
+- `@Nullable private final UUID entityUUID`
+- `private final EntityTypeTest<Entity,?> type`
+- `private final boolean usesSelector`
+
+### Methods
+- `public int getMaxResults()`
+- `public boolean includesEntities()`
+- `public boolean isSelfSelector()`
+- `public boolean isWorldLimited()`
+- `public boolean usesSelector()`
+- `private void checkPermissions(CommandSourceStack p_121169_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `public Entity findSingleEntity(CommandSourceStack p_121140_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `public List<? extends Entity> findEntities(CommandSourceStack p_121161_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `private List<? extends Entity> findEntitiesRaw(CommandSourceStack p_251934_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `private void addEntities(List<Entity> p_121155_,  ServerLevel p_121156_,  Vec3 p_121157_,  Predicate<Entity> p_121158_)`
+- `private int getResultLimit()`
+- `public ServerPlayer findSinglePlayer(CommandSourceStack p_121164_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `public List<ServerPlayer> findPlayers(CommandSourceStack p_121167_)  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `private Predicate<Entity> getPredicate(Vec3 p_121145_)`
+- `private <T extends Entity> List<T> sortAndLimit(Vec3 p_121150_,  List<T> p_121151_)`
+- `public static Component joinNames(List<? extends Entity> p_175104_)`
+
+## EntitySelectorParser
+
+*class* `net.minecraft.commands.arguments.selector.EntitySelectorParser`
+
+### Fields
+- `public static final char SYNTAX_SELECTOR_START` (= '@')
+- `private static final char SYNTAX_OPTIONS_START` (= '[')
+- `private static final char SYNTAX_OPTIONS_END` (= ']')
+- `public static final char SYNTAX_OPTIONS_KEY_VALUE_SEPARATOR` (= '=')
+- `private static final char SYNTAX_OPTIONS_SEPARATOR` (= ',')
+- `public static final char SYNTAX_NOT` (= '!')
+- `public static final char SYNTAX_TAG` (= '#')
+- `private static final char SELECTOR_NEAREST_PLAYER` (= 'p')
+- `private static final char SELECTOR_ALL_PLAYERS` (= 'a')
+- `private static final char SELECTOR_RANDOM_PLAYERS` (= 'r')
+- `private static final char SELECTOR_CURRENT_ENTITY` (= 's')
+- `private static final char SELECTOR_ALL_ENTITIES` (= 'e')
+- `public static final com.mojang.brigadier.exceptions.SimpleCommandExceptionType ERROR_INVALID_NAME_OR_UUID`
+- `public static final com.mojang.brigadier.exceptions.DynamicCommandExceptionType ERROR_UNKNOWN_SELECTOR_TYPE`
+- `public static final com.mojang.brigadier.exceptions.SimpleCommandExceptionType ERROR_SELECTORS_NOT_ALLOWED`
+- `public static final com.mojang.brigadier.exceptions.SimpleCommandExceptionType ERROR_MISSING_SELECTOR_TYPE`
+- `public static final com.mojang.brigadier.exceptions.SimpleCommandExceptionType ERROR_EXPECTED_END_OF_OPTIONS`
+- `public static final com.mojang.brigadier.exceptions.DynamicCommandExceptionType ERROR_EXPECTED_OPTION_VALUE`
+- `public static final BiConsumer<Vec3,List<? extends Entity>> ORDER_NEAREST`
+- `public static final BiConsumer<Vec3,List<? extends Entity>> ORDER_FURTHEST`
+- `public static final BiConsumer<Vec3,List<? extends Entity>> ORDER_RANDOM`
+- `public static final BiFunction<com.mojang.brigadier.suggestion.SuggestionsBuilder,Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder>,CompletableFuture<com.mojang.brigadier.suggestion.Suggestions>> SUGGEST_NOTHING`
+- `private final com.mojang.brigadier.StringReader reader`
+- `private final boolean allowSelectors`
+- `private int maxResults`
+- `private boolean includesEntities`
+- `private boolean worldLimited`
+- `private MinMaxBounds.Doubles distance`
+- `private MinMaxBounds.Ints level`
+- `@Nullable private Double x`
+- `@Nullable private Double y`
+- `@Nullable private Double z`
+- `@Nullable private Double deltaX`
+- `@Nullable private Double deltaY`
+- `@Nullable private Double deltaZ`
+- `private WrappedMinMaxBounds rotX`
+- `private WrappedMinMaxBounds rotY`
+- `private Predicate<Entity> predicate`
+- `private BiConsumer<Vec3,List<? extends Entity>> order`
+- `private boolean currentEntity`
+- `@Nullable private String playerName`
+- `private int startPosition`
+- `@Nullable private UUID entityUUID`
+- `private BiFunction<com.mojang.brigadier.suggestion.SuggestionsBuilder,Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder>,CompletableFuture<com.mojang.brigadier.suggestion.Suggestions>> suggestions`
+- `private boolean hasNameEquals`
+- `private boolean hasNameNotEquals`
+- `private boolean isLimited`
+- `private boolean isSorted`
+- `private boolean hasGamemodeEquals`
+- `private boolean hasGamemodeNotEquals`
+- `private boolean hasTeamEquals`
+- `private boolean hasTeamNotEquals`
+- `@Nullable private EntityType<?> type`
+- `private boolean typeInverse`
+- `private boolean hasScores`
+- `private boolean hasAdvancements`
+- `private boolean usesSelectors`
+
+### Methods
+- `public EntitySelector getSelector()`
+- `private AABB createAabb(double p_121234_,  double p_121235_,  double p_121236_)`
+- `public void finalizePredicates()`
+- `private Predicate<Entity> createRotationPredicate(WrappedMinMaxBounds p_121255_,  ToDoubleFunction<Entity> p_121256_)`
+- `protected void parseSelector()  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `protected void parseNameOrUUID()  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `public void parseOptions()  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `public boolean shouldInvertValue()`
+- `public boolean isTag()`
+- `public com.mojang.brigadier.StringReader getReader()`
+- `public void addPredicate(Predicate<Entity> p_121273_)`
+- `public void setWorldLimited()`
+- `public MinMaxBounds.Doubles getDistance()`
+- `public void setDistance(MinMaxBounds.Doubles p_175128_)`
+- `public MinMaxBounds.Ints getLevel()`
+- `public void setLevel(MinMaxBounds.Ints p_121246_)`
+- `public WrappedMinMaxBounds getRotX()`
+- `public void setRotX(WrappedMinMaxBounds p_121253_)`
+- `public WrappedMinMaxBounds getRotY()`
+- `public void setRotY(WrappedMinMaxBounds p_121290_)`
+- `@Nullable public Double getX()`
+- `@Nullable public Double getY()`
+- `@Nullable public Double getZ()`
+- `public void setX(double p_121232_)`
+- `public void setY(double p_121283_)`
+- `public void setZ(double p_121306_)`
+- `public void setDeltaX(double p_121319_)`
+- `public void setDeltaY(double p_121332_)`
+- `public void setDeltaZ(double p_121340_)`
+- `@Nullable public Double getDeltaX()`
+- `@Nullable public Double getDeltaY()`
+- `@Nullable public Double getDeltaZ()`
+- `public void setMaxResults(int p_121238_)`
+- `public void setIncludesEntities(boolean p_121280_)`
+- `public BiConsumer<Vec3,List<? extends Entity>> getOrder()`
+- `public void setOrder(BiConsumer<Vec3,List<? extends Entity>> p_121269_)`
+- `public EntitySelector parse()  throws com.mojang.brigadier.exceptions.CommandSyntaxException`
+  - throws: com.mojang.brigadier.exceptions.CommandSyntaxException
+- `private static void fillSelectorSuggestions(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121248_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestNameOrSelector(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121287_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121288_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestName(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121310_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121311_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestSelector(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121323_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121324_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestOpenOptions(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121334_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121335_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestOptionsKeyOrClose(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121342_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121343_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestOptionsKey(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121348_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121349_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestOptionsNextOrClose(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121354_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121355_)`
+- `private CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> suggestEquals(com.mojang.brigadier.suggestion.SuggestionsBuilder p_175144_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_175145_)`
+- `public boolean isCurrentEntity()`
+- `public void setSuggestions(BiFunction<com.mojang.brigadier.suggestion.SuggestionsBuilder,Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder>,CompletableFuture<com.mojang.brigadier.suggestion.Suggestions>> p_121271_)`
+- `public CompletableFuture<com.mojang.brigadier.suggestion.Suggestions> fillSuggestions(com.mojang.brigadier.suggestion.SuggestionsBuilder p_121250_,  Consumer<com.mojang.brigadier.suggestion.SuggestionsBuilder> p_121251_)`
+- `public boolean hasNameEquals()`
+- `public void setHasNameEquals(boolean p_121303_)`
+- `public boolean hasNameNotEquals()`
+- `public void setHasNameNotEquals(boolean p_121316_)`
+- `public boolean isLimited()`
+- `public void setLimited(boolean p_121329_)`
+- `public boolean isSorted()`
+- `public void setSorted(boolean p_121337_)`
+- `public boolean hasGamemodeEquals()`
+- `public void setHasGamemodeEquals(boolean p_121345_)`
+- `public boolean hasGamemodeNotEquals()`
+- `public void setHasGamemodeNotEquals(boolean p_121351_)`
+- `public boolean hasTeamEquals()`
+- `public void setHasTeamEquals(boolean p_121357_)`
+- `public boolean hasTeamNotEquals()`
+- `public void setHasTeamNotEquals(boolean p_121360_)`
+- `public void limitToType(EntityType<?> p_121242_)`
+- `public void setTypeLimitedInversely()`
+- `public boolean isTypeLimited()`
+- `public boolean isTypeLimitedInversely()`
+- `public boolean hasScores()`
+- `public void setHasScores(boolean p_121366_)`
+- `public boolean hasAdvancements()`
+- `public void setHasAdvancements(boolean p_121369_)`

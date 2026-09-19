@@ -61,6 +61,9 @@ ES6 code can be written in the `src` folder and will be transpiled to the `ecmas
 CustomNPCs is the mod that leverages Nashorn to execute the scripts.
 This is the most important mod to make this project possible.
 
+The API is not always a clean write-through to what the client or a clone actually stores. Display, NBT, `reset()`, and clones have a few sharp edges; those are in [CAVEATS.md](CAVEATS.md). Read that before changing NPC appearance or saving clones.
+
+
 In CustomNPCs, there are 5 kinds of scripts that can be created (plus a project-only `debug` entry):
 - Player scripts: These are scripts that are executed for each player that is online. They can hook into player events like `chat`, `kill`, `levelUp`, etc.
 You cannot load different scripts for different players. You set them globally for all players and if needed, you can single out a player inside the script.
@@ -83,12 +86,24 @@ The folder structure is as follows:
 - `src/(players|npcs|blocks|items|forge|debug)`: These folders contain scripts per type. The scripts in here are entry points for the transpiler to find and transpile the code. `debug` is for agent verification scripts and is compiled into `ecmascript/debug/`.
 - `src/*`: src is not limited to the above folders. You can put any script and any folder inside it, especially handy for helpers or utils.
 - `ecmascript`: This folder contains the transpiled ES5 code, based on what is inside the `src/(players|npcs|blocks|items|forge|debug)` folders.
-- `docs/<name>`: Raw Javadoc HTML dumps (CustomNPCs lives in `docs/customnpcs`).
-- `docs-llm`: Scraped API reference, one folder per dump. Start at `docs-llm/index.md`; CustomNPCs hooks are in `docs-llm/customnpcs/events.md`.
-- `bin`: Project CLI helpers for agents. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Do not load `docs-llm/api.json` into context; look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file) into context; always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
+- `docs/<name>`: Raw Javadoc HTML dumps. **Do not Read, Grep, or Glob `docs/`.** Use `docs-llm/` or `node bin/get-class-info.js`.
+- `docs-llm`: Scraped API reference. Prefer `node bin/get-class-info.js` over opening these files. If you must read markdown, start at `docs-llm/index.md` or `docs-llm/customnpcs/events.md`. Never load `docs-llm/api.json` into context.
+- `CAVEATS.md`: CustomNPCs quirks (display vs NBT, `reset()`, clones). See **CustomNPCs** above.
+- `bin`: Project CLI helpers. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file); always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
 - `.agent`: Agent scratchpad. See **Scratchpad (`.agent`)** below.
 
 So its important to note that `ecmascript/` should not be modified manually.
+
+## Token hygiene
+
+This file is already in context every turn. Do **not** Read `AGENTS.md`, `CLAUDE.md`, `bin/execute.js`, or `src/debug/ai-integration.js` unless you are editing that file.
+
+- API lookup: `node bin/get-class-info.js <Name>` first. Read one `docs-llm/**/*.md` file only if that miss. Never Read/Grep/Glob `docs/` (raw HTML).
+- Grep: always set `head_limit` (40 is enough). Scope to a folder; do not grep the repo root or all of `docs-llm/`.
+- Read: always pass `limit` (and `offset` to continue). Do not reread a file you already have in this chat.
+- Shell: keep `execute.js` results small (UUID, a few fields). Do not dump NBT, class lists, or nearby-entity arrays into the transcript.
+- Edits: `StrReplace` the changed hunk. Do not `Write` a whole existing file unless creating it.
+- `GetDynamicTools`: pass `toolName`. Do not dump a whole namespace.
 
 ## Scratchpad (`.agent`)
 

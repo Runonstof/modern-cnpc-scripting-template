@@ -6,5 +6,7 @@ Each folder under `docs/` is a Javadoc dump. This tree is generated from all of 
 
 - [customnpcs](customnpcs/index.md) — 205 types, 12 packages
   - [Event hooks](customnpcs/events.md)
+- [minecraftforge](minecraftforge/index.md) — 7853 types, 421 packages
+  - [Event hooks](minecraftforge/events.md)
 
 - [api.json](api.json) — machine-readable dump

@@ -1,5 +1,6 @@
 # Scripting API docs
 
-Use Markdown under each source folder first. Open api.json only for structured lookup.
+Use Markdown under each source folder first. Don't open api.json directly, but use `node bin/get-class-info.js <name|fqn|package|source> [...]` to lookup types..
 
 - customnpcs/index.md: customnpcs
+- minecraftforge/index.md: minecraftforge

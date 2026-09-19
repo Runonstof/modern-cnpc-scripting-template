@@ -1,8 +1,22 @@
 /**
  * Maintainer tool: scrape Javadoc HTML dumps in docs/<source>/ into docs-llm/.
  *
- * Put each Javadoc site in its own folder, e.g. docs/customnpcs/, then:
+ * Usage:
  *   npm run docs:llm
+ *   node tools/scrape-docs-llm.js
+ *
+ * Example:
+ *   1. Drop a Javadoc site into docs/<name>/  (e.g. docs/customnpcs/)
+ *   2. From the repo root:
+ *        npm run docs:llm
+ *   3. Output:
+ *        docs-llm/index.md          — all sources
+ *        docs-llm/<name>/index.md   — packages for that dump
+ *        docs-llm/<name>/events.md  — script hooks (if event types exist)
+ *        docs-llm/api.json          — machine-readable types (all sources)
+ *
+ * No CLI flags. Every immediate subdirectory of docs/ is treated as one source.
+ * docs-llm/ is wiped and rewritten each run.
  *
  * Coding agents should read docs-llm/ only; they do not need this script.
  */
@@ -393,7 +407,7 @@ function writeSourceMarkdown(source, types) {
   const llmsLines = [
     "# " + source.id + " API",
     "",
-    "Use the Markdown packages first. Open ../api.json only for structured lookup.",
+    "Use the Markdown packages first. Don't open ../api.json directly, but use `node bin/get-class-info.js <name|fqn|package|source> [...]` to lookup types.",
     "",
   ];
 
@@ -448,7 +462,7 @@ function main() {
   const llmsLines = [
     "# Scripting API docs",
     "",
-    "Use Markdown under each source folder first. Open api.json only for structured lookup.",
+    "Use Markdown under each source folder first. Don't open api.json directly, but use `node bin/get-class-info.js <name|fqn|package|source> [...]` to lookup types..",
     "",
   ];
 
