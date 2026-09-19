@@ -1,23 +1,37 @@
 # net.minecraft.client.player.inventory
 
-- [Hotbar](#hotbar)
-## Hotbar
+- [ContainerLocalMenu](#containerlocalmenu)
+- [LocalBlockIntercommunication](#localblockintercommunication)
+## ContainerLocalMenu
 
-*class* `net.minecraft.client.player.inventory.Hotbar`
+*class* `net.minecraft.client.player.inventory.ContainerLocalMenu`
 
-### Fields
-- `private final NonNullList<ItemStack> items`
+All Implemented Interfaces: IInventory, IInteractionObject, ILockableContainer, IWorldNameable
 
 ### Methods
-- `protected List<ItemStack> delegate()`
-- `public ListTag createTag()`
-- `public void fromTag(ListTag p_108784_)`
-- `public boolean isEmpty()`
+- `public int getField(int id)`
+- `public void setField(int id,  int value)`
+- `public int getFieldCount()`
+- `public boolean isLocked()`
+- `public void setLockCode(LockCode code)`
+- `public LockCode getLockCode()`
+- `public java.lang.String getGuiID()`
+- `public Container createContainer(InventoryPlayer playerInventory,  EntityPlayer playerIn)`
 
 ### Inherited methods
-- from `com.google.common.collect.ForwardingList`: `add`, `addAll`, `equals`, `get`, `hashCode`, `indexOf`, `lastIndexOf`, `listIterator`, `listIterator`, `remove`, `set`, `standardAdd`, `standardAddAll`, `standardEquals`, `standardHashCode`, `standardIndexOf`, `standardIterator`, `standardLastIndexOf`, `standardListIterator`, `standardListIterator`, `standardSubList`, `subList`
-- from `com.google.common.collect.ForwardingCollection`: `add`, `addAll`, `clear`, `contains`, `containsAll`, `iterator`, `remove`, `removeAll`, `retainAll`, `size`, `standardAddAll`, `standardClear`, `standardContains`, `standardContainsAll`, `standardIsEmpty`, `standardRemove`, `standardRemoveAll`, `standardRetainAll`, `standardToArray`, `standardToArray`, `standardToString`, `toArray`, `toArray`
-- from `com.google.common.collect.ForwardingObject`: `toString`
-- from `java.util.Collection`: `parallelStream`, `removeIf`, `stream`, `toArray`
-- from `java.lang.Iterable`: `forEach`
-- from `java.util.List`: `add`, `addAll`, `clear`, `contains`, `containsAll`, `iterator`, `remove`, `removeAll`, `replaceAll`, `retainAll`, `size`, `sort`, `spliterator`, `toArray`, `toArray`
+- from `net.minecraft.inventory.InventoryBasic`: `addInventoryChangeListener`, `addItem`, `clear`, `closeInventory`, `decrStackSize`, `getDisplayName`, `getInventoryStackLimit`, `getName`, `getSizeInventory`, `getStackInSlot`, `hasCustomName`, `isEmpty`, `isItemValidForSlot`, `isUsableByPlayer`, `markDirty`, `openInventory`, `removeInventoryChangeListener`, `removeStackFromSlot`, `setCustomName`, `setInventorySlotContents`
+- from `net.minecraft.inventory.IInventory`: `clear`, `closeInventory`, `decrStackSize`, `getInventoryStackLimit`, `getSizeInventory`, `getStackInSlot`, `isEmpty`, `isItemValidForSlot`, `isUsableByPlayer`, `markDirty`, `openInventory`, `removeStackFromSlot`, `setInventorySlotContents`
+- from `net.minecraft.world.IWorldNameable`: `getDisplayName`, `getName`, `hasCustomName`
+
+## LocalBlockIntercommunication
+
+*class* `net.minecraft.client.player.inventory.LocalBlockIntercommunication`
+
+All Implemented Interfaces: IInteractionObject, IWorldNameable
+
+### Methods
+- `public Container createContainer(InventoryPlayer playerInventory,  EntityPlayer playerIn)`
+- `public java.lang.String getName()`
+- `public boolean hasCustomName()`
+- `public java.lang.String getGuiID()`
+- `public ITextComponent getDisplayName()`

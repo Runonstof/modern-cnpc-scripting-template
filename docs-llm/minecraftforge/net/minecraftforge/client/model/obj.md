@@ -1,233 +1,416 @@
 # net.minecraftforge.client.model.obj
 
-- [ObjLoader](#objloader)
-- [ObjMaterialLibrary](#objmateriallibrary)
-- [ObjMaterialLibrary.Material](#objmateriallibrary.material)
-- [ObjModel](#objmodel)
-- [ObjModel.ModelGroup](#objmodel.modelgroup)
-- [ObjModel.ModelMesh](#objmodel.modelmesh)
-- [ObjModel.ModelObject](#objmodel.modelobject)
-- [ObjModel.ModelSettings](#objmodel.modelsettings)
-- [ObjTokenizer](#objtokenizer)
-## ObjLoader
+- [OBJLoader](#objloader)
+- [OBJModel](#objmodel)
+- [OBJModel.Face](#objmodel.face)
+- [OBJModel.Group](#objmodel.group)
+- [OBJModel.Material](#objmodel.material)
+- [OBJModel.MaterialLibrary](#objmodel.materiallibrary)
+- [OBJModel.Normal](#objmodel.normal)
+- [OBJModel.OBJBakedModel](#objmodel.objbakedmodel)
+- [OBJModel.OBJProperty](#objmodel.objproperty)
+- [OBJModel.OBJState](#objmodel.objstate)
+- [OBJModel.OBJState.Operation](#objmodel.objstate.operation)
+- [OBJModel.Parser](#objmodel.parser)
+- [OBJModel.Texture](#objmodel.texture)
+- [OBJModel.TextureCoordinate](#objmodel.texturecoordinate)
+- [OBJModel.UVsOutOfBoundsException](#objmodel.uvsoutofboundsexception)
+- [OBJModel.Vertex](#objmodel.vertex)
+## OBJLoader
 
-*class* `net.minecraftforge.client.model.obj.ObjLoader`
+*enum* `net.minecraftforge.client.model.obj.OBJLoader`
 
-A loader for OBJ models.
-
- Allows the user to enable automatic face culling, toggle quad shading, flip UVs, render emissively and specify a
- material library override.
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<OBJLoader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
 
 ### Fields
-- `public static ObjLoader INSTANCE`
-- `private final Map<ObjModel.ModelSettings,ObjModel> modelCache`
-- `private final Map<ResourceLocation,ObjMaterialLibrary> materialCache`
-- `private ResourceManager manager`
+- `public static final OBJLoader INSTANCE`
 
 ### Methods
-- `public void onResourceManagerReload(ResourceManager resourceManager)`
-- `public ObjModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)`
-- `public ObjModel loadModel(ObjModel.ModelSettings settings)`
-- `public ObjMaterialLibrary loadMaterialLibrary(ResourceLocation materialLocation)`
+- `public static OBJLoader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (OBJLoader c : OBJLoader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static OBJLoader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void addDomain(java.lang.String domain)`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)  throws java.lang.Exception`
+  - throws: java.lang.Exception
 
 ### Inherited methods
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
-- from `net.minecraft.server.packs.resources.ResourceManagerReloadListener`: `reload`
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
 
-## ObjMaterialLibrary
+## OBJModel
 
-*class* `net.minecraftforge.client.model.obj.ObjMaterialLibrary`
+*class* `net.minecraftforge.client.model.obj.OBJModel`
 
-An OBJ material library (MTL), composed of named materials.
-
-### Fields
-- `public static final ObjMaterialLibrary EMPTY`
-- `final Map<String,ObjMaterialLibrary.Material> materials`
+All Implemented Interfaces: IModel
 
 ### Methods
-- `public ObjMaterialLibrary.Material getMaterial(String mat)`
-
-## ObjMaterialLibrary.Material
-
-*class* `net.minecraftforge.client.model.obj.ObjMaterialLibrary.Material`
-
-Enclosing class: ObjMaterialLibrary
-
-### Fields
-- `public final String name`
-- `public org.joml.Vector4f ambientColor`
-- `public String ambientColorMap`
-- `public org.joml.Vector4f diffuseColor`
-- `public String diffuseColorMap`
-- `public org.joml.Vector4f specularColor`
-- `public float specularHighlight`
-- `public String specularColorMap`
-- `public float dissolve`
-- `public float transparency`
-- `public int diffuseTintIndex`
-
-## ObjModel
-
-*class* `net.minecraftforge.client.model.obj.ObjModel`
-
-A model loaded from an OBJ file.
-
- Supports positions, texture coordinates, normals and colors. The material library
- has support for numerous features, including support for ResourceLocation textures (non-standard).
-
-### Fields
-- `private static final org.joml.Vector4f COLOR_WHITE`
-- `private static final Vec2[] DEFAULT_COORDS`
-- `private final Map<String,ObjModel.ModelGroup> parts`
-- `private final Set<String> rootComponentNames`
-- `private Set<String> allComponentNames`
-- `private final List<org.joml.Vector3f> positions`
-- `private final List<Vec2> texCoords`
-- `private final List<org.joml.Vector3f> normals`
-- `private final List<org.joml.Vector4f> colors`
-- `public final boolean automaticCulling`
-- `public final boolean shadeQuads`
-- `public final boolean flipV`
-- `public final boolean emissiveAmbient`
-- `@Nullable public final @Nullable String mtlOverride`
-- `public final ResourceLocation modelLocation`
-
-### Methods
-- `public static ObjModel parse(ObjTokenizer tokenizer,  ObjModel.ModelSettings settings)  throws IOException`
-  - throws: IOException
-- `private static org.joml.Vector3f parseVector4To3(String[] line)`
-- `private static Vec2 parseVector2(String[] line)`
-- `private static org.joml.Vector3f parseVector3(String[] line)`
-- `static org.joml.Vector4f parseVector4(String[] line)`
-- `protected void addQuads(IGeometryBakingContext owner,  IModelBuilder<?> modelBuilder,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelTransform,  ResourceLocation modelLocation)`
-- `public Set<String> getRootComponentNames()`
-- `public Set<String> getConfigurableComponentNames()`
-  Description copied from interface: IUnbakedGeometry
-  Returns a set of all the components whose visibility may be configured via IGeometryBakingContext.
-  - returns: a set of all the components whose visibility may be configured via IGeometryBakingContext
-- `private org.apache.commons.lang3.tuple.Pair<BakedQuad,Direction> makeQuad(int[][] indices,  int tintIndex,  org.joml.Vector4f colorTint,  org.joml.Vector4f ambientColor,  TextureAtlasSprite texture,  Transformation transform)`
-- `public CompositeRenderable bakeRenderable(IGeometryBakingContext configuration)`
+- `public java.util.Collection<ResourceLocation> getTextures()`
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `public OBJModel.MaterialLibrary getMatLib()`
+- `public IModel process(<any> customData)`
+  Description copied from interface: IModel
+  Allows the model to process custom data from the variant definition.
+   If unknown data is encountered it should be skipped.
+  - returns: a new model, with data applied.
+- `public IModel retexture(<any> textures)`
+  Description copied from interface: IModel
+  Applies new textures to the model.
+   The returned model should be independent of the accessed one,
+   as a model should be able to be retextured multiple times producing
+   a separate model each time.
+  
+   The input map MAY map to an empty string "" which should be used
+   to indicate the texture was removed. Handling of that is up to
+   the model itself. Such as using default, missing texture, or
+   removing vertices.
+  
+   The input should be considered a DIFF of the old textures, not a
+   replacement as it may not contain everything.
+  - param: textures - New
+  - returns: Model with textures applied.
 
 ### Inherited methods
-- from `net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry`: `bake`
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `resolveParents`
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `getDependencies`, `gui3d`, `smoothLighting`, `uvlock`
 
-## ObjModel.ModelGroup
+## OBJModel.Face
 
-*class* `net.minecraftforge.client.model.obj.ObjModel.ModelGroup`
+*class* `net.minecraftforge.client.model.obj.OBJModel.Face`
 
-Enclosing class: ObjModel
-
-### Fields
-- `final Map<String,ObjModel.ModelObject> parts`
-
-### Inherited fields
-- from `net.minecraftforge.client.model.obj.ObjModel.ModelObject`: `meshes`, `name`
+Enclosing class: OBJModel
 
 ### Methods
-- `public void addQuads(IGeometryBakingContext owner,  IModelBuilder<?> modelBuilder,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelTransform,  ResourceLocation modelLocation)`
-- `public void bake(CompositeRenderable.PartBuilder<?> builder,  IGeometryBakingContext configuration)`
-- `public Collection<Material> getTextures(IGeometryBakingContext owner,  Function<ResourceLocation,UnbakedModel> modelGetter,  Set<com.mojang.datafixers.util.Pair<String,String>> missingTextureErrors)`
-- `protected void addNamesRecursively(Set<String> names)`
+- `public void setMaterialName(java.lang.String materialName)`
+- `public java.lang.String getMaterialName()`
+- `public boolean isTriangles()`
+- `public boolean setVertices(OBJModel.Vertex[] verts)`
+- `public OBJModel.Vertex[] getVertices()`
+- `public OBJModel.Face bake(TRSRTransformation transform)`
+- `public OBJModel.Normal getNormal()`
+
+## OBJModel.Group
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Group`
+
+Deprecated.
+
+All Implemented Interfaces: IModelPart
+
+Enclosing class: OBJModel
+
+### Fields
+- `public static final java.lang.String DEFAULT_NAME` (= "OBJModel.Default.Element.Name", deprecated)
+  Deprecated.
+- `public static final java.lang.String ALL` (= "OBJModel.Group.All.Key", deprecated)
+  Deprecated.
+- `public static final java.lang.String ALL_EXCEPT` (= "OBJModel.Group.All.Except.Key", deprecated)
+  Deprecated.
+- `public float[] minUVBounds` (deprecated)
+  Deprecated.
+- `public float[] maxUVBounds` (deprecated)
+  Deprecated.
+
+### Methods
+- `public java.util.LinkedHashSet<OBJModel.Face> applyTransform(java.util.Optional<TRSRTransformation> transform)` (deprecated)
+  Deprecated.
+- `public java.lang.String getName()` (deprecated)
+  Deprecated.
+- `public java.util.LinkedHashSet<OBJModel.Face> getFaces()` (deprecated)
+  Deprecated.
+- `public void setFaces(java.util.LinkedHashSet<OBJModel.Face> faces)` (deprecated)
+  Deprecated.
+- `public void addFace(OBJModel.Face face)` (deprecated)
+  Deprecated.
+- `public void addFaces(java.util.List<OBJModel.Face> faces)` (deprecated)
+  Deprecated.
+
+## OBJModel.Material
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Material`
+
+Enclosing class: OBJModel
+
+### Fields
+- `public static final java.lang.String WHITE_NAME` (= "OBJModel.White.Texture.Name")
+- `public static final java.lang.String DEFAULT_NAME` (= "OBJModel.Default.Texture.Name")
+
+### Methods
+- `public void setName(java.lang.String name)`
+- `public java.lang.String getName()`
+- `public void setColor(Vector4f color)`
+- `public Vector4f getColor()`
+- `public void setTexture(OBJModel.Texture texture)`
+- `public OBJModel.Texture getTexture()`
+- `public boolean isWhite()`
+- `public java.lang.String toString()`
+
+## OBJModel.MaterialLibrary
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.MaterialLibrary`
+
+Enclosing class: OBJModel
+
+### Methods
+- `public OBJModel.MaterialLibrary makeLibWithReplacements(<any> replacements)`
+- `public java.util.Map<java.lang.String,OBJModel.Group> getGroups()`
+- `public java.util.List<OBJModel.Group> getGroupsContainingFace(OBJModel.Face f)`
+- `public void changeMaterialColor(java.lang.String name,  int color)`
+- `public OBJModel.Material getMaterial(java.lang.String name)`
+- `public <any> getMaterialNames()`
+- `public void parseMaterials(IResourceManager manager,  java.lang.String path,  ResourceLocation from)  throws java.io.IOException`
+  - throws: java.io.IOException
+
+## OBJModel.Normal
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Normal`
+
+Enclosing class: OBJModel
+
+### Fields
+- `public float x`
+- `public float y`
+- `public float z`
+
+### Methods
+- `public Vector3f getData()`
+
+## OBJModel.OBJBakedModel
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.OBJBakedModel`
+
+All Implemented Interfaces: IBakedModel
+
+Enclosing class: OBJModel
+
+### Methods
+- `public void scheduleRebake()`
+- `public java.util.List<BakedQuad> getQuads(IBlockState blockState,  EnumFacing side,  long rand)`
+- `public boolean isAmbientOcclusion()`
+- `public boolean isGui3d()`
+- `public boolean isBuiltInRenderer()`
+- `public TextureAtlasSprite getParticleTexture()`
+- `public OBJModel.OBJBakedModel getCachedModel(IModelState state)`
+- `public OBJModel getModel()`
+- `public IModelState getState()`
+- `public OBJModel.OBJBakedModel getBakedModel()`
+- `public <any> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)`
+- `public java.lang.String toString()`
+- `public ItemOverrideList getOverrides()`
 
 ### Inherited methods
-- from `net.minecraftforge.client.model.obj.ObjModel.ModelObject`: `name`
+- from `net.minecraft.client.renderer.block.model.IBakedModel`: `getItemCameraTransforms`, `isAmbientOcclusion`
 
-## ObjModel.ModelMesh
+## OBJModel.OBJProperty
 
-*class* `net.minecraftforge.client.model.obj.ObjModel.ModelMesh`
+*enum* `net.minecraftforge.client.model.obj.OBJModel.OBJProperty`
 
-Enclosing class: ObjModel
+Deprecated.
 
-### Fields
-- `@Nullable public ObjMaterialLibrary.Material mat`
-- `@Nullable public @Nullable String smoothingGroup`
-- `public final List<int[][]> faces`
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<OBJModel.OBJProperty>, IUnlistedProperty<OBJModel.OBJState>
 
-### Methods
-- `public void addQuads(IGeometryBakingContext owner,  IModelBuilder<?> modelBuilder,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelTransform)`
-- `public void bake(CompositeRenderable.PartBuilder<?> builder,  IGeometryBakingContext configuration)`
-
-## ObjModel.ModelObject
-
-*class* `net.minecraftforge.client.model.obj.ObjModel.ModelObject`
-
-Enclosing class: ObjModel
+Enclosing class: OBJModel
 
 ### Fields
-- `public final String name`
-- `List<ObjModel.ModelMesh> meshes`
+- `public static final OBJModel.OBJProperty INSTANCE` (deprecated)
+  Deprecated.
 
 ### Methods
-- `public String name()`
-- `public void addQuads(IGeometryBakingContext owner,  IModelBuilder<?> modelBuilder,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelTransform,  ResourceLocation modelLocation)`
-- `public void bake(CompositeRenderable.PartBuilder<?> builder,  IGeometryBakingContext configuration)`
-- `public Collection<Material> getTextures(IGeometryBakingContext owner,  Function<ResourceLocation,UnbakedModel> modelGetter,  Set<com.mojang.datafixers.util.Pair<String,String>> missingTextureErrors)`
-- `protected void addNamesRecursively(Set<String> names)`
+- `public static OBJModel.OBJProperty[] values()` (deprecated)
+  Deprecated.
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (OBJModel.OBJProperty c : OBJModel.OBJProperty.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static OBJModel.OBJProperty valueOf(java.lang.String name)` (deprecated)
+  Deprecated.
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public java.lang.String getName()` (deprecated)
+  Deprecated.
+- `public boolean isValid(OBJModel.OBJState value)` (deprecated)
+  Deprecated.
+- `public java.lang.Class<OBJModel.OBJState> getType()` (deprecated)
+  Deprecated.
+- `public java.lang.String valueToString(OBJModel.OBJState value)` (deprecated)
+  Deprecated.
 
-## ObjModel.ModelSettings
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
 
-*record* `net.minecraftforge.client.model.obj.ObjModel.ModelSettings`
+## OBJModel.OBJState
 
-Enclosing class: ObjModel
+*class* `net.minecraftforge.client.model.obj.OBJModel.OBJState`
+
+Deprecated.
+
+All Implemented Interfaces: IModelState
+
+Enclosing class: OBJModel
 
 ### Fields
-- `@NotNull private final @NotNull ResourceLocation modelLocation`
-  The field for the modelLocation record component.
-- `private final boolean automaticCulling`
-  The field for the automaticCulling record component.
-- `private final boolean shadeQuads`
-  The field for the shadeQuads record component.
-- `private final boolean flipV`
-  The field for the flipV record component.
-- `private final boolean emissiveAmbient`
-  The field for the emissiveAmbient record component.
-- `@Nullable private final @Nullable String mtlOverride`
-  The field for the mtlOverride record component.
+- `protected java.util.Map<java.lang.String,java.lang.Boolean> visibilityMap` (deprecated)
+  Deprecated.
+- `public IModelState parent` (deprecated)
+  Deprecated.
+- `protected OBJModel.OBJState.Operation operation` (deprecated)
+  Deprecated.
 
 ### Methods
-- `public final String toString()`
-  Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.
-  - returns: a string representation of this object
-- `public final int hashCode()`
-  Returns a hash code value for this object. The value is derived from the hash code of each of the record components.
-  - returns: a hash code value for this object
-- `public final boolean equals(Object o)`
-  Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with Objects::equals(Object,Object); primitive components are compared with '=='.
-  - param: o - the object with which to compare
-  - returns: true if this object is the same as the o argument; false otherwise.
-- `@NotNull public @NotNull ResourceLocation modelLocation()`
-  Returns the value of the modelLocation record component.
-  - returns: the value of the modelLocation record component
-- `public boolean automaticCulling()`
-  Returns the value of the automaticCulling record component.
-  - returns: the value of the automaticCulling record component
-- `public boolean shadeQuads()`
-  Returns the value of the shadeQuads record component.
-  - returns: the value of the shadeQuads record component
-- `public boolean flipV()`
-  Returns the value of the flipV record component.
-  - returns: the value of the flipV record component
-- `public boolean emissiveAmbient()`
-  Returns the value of the emissiveAmbient record component.
-  - returns: the value of the emissiveAmbient record component
-- `@Nullable public @Nullable String mtlOverride()`
-  Returns the value of the mtlOverride record component.
-  - returns: the value of the mtlOverride record component
+- `public IModelState getParent(IModelState parent)` (deprecated)
+  Deprecated.
+- `public java.util.Optional<TRSRTransformation> apply(java.util.Optional<? extends IModelPart> part)` (deprecated)
+  Deprecated.
+- `public java.util.Map<java.lang.String,java.lang.Boolean> getVisibilityMap()` (deprecated)
+  Deprecated.
+- `public java.util.List<java.lang.String> getGroupsWithVisibility(boolean visibility)` (deprecated)
+  Deprecated.
+- `public java.util.List<java.lang.String> getGroupNamesFromMap()` (deprecated)
+  Deprecated.
+- `public void changeGroupVisibilities(java.util.List<java.lang.String> names,  OBJModel.OBJState.Operation operation)` (deprecated)
+  Deprecated.
+- `public java.lang.String toString()` (deprecated)
+  Deprecated.
+- `public int hashCode()` (deprecated)
+  Deprecated.
+- `public boolean equals(java.lang.Object obj)` (deprecated)
+  Deprecated.
 
-## ObjTokenizer
+## OBJModel.OBJState.Operation
 
-*class* `net.minecraftforge.client.model.obj.ObjTokenizer`
+*enum* `net.minecraftforge.client.model.obj.OBJModel.OBJState.Operation`
 
-A tokenizer for OBJ and MTL files.
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<OBJModel.OBJState.Operation>
 
- Joins split lines and ignores comments.
+Enclosing class: OBJModel.OBJState
 
 ### Fields
-- `private final BufferedReader lineReader`
+- `public static final OBJModel.OBJState.Operation SET_TRUE`
+- `public static final OBJModel.OBJState.Operation SET_FALSE`
+- `public static final OBJModel.OBJState.Operation TOGGLE`
 
 ### Methods
-- `@Nullable public @Nullable String[] readAndSplitLine(boolean ignoreEmptyLines)  throws IOException`
-  - throws: IOException
-- `public void close()  throws IOException`
-  - throws: IOException
+- `public static OBJModel.OBJState.Operation[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (OBJModel.OBJState.Operation c : OBJModel.OBJState.Operation.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static OBJModel.OBJState.Operation valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public boolean performOperation(boolean valueToToggle)`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+
+## OBJModel.Parser
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Parser`
+
+Enclosing class: OBJModel
+
+### Fields
+- `public OBJModel.MaterialLibrary materialLibrary`
+
+### Methods
+- `public java.util.List<java.lang.String> getElements()`
+- `public OBJModel parse()  throws java.io.IOException`
+  - throws: java.io.IOException
+
+## OBJModel.Texture
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Texture`
+
+Enclosing class: OBJModel
+
+### Fields
+- `public static OBJModel.Texture WHITE`
+
+### Methods
+- `public ResourceLocation getTextureLocation()`
+- `public void setPath(java.lang.String path)`
+- `public java.lang.String getPath()`
+- `public void setPosition(Vector2f position)`
+- `public Vector2f getPosition()`
+- `public void setScale(Vector2f scale)`
+- `public Vector2f getScale()`
+- `public void setRotation(float rotation)`
+- `public float getRotation()`
+
+## OBJModel.TextureCoordinate
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.TextureCoordinate`
+
+Enclosing class: OBJModel
+
+### Fields
+- `public float u`
+- `public float v`
+- `public float w`
+
+### Methods
+- `public Vector3f getData()`
+- `public static OBJModel.TextureCoordinate[] getDefaultUVs()`
+
+## OBJModel.UVsOutOfBoundsException
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.UVsOutOfBoundsException`
+
+All Implemented Interfaces: java.io.Serializable
+
+Enclosing class: OBJModel
+
+### Fields
+- `public ResourceLocation modelLocation`
+
+### Inherited methods
+- from `java.lang.Throwable`: `addSuppressed`, `fillInStackTrace`, `getCause`, `getLocalizedMessage`, `getMessage`, `getStackTrace`, `getSuppressed`, `initCause`, `printStackTrace`, `printStackTrace`, `printStackTrace`, `setStackTrace`, `toString`
+
+## OBJModel.Vertex
+
+*class* `net.minecraftforge.client.model.obj.OBJModel.Vertex`
+
+Enclosing class: OBJModel
+
+### Methods
+- `public void setPos(Vector4f position)`
+- `public Vector4f getPos()`
+- `public Vector3f getPos3()`
+- `public boolean hasNormal()`
+- `public void setNormal(OBJModel.Normal normal)`
+- `public OBJModel.Normal getNormal()`
+- `public boolean hasTextureCoordinate()`
+- `public void setTextureCoordinate(OBJModel.TextureCoordinate texCoord)`
+- `public OBJModel.TextureCoordinate getTextureCoordinate()`
+- `public void setMaterial(OBJModel.Material material)`
+- `public OBJModel.Material getMaterial()`
+- `public java.lang.String toString()`

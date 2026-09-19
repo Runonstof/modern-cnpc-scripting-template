@@ -7,15 +7,14 @@ API reference scraped from `docs/customnpcs/`.
 
 ## Packages
 
-- [`noppes.npcs.api`](root.md) — 14 types
-- [`noppes.npcs.api.block`](block.md) — 5 types
-- [`noppes.npcs.api.constants`](constants.md) — 12 types
-- [`noppes.npcs.api.entity`](entity.md) — 13 types
-- [`noppes.npcs.api.entity.data`](entity/data.md) — 14 types
-- [`noppes.npcs.api.entity.data.role`](entity/data/role.md) — 12 types
-- [`noppes.npcs.api.event`](event.md) — 97 types
-- [`noppes.npcs.api.function.gui`](function/gui.md) — 3 types
-- [`noppes.npcs.api.gui`](gui.md) — 16 types
-- [`noppes.npcs.api.handler`](handler.md) — 5 types
-- [`noppes.npcs.api.handler.data`](handler/data.md) — 9 types
-- [`noppes.npcs.api.item`](item.md) — 5 types
+- [`noppes.npcs.api`](api.md) — 17 types
+- [`noppes.npcs.api.block`](api/block.md) — 5 types
+- [`noppes.npcs.api.constants`](api/constants.md) — 13 types
+- [`noppes.npcs.api.entity`](api/entity.md) — 13 types
+- [`noppes.npcs.api.entity.data`](api/entity/data.md) — 14 types
+- [`noppes.npcs.api.entity.data.role`](api/entity/data/role.md) — 12 types
+- [`noppes.npcs.api.event`](api/event.md) — 98 types
+- [`noppes.npcs.api.gui`](api/gui.md) — 9 types
+- [`noppes.npcs.api.handler`](api/handler.md) — 5 types
+- [`noppes.npcs.api.handler.data`](api/handler/data.md) — 9 types
+- [`noppes.npcs.api.item`](api/item.md) — 5 types

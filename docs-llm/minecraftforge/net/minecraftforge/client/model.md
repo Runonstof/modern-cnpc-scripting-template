@@ -1,582 +1,341 @@
 # net.minecraftforge.client.model
 
+- [Attributes](#attributes)
+- [BakedItemModel](#bakeditemmodel)
+- [BakedItemModel.BakedGuiItemModel](#bakeditemmodel.bakedguiitemmodel)
 - [BakedModelWrapper](#bakedmodelwrapper)
-- [CompositeModel](#compositemodel)
-- [CompositeModel.Baked](#compositemodel.baked)
-- [CompositeModel.Baked.Builder](#compositemodel.baked.builder)
-- [CompositeModel.Data](#compositemodel.data)
-- [CompositeModel.Data.Builder](#compositemodel.data.builder)
-- [CompositeModel.Loader](#compositemodel.loader)
-- [DynamicFluidContainerModel](#dynamicfluidcontainermodel)
-- [DynamicFluidContainerModel.Colors](#dynamicfluidcontainermodel.colors)
-- [DynamicFluidContainerModel.ContainedFluidOverrideHandler](#dynamicfluidcontainermodel.containedfluidoverridehandler)
-- [DynamicFluidContainerModel.Loader](#dynamicfluidcontainermodel.loader)
-- [ElementsModel](#elementsmodel)
-- [ElementsModel.Loader](#elementsmodel.loader)
-- [EmptyModel](#emptymodel)
-- [EmptyModel.Baked](#emptymodel.baked)
-- [ExtendedBlockModelDeserializer](#extendedblockmodeldeserializer)
-- [ForgeFaceData](#forgefacedata)
-- [ForgeItemModelShaper](#forgeitemmodelshaper)
-- [IDynamicBakedModel](#idynamicbakedmodel)
-- [IModelBuilder.Collecting](#imodelbuilder.collecting)
-- [IModelBuilder.Simple](#imodelbuilder.simple)
-- [IModelBuilder>](#imodelbuilder)
-- [IQuadTransformer](#iquadtransformer)
+- [BlockStateLoader](#blockstateloader)
+- [BlockStateLoader.Marker](#blockstateloader.marker)
+- [BlockStateLoader.SubModel](#blockstateloader.submodel)
+- [ForgeBlockStateV1](#forgeblockstatev1)
+- [ForgeBlockStateV1.Deserializer](#forgeblockstatev1.deserializer)
+- [ForgeBlockStateV1.Transforms](#forgeblockstatev1.transforms)
+- [ForgeBlockStateV1.TRSRDeserializer](#forgeblockstatev1.trsrdeserializer)
+- [ForgeBlockStateV1.Variant](#forgeblockstatev1.variant)
+- [ForgeBlockStateV1.Variant.Deserializer](#forgeblockstatev1.variant.deserializer)
+- [ICustomModelLoader](#icustommodelloader)
+- [IModel](#imodel)
+- [ISmartVariant](#ismartvariant)
 - [ItemLayerModel](#itemlayermodel)
 - [ItemLayerModel.Loader](#itemlayermodel.loader)
-- [QuadTransformers](#quadtransformers)
-- [SeparateTransformsModel](#separatetransformsmodel)
-- [SeparateTransformsModel.Baked](#separatetransformsmodel.baked)
-- [SeparateTransformsModel.Loader](#separatetransformsmodel.loader)
+- [ItemTextureQuadConverter](#itemtexturequadconverter)
+- [MapModelState](#mapmodelstate)
+- [MapModelState.Wrapper](#mapmodelstate.wrapper)
+- [ModelDynBucket](#modeldynbucket)
+- [ModelDynBucket.LoaderDynBucket](#modeldynbucket.loaderdynbucket)
+- [ModelFluid](#modelfluid)
+- [ModelFluid.FluidLoader](#modelfluid.fluidloader)
+- [ModelLoader](#modelloader)
+- [ModelLoader.BakedModelCacheKey](#modelloader.bakedmodelcachekey)
+- [ModelLoader.VanillaLoader](#modelloader.vanillaloader)
+- [ModelLoader.VariantLoader](#modelloader.variantloader)
+- [ModelLoader.White](#modelloader.white)
+- [ModelLoaderRegistry](#modelloaderregistry)
+- [ModelLoaderRegistry.LoaderException](#modelloaderregistry.loaderexception)
+- [ModelStateComposition](#modelstatecomposition)
+- [MultiLayerModel](#multilayermodel)
+- [MultiLayerModel.Loader](#multilayermodel.loader)
+- [MultiModel](#multimodel)
+- [MultiModelState](#multimodelstate)
+- [PerspectiveMapWrapper](#perspectivemapwrapper)
+- [SimpleModelFontRenderer](#simplemodelfontrenderer)
 - [SimpleModelState](#simplemodelstate)
+## Attributes
+
+*class* `net.minecraftforge.client.model.Attributes`
+
+### Fields
+- `public static final VertexFormat DEFAULT_BAKED_FORMAT`
+
+### Methods
+- `public static boolean moreSpecific(VertexFormat first,  VertexFormat second)`
+
+## BakedItemModel
+
+*class* `net.minecraftforge.client.model.BakedItemModel`
+
+All Implemented Interfaces: IBakedModel
+
+### Fields
+- `protected final <any> quads`
+- `protected final TextureAtlasSprite particle`
+- `protected final <any> transforms`
+- `protected final ItemOverrideList overrides`
+- `protected final IBakedModel guiModel`
+
+### Methods
+- `public boolean isAmbientOcclusion()`
+- `public boolean isGui3d()`
+- `public boolean isBuiltInRenderer()`
+- `public TextureAtlasSprite getParticleTexture()`
+- `public ItemOverrideList getOverrides()`
+- `public java.util.List<BakedQuad> getQuads(IBlockState state,  EnumFacing side,  long rand)`
+- `public <any> handlePerspective(ItemCameraTransforms.TransformType type)`
+
+### Inherited methods
+- from `net.minecraft.client.renderer.block.model.IBakedModel`: `getItemCameraTransforms`, `isAmbientOcclusion`
+
+## BakedItemModel.BakedGuiItemModel
+
+*class* `net.minecraftforge.client.model.BakedItemModel.BakedGuiItemModel`
+
+All Implemented Interfaces: IBakedModel
+
+Enclosing class: BakedItemModel
+
+### Inherited fields
+- from `net.minecraftforge.client.model.BakedModelWrapper`: `originalModel`
+
+### Methods
+- `public java.util.List<BakedQuad> getQuads(IBlockState state,  EnumFacing side,  long rand)`
+- `public <any> handlePerspective(ItemCameraTransforms.TransformType type)`
+
+### Inherited methods
+- from `net.minecraftforge.client.model.BakedModelWrapper`: `getItemCameraTransforms`, `getOverrides`, `getParticleTexture`, `isAmbientOcclusion`, `isAmbientOcclusion`, `isBuiltInRenderer`, `isGui3d`
+
 ## BakedModelWrapper
 
 *class* `net.minecraftforge.client.model.BakedModelWrapper`
 
-Wrapper for BakedModel which delegates all operations to its parent.
-
- Useful for creating wrapper baked models which only override certain properties.
+All Implemented Interfaces: IBakedModel
 
 ### Fields
-- `protected final T extends BakedModel originalModel`
+- `protected final T extends IBakedModel originalModel`
 
 ### Methods
-- `public List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  RandomSource rand)`
-- `public boolean useAmbientOcclusion()`
-- `public boolean useAmbientOcclusion(BlockState state)`
-- `public boolean useAmbientOcclusion(BlockState state,  RenderType renderType)`
+- `public java.util.List<BakedQuad> getQuads(IBlockState state,  EnumFacing side,  long rand)`
+- `public boolean isAmbientOcclusion()`
+- `public boolean isAmbientOcclusion(IBlockState state)`
 - `public boolean isGui3d()`
-- `public boolean usesBlockLight()`
-- `public boolean isCustomRenderer()`
-- `public TextureAtlasSprite getParticleIcon()`
-- `public ItemTransforms getTransforms()`
-- `public ItemOverrides getOverrides()`
-- `public BakedModel applyTransform(ItemDisplayContext cameraTransformType,  PoseStack poseStack,  boolean applyLeftHandTransform)`
-  Description copied from interface: IForgeBakedModel
-  Applies a transform for the given ItemTransforms.TransformType and applyLeftHandTransform, and
-   returns the model to be rendered.
-- `public TextureAtlasSprite getParticleIcon(@NotNull  @NotNull ModelData data)`
-- `@NotNull public @NotNull List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData extraData,  @Nullable  @Nullable RenderType renderType)`
-  Description copied from interface: IForgeBakedModel
-  A null RenderType is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
-- `@NotNull public @NotNull ModelData getModelData(@NotNull  @NotNull BlockAndTintGetter level,  @NotNull  @NotNull BlockPos pos,  @NotNull  @NotNull BlockState state,  @NotNull  @NotNull ModelData modelData)`
-- `public ChunkRenderTypeSet getRenderTypes(@NotNull  @NotNull BlockState state,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData data)`
-  Description copied from interface: IForgeBakedModel
-  Gets the set of render types to use when drawing this block in the level.
-   Supported types are those returned by RenderType.chunkBufferLayers().
+- `public boolean isBuiltInRenderer()`
+- `public TextureAtlasSprite getParticleTexture()`
+- `public ItemCameraTransforms getItemCameraTransforms()`
+- `public ItemOverrideList getOverrides()`
+- `public <any> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)`
+
+## BlockStateLoader
+
+*class* `net.minecraftforge.client.model.BlockStateLoader`
+
+### Methods
+- `public static ModelBlockDefinition load(java.io.Reader reader,  ResourceLocation location,  Gson vanillaGSON)`
+  Loads a BlockStates json file.
+   Will attempt to parse it as a Forge Enhanced version if possible.
+   Will fall back to standard loading if marker is not present.
   
-   By default, defers query to ItemBlockRenderTypes.
-- `public List<RenderType> getRenderTypes(ItemStack itemStack,  boolean fabulous)`
-  Description copied from interface: IForgeBakedModel
-  Gets an ordered list of render types to use when drawing this item.
-   All render types using the DefaultVertexFormat.NEW_ENTITY format are supported.
-  
-   This method will only be called on the models returned by IForgeBakedModel.getRenderPasses(ItemStack, boolean).
-  
-   By default, defers query to ItemBlockRenderTypes.
-- `public List<BakedModel> getRenderPasses(ItemStack itemStack,  boolean fabulous)`
-  Description copied from interface: IForgeBakedModel
-  Gets an ordered list of baked models used to render this model as an item.
-   Each of those models' render types will be queried via IForgeBakedModel.getRenderTypes(ItemStack, boolean).
-  
-   By default, returns the model itself.
+   Note: This method is NOT thread safe
+  - param: reader - json read
+  - param: location - blockstate location
+  - param: vanillaGSON - ModelBlockDefinition's GSON reader.
+  - returns: Model definition including variants for all known combinations.
 
-## CompositeModel
+## BlockStateLoader.Marker
 
-*class* `net.minecraftforge.client.model.CompositeModel`
+*class* `net.minecraftforge.client.model.BlockStateLoader.Marker`
 
-A model composed of several named children.
-
- These respect component visibility as specified in IGeometryBakingContext and can additionally be provided
- with an item-specific render ordering, for multi-pass arrangements.
+Enclosing class: BlockStateLoader
 
 ### Fields
-- `private final com.google.common.collect.ImmutableMap<String,BlockModel> children`
-- `private final com.google.common.collect.ImmutableList<String> itemPasses`
+- `public int forge_marker`
+
+## BlockStateLoader.SubModel
+
+*class* `net.minecraftforge.client.model.BlockStateLoader.SubModel`
+
+Enclosing class: BlockStateLoader
 
 ### Methods
-- `public BakedModel bake(IGeometryBakingContext context,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ItemOverrides overrides,  ResourceLocation modelLocation)`
-- `public void resolveParents(Function<ResourceLocation,UnbakedModel> modelGetter,  IGeometryBakingContext context)`
-  Description copied from interface: IUnbakedGeometry
-  Resolve parents of nested BlockModels which are later used in
-   IUnbakedGeometry.bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation)
-   via BlockModel.resolveParents(Function)
-- `public Set<String> getConfigurableComponentNames()`
-  Description copied from interface: IUnbakedGeometry
-  Returns a set of all the components whose visibility may be configured via IGeometryBakingContext.
-  - returns: a set of all the components whose visibility may be configured via IGeometryBakingContext
+- `public IModelState getState()`
+- `public boolean isUVLock()`
+- `public <any> getTextures()`
+- `public ResourceLocation getModelLocation()`
+- `public <any> getCustomData()`
 
-## CompositeModel.Baked
+## ForgeBlockStateV1
 
-*class* `net.minecraftforge.client.model.CompositeModel.Baked`
-
-Enclosing class: CompositeModel
-
-### Fields
-- `private final boolean isAmbientOcclusion`
-- `private final boolean isGui3d`
-- `private final boolean isSideLit`
-- `private final TextureAtlasSprite particle`
-- `private final ItemOverrides overrides`
-- `private final ItemTransforms transforms`
-- `private final com.google.common.collect.ImmutableMap<String,BakedModel> children`
-- `private final com.google.common.collect.ImmutableList<BakedModel> itemPasses`
-
-### Methods
-- `@NotNull public @NotNull List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData data,  @Nullable  @Nullable RenderType renderType)`
-  Description copied from interface: IForgeBakedModel
-  A null RenderType is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
-- `@NotNull public @NotNull ModelData getModelData(@NotNull  @NotNull BlockAndTintGetter level,  @NotNull  @NotNull BlockPos pos,  @NotNull  @NotNull BlockState state,  @NotNull  @NotNull ModelData modelData)`
-- `public boolean useAmbientOcclusion()`
-- `public boolean isGui3d()`
-- `public boolean usesBlockLight()`
-- `public boolean isCustomRenderer()`
-- `public TextureAtlasSprite getParticleIcon()`
-- `public ItemOverrides getOverrides()`
-- `public ItemTransforms getTransforms()`
-- `public ChunkRenderTypeSet getRenderTypes(@NotNull  @NotNull BlockState state,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData data)`
-  Description copied from interface: IForgeBakedModel
-  Gets the set of render types to use when drawing this block in the level.
-   Supported types are those returned by RenderType.chunkBufferLayers().
-  
-   By default, defers query to ItemBlockRenderTypes.
-- `public List<BakedModel> getRenderPasses(ItemStack itemStack,  boolean fabulous)`
-  Description copied from interface: IForgeBakedModel
-  Gets an ordered list of baked models used to render this model as an item.
-   Each of those models' render types will be queried via IForgeBakedModel.getRenderTypes(ItemStack, boolean).
-  
-   By default, returns the model itself.
-- `@Nullable public @Nullable BakedModel getPart(String name)`
-- `public static CompositeModel.Baked.Builder builder(IGeometryBakingContext owner,  TextureAtlasSprite particle,  ItemOverrides overrides,  ItemTransforms cameraTransforms)`
-- `public static CompositeModel.Baked.Builder builder(boolean isAmbientOcclusion,  boolean isGui3d,  boolean isSideLit,  TextureAtlasSprite particle,  ItemOverrides overrides,  ItemTransforms cameraTransforms)`
-
-### Inherited methods
-- from `net.minecraftforge.client.model.IDynamicBakedModel`: `getQuads`
-- from `net.minecraftforge.client.extensions.IForgeBakedModel`: `applyTransform`, `getParticleIcon`, `getRenderTypes`, `useAmbientOcclusion`, `useAmbientOcclusion`
-
-## CompositeModel.Baked.Builder
-
-*class* `net.minecraftforge.client.model.CompositeModel.Baked.Builder`
-
-Enclosing class: CompositeModel.Baked
-
-### Fields
-- `private final boolean isAmbientOcclusion`
-- `private final boolean isGui3d`
-- `private final boolean isSideLit`
-- `private final List<BakedModel> children`
-- `private final List<BakedQuad> quads`
-- `private final ItemOverrides overrides`
-- `private final ItemTransforms transforms`
-- `private TextureAtlasSprite particle`
-- `private RenderTypeGroup lastRenderTypes`
-
-### Methods
-- `public void addLayer(BakedModel model)`
-- `private void addLayer(RenderTypeGroup renderTypes,  List<BakedQuad> quads)`
-- `private void flushQuads(RenderTypeGroup renderTypes)`
-- `public CompositeModel.Baked.Builder setParticle(TextureAtlasSprite particleSprite)`
-- `public CompositeModel.Baked.Builder addQuads(RenderTypeGroup renderTypes,  BakedQuad... quadsToAdd)`
-- `public CompositeModel.Baked.Builder addQuads(RenderTypeGroup renderTypes,  Collection<BakedQuad> quadsToAdd)`
-- `public BakedModel build()`
-
-## CompositeModel.Data
-
-*class* `net.minecraftforge.client.model.CompositeModel.Data`
-
-A model data container which stores data for child components.
-
-Enclosing class: CompositeModel
-
-### Fields
-- `public static final ModelProperty<CompositeModel.Data> PROPERTY`
-- `private final Map<String,ModelData> partData`
-
-### Methods
-- `@Nullable public @Nullable ModelData get(String name)`
-- `public static ModelData resolve(ModelData modelData,  String name)`
-  Helper to get the data from a ModelData instance.
-  - param: modelData - The object to get data from
-  - param: name - The name of the part to get data for
-  - returns: The data for the part, or the one passed in if not found
-- `public static CompositeModel.Data.Builder builder()`
-
-## CompositeModel.Data.Builder
-
-*class* `net.minecraftforge.client.model.CompositeModel.Data.Builder`
-
-Enclosing class: CompositeModel.Data
-
-### Fields
-- `private final Map<String,ModelData> partData`
-
-### Methods
-- `public CompositeModel.Data.Builder with(String name,  ModelData data)`
-- `public CompositeModel.Data build()`
-
-## CompositeModel.Loader
-
-*class* `net.minecraftforge.client.model.CompositeModel.Loader`
-
-Enclosing class: CompositeModel
-
-### Fields
-- `public static final CompositeModel.Loader INSTANCE`
-
-### Methods
-- `public CompositeModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)`
-- `private void readChildren(com.google.gson.JsonObject jsonObject,  String name,  com.google.gson.JsonDeserializationContext deserializationContext,  com.google.common.collect.ImmutableMap.Builder<String,BlockModel> children,  List<String> itemPasses)`
-
-## DynamicFluidContainerModel
-
-*class* `net.minecraftforge.client.model.DynamicFluidContainerModel`
-
-A dynamic fluid container model, capable of re-texturing itself at runtime to match the contained fluid.
-
- Composed of a base layer, a fluid layer (applied with a mask) and a cover layer (optionally applied with a mask).
- The entire model may optionally be flipped if the fluid is gaseous, and the fluid layer may glow if light-emitting.
-
- Fluid tinting requires registering a separate ItemColor. An implementation is provided in DynamicFluidContainerModel.Colors.
-
-### Fields
-- `private static final Transformation FLUID_TRANSFORM`
-- `private static final Transformation COVER_TRANSFORM`
-- `private final Fluid fluid`
-- `private final boolean flipGas`
-- `private final boolean coverIsMask`
-- `private final boolean applyFluidLuminosity`
-
-### Methods
-- `public static RenderTypeGroup getLayerRenderTypes(boolean unlit)`
-- `public DynamicFluidContainerModel withFluid(Fluid newFluid)`
-  Returns a new ModelDynBucket representing the given fluid, but with the same
-   other properties (flipGas, tint, coverIsMask).
-- `public BakedModel bake(IGeometryBakingContext context,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ItemOverrides overrides,  ResourceLocation modelLocation)`
-
-### Inherited methods
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `getConfigurableComponentNames`, `resolveParents`
-
-## DynamicFluidContainerModel.Colors
-
-*class* `net.minecraftforge.client.model.DynamicFluidContainerModel.Colors`
-
-Enclosing class: DynamicFluidContainerModel
-
-### Methods
-- `public int getColor(@NotNull  @NotNull ItemStack stack,  int tintIndex)`
-
-## DynamicFluidContainerModel.ContainedFluidOverrideHandler
-
-*class* `net.minecraftforge.client.model.DynamicFluidContainerModel.ContainedFluidOverrideHandler`
-
-Enclosing class: DynamicFluidContainerModel
-
-### Fields
-- `private final Map<String,BakedModel> cache`
-- `private final ItemOverrides nested`
-- `private final ModelBaker baker`
-- `private final IGeometryBakingContext owner`
-- `private final DynamicFluidContainerModel parent`
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1`
 
 ### Inherited fields
-- from `net.minecraft.client.renderer.block.model.ItemOverrides`: `EMPTY`, `NO_OVERRIDE`
+- from `net.minecraftforge.client.model.BlockStateLoader.Marker`: `forge_marker`
+
+## ForgeBlockStateV1.Deserializer
+
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1.Deserializer`
+
+Enclosing class: ForgeBlockStateV1
 
 ### Methods
-- `public BakedModel resolve(BakedModel originalModel,  ItemStack stack,  @Nullable  @Nullable ClientLevel level,  @Nullable  @Nullable LivingEntity entity,  int seed)`
+- `public ForgeBlockStateV1 deserialize(JsonElement element,  java.lang.reflect.Type typeOfT,  JsonDeserializationContext context)  throws JsonParseException`
+  - throws: JsonParseException
 
-### Inherited methods
-- from `net.minecraft.client.renderer.block.model.ItemOverrides`: `getOverrides`
+## ForgeBlockStateV1.Transforms
 
-## DynamicFluidContainerModel.Loader
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1.Transforms`
 
-*class* `net.minecraftforge.client.model.DynamicFluidContainerModel.Loader`
+Enclosing class: ForgeBlockStateV1
 
-Enclosing class: DynamicFluidContainerModel
+### Methods
+- `public static TRSRTransformation convert(float tx,  float ty,  float tz,  float ax,  float ay,  float az,  float s)`
+- `public static TRSRTransformation convert(float tx,  float ty,  float tz,  float ax,  float ay,  float az,  float sx,  float sy,  float sz)`
+- `public static TRSRTransformation leftify(TRSRTransformation transform)`
+- `public static java.util.Optional<IModelState> get(java.lang.String name)`
+
+## ForgeBlockStateV1.TRSRDeserializer
+
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1.TRSRDeserializer`
+
+Enclosing class: ForgeBlockStateV1
 
 ### Fields
-- `public static final DynamicFluidContainerModel.Loader INSTANCE`
+- `public static final ForgeBlockStateV1.TRSRDeserializer INSTANCE`
 
 ### Methods
-- `public DynamicFluidContainerModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)`
+- `public TRSRTransformation deserialize(JsonElement json,  java.lang.reflect.Type typeOfT,  JsonDeserializationContext context)  throws JsonParseException`
+  - throws: JsonParseException
+- `public static Matrix4f parseMatrix(JsonElement e)`
+- `public static float[] parseFloatArray(JsonElement e,  int length,  java.lang.String prefix)`
+- `public static Quat4f parseAxisRotation(JsonElement e)`
+- `public static Quat4f parseRotation(JsonElement e)`
 
-## ElementsModel
+## ForgeBlockStateV1.Variant
 
-*class* `net.minecraftforge.client.model.ElementsModel`
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1.Variant`
 
-A model composed of vanilla block elements.
+Enclosing class: ForgeBlockStateV1
 
 ### Fields
-- `private final List<BlockElement> elements`
+- `public static final java.lang.Object SET_VALUE`
 
 ### Methods
-- `protected void addQuads(IGeometryBakingContext context,  IModelBuilder<?> modelBuilder,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ResourceLocation modelLocation)`
+- `protected BlockStateLoader.SubModel asGenericSubModel()`
+- `public <any> getOnlyPartsVariant()`
+  Gets a list containing the single variant of each part.
+   Will throw an error if this Variant has multiple variants for a submodel.
+- `public java.util.Optional<java.lang.Boolean> getSmooth()`
+- `public java.util.Optional<java.lang.Boolean> getGui3d()`
+- `public ResourceLocation getModel()`
+- `public boolean isModelSet()`
+- `public java.util.Optional<IModelState> getState()`
+- `public java.util.Optional<java.lang.Boolean> getUvLock()`
+- `public java.util.Optional<java.lang.Integer> getWeight()`
+- `public <any> getTextures()`
+- `public <any> getSubmodels()`
+- `public <any> getCustomData()`
 
-### Inherited methods
-- from `net.minecraftforge.client.model.geometry.SimpleUnbakedGeometry`: `bake`
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `getConfigurableComponentNames`, `resolveParents`
+## ForgeBlockStateV1.Variant.Deserializer
 
-## ElementsModel.Loader
+*class* `net.minecraftforge.client.model.ForgeBlockStateV1.Variant.Deserializer`
 
-*class* `net.minecraftforge.client.model.ElementsModel.Loader`
-
-Enclosing class: ElementsModel
+Enclosing class: ForgeBlockStateV1.Variant
 
 ### Fields
-- `public static final ElementsModel.Loader INSTANCE`
+- `public java.lang.String simpleSubmodelKey`
+  Used once (then set null) for the key to put a simple submodel declaration under in the submodel map.
 
 ### Methods
-- `public ElementsModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)  throws com.google.gson.JsonParseException`
-  - throws: com.google.gson.JsonParseException
+- `protected ResourceLocation getBlockLocation(java.lang.String location)`
+- `public ForgeBlockStateV1.Variant deserialize(JsonElement element,  java.lang.reflect.Type typeOfT,  JsonDeserializationContext context)  throws JsonParseException`
+  - throws: JsonParseException
 
-## EmptyModel
+## ICustomModelLoader
 
-*class* `net.minecraftforge.client.model.EmptyModel`
+*interface* `net.minecraftforge.client.model.ICustomModelLoader`
 
-A completely empty model with no quads or texture dependencies.
-
- You can access it as a BakedModel, an IUnbakedGeometry or an IGeometryLoader.
-
-### Fields
-- `public static final BakedModel BAKED`
-- `public static final EmptyModel INSTANCE`
-- `public static final IGeometryLoader<EmptyModel> LOADER`
+All Superinterfaces: IResourceManagerReloadListener, ISelectiveResourceReloadListener
 
 ### Methods
-- `protected void addQuads(IGeometryBakingContext owner,  IModelBuilder<?> modelBuilder,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelTransform,  ResourceLocation modelLocation)`
-- `public BakedModel bake(IGeometryBakingContext context,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ItemOverrides overrides,  ResourceLocation modelLocation)`
+- `void onResourceManagerReload(IResourceManager resourceManager)`
+- `default void onResourceManagerReload(IResourceManager resourceManager,  java.util.function.Predicate<IResourceType> resourcePredicate)`
+  Description copied from interface: ISelectiveResourceReloadListener
+  A version of onResourceManager that selectively chooses IResourceTypes
+   to reload.
+   When using this, the given predicate should be called to ensure the relevant resources should
+   be reloaded at this time.
+  - param: resourceManager - the resource manager being reloaded
+  - param: resourcePredicate - predicate to test whether any given resource type should be reloaded
+- `boolean accepts(ResourceLocation modelLocation)`
+- `IModel loadModel(ResourceLocation modelLocation)  throws java.lang.Exception`
+  - throws: java.lang.Exception
 
-### Inherited methods
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `getConfigurableComponentNames`, `resolveParents`
+## IModel
 
-## EmptyModel.Baked
-
-*class* `net.minecraftforge.client.model.EmptyModel.Baked`
-
-Enclosing class: EmptyModel
-
-### Fields
-- `private static final Material MISSING_TEXTURE`
-
-### Inherited fields
-- from `net.minecraft.client.resources.model.SimpleBakedModel`: `blockRenderTypes`, `culledFaces`, `fabulousItemRenderTypes`, `hasAmbientOcclusion`, `isGui3d`, `itemRenderTypes`, `overrides`, `particleIcon`, `transforms`, `unculledFaces`, `usesBlockLight`
-
-### Methods
-- `public TextureAtlasSprite getParticleIcon()`
-
-### Inherited methods
-- from `net.minecraft.client.resources.model.SimpleBakedModel`: `getOverrides`, `getQuads`, `getRenderTypes`, `getRenderTypes`, `getTransforms`, `isCustomRenderer`, `isGui3d`, `useAmbientOcclusion`, `usesBlockLight`
-- from `net.minecraftforge.client.extensions.IForgeBakedModel`: `applyTransform`, `getModelData`, `getParticleIcon`, `getQuads`, `getRenderPasses`, `useAmbientOcclusion`, `useAmbientOcclusion`
-
-## ExtendedBlockModelDeserializer
-
-*class* `net.minecraftforge.client.model.ExtendedBlockModelDeserializer`
-
-A version of BlockModel.Deserializer capable of deserializing models with custom loaders, as well as other
- changes introduced to the spec by Forge.
-
-### Fields
-- `public static final com.google.gson.Gson INSTANCE`
+*interface* `net.minecraftforge.client.model.IModel`
 
 ### Methods
-- `public BlockModel deserialize(com.google.gson.JsonElement element,  Type targetType,  com.google.gson.JsonDeserializationContext deserializationContext)  throws com.google.gson.JsonParseException`
-  - throws: com.google.gson.JsonParseException
-- `@Nullable public static @Nullable IUnbakedGeometry<?> deserializeGeometry(com.google.gson.JsonDeserializationContext deserializationContext,  com.google.gson.JsonObject object)  throws com.google.gson.JsonParseException`
-  - throws: com.google.gson.JsonParseException
+- `default java.util.Collection<ResourceLocation> getDependencies()`
+- `default java.util.Collection<ResourceLocation> getTextures()`
+- `IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `default IModelState getDefaultState()`
+- `default java.util.Optional<? extends IClip> getClip(java.lang.String name)`
+- `default IModel process(<any> customData)`
+  Allows the model to process custom data from the variant definition.
+   If unknown data is encountered it should be skipped.
+  - returns: a new model, with data applied.
+- `default IModel smoothLighting(boolean value)`
+- `default IModel gui3d(boolean value)`
+- `default IModel uvlock(boolean value)`
+- `default IModel retexture(<any> textures)`
+  Applies new textures to the model.
+   The returned model should be independent of the accessed one,
+   as a model should be able to be retextured multiple times producing
+   a separate model each time.
+  
+   The input map MAY map to an empty string "" which should be used
+   to indicate the texture was removed. Handling of that is up to
+   the model itself. Such as using default, missing texture, or
+   removing vertices.
+  
+   The input should be considered a DIFF of the old textures, not a
+   replacement as it may not contain everything.
+  - param: textures - New
+  - returns: Model with textures applied.
+- `default java.util.Optional<ModelBlock> asVanillaModel()`
 
-### Inherited methods
-- from `net.minecraft.client.renderer.block.model.BlockModel.Deserializer`: `getAmbientOcclusion`, `getElements`, `getOverrides`
+## ISmartVariant
 
-## ForgeFaceData
-
-*record* `net.minecraftforge.client.model.ForgeFaceData`
-
-Holds extra data that may be injected into a face.
- Used by ItemLayerModel, BlockElement and BlockElementFace
-
-### Fields
-- `private final int color`
-  The field for the color record component.
-- `private final int blockLight`
-  The field for the blockLight record component.
-- `private final int skyLight`
-  The field for the skyLight record component.
-- `private final boolean ambientOcclusion`
-  The field for the ambientOcclusion record component.
-- `private final boolean calculateNormals`
-  The field for the calculateNormals record component.
-- `public static final ForgeFaceData DEFAULT`
-- `public static final com.mojang.serialization.Codec<Integer> COLOR`
-- `public static final com.mojang.serialization.Codec<ForgeFaceData> CODEC`
-
-### Methods
-- `@Nullable public static ForgeFaceData read(@Nullable  com.google.gson.JsonElement obj,  @Nullable  ForgeFaceData fallback)  throws com.google.gson.JsonParseException`
-  Parses a ForgeFaceData from JSON
-  - param: obj - The JsonObject to parse from, weakly-typed to JsonElement to reduce logic complexity.
-  - param: fallback - What to return if the first parameter is null.
-  - returns: The parsed ForgeFaceData, or the fallback parameter if the first parmeter is null.
-  - throws: com.google.gson.JsonParseException
-- `public final String toString()`
-  Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.
-  - returns: a string representation of this object
-- `public final int hashCode()`
-  Returns a hash code value for this object. The value is derived from the hash code of each of the record components.
-  - returns: a hash code value for this object
-- `public final boolean equals(Object o)`
-  Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. All components in this record class are compared with '=='.
-  - param: o - the object with which to compare
-  - returns: true if this object is the same as the o argument; false otherwise.
-- `public int color()`
-  Returns the value of the color record component.
-  - returns: the value of the color record component
-- `public int blockLight()`
-  Returns the value of the blockLight record component.
-  - returns: the value of the blockLight record component
-- `public int skyLight()`
-  Returns the value of the skyLight record component.
-  - returns: the value of the skyLight record component
-- `public boolean ambientOcclusion()`
-  Returns the value of the ambientOcclusion record component.
-  - returns: the value of the ambientOcclusion record component
-- `public boolean calculateNormals()`
-  Returns the value of the calculateNormals record component.
-  - returns: the value of the calculateNormals record component
-
-## ForgeItemModelShaper
-
-*class* `net.minecraftforge.client.model.ForgeItemModelShaper`
-
-Wrapper around ItemModelShaper that cleans up the internal maps to respect ID remapping.
-
-### Fields
-- `private final Map<Holder.Reference<Item>,ModelResourceLocation> locations`
-- `private final Map<Holder.Reference<Item>,BakedModel> models`
-
-### Inherited fields
-- from `net.minecraft.client.renderer.ItemModelShaper`: `shapes`
+*interface* `net.minecraftforge.client.model.ISmartVariant`
 
 ### Methods
-- `@Nullable public @Nullable BakedModel getItemModel(Item item)`
-- `public void register(Item item,  ModelResourceLocation location)`
-- `public void rebuildCache()`
-- `public ModelResourceLocation getLocation(@NotNull  @NotNull ItemStack stack)`
-
-### Inherited methods
-- from `net.minecraft.client.renderer.ItemModelShaper`: `getItemModel`, `getModelManager`
-
-## IDynamicBakedModel
-
-*interface* `net.minecraftforge.client.model.IDynamicBakedModel`
-
-Convenience interface with default implementation of IForgeBakedModel.getQuads(BlockState, Direction, RandomSource, ModelData, RenderType).
-
-All Superinterfaces: BakedModel, IForgeBakedModel
-
-### Methods
-- `@NotNull default @NotNull List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  @NotNull  @NotNull RandomSource rand)`
-- `@NotNull @NotNull List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData extraData,  @Nullable  @Nullable RenderType renderType)`
-  Description copied from interface: IForgeBakedModel
-  A null RenderType is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
-
-### Inherited methods
-- from `net.minecraft.client.resources.model.BakedModel`: `getOverrides`, `getParticleIcon`, `getTransforms`, `isCustomRenderer`, `isGui3d`, `useAmbientOcclusion`, `usesBlockLight`
-- from `net.minecraftforge.client.extensions.IForgeBakedModel`: `applyTransform`, `getModelData`, `getParticleIcon`, `getRenderPasses`, `getRenderTypes`, `getRenderTypes`, `useAmbientOcclusion`, `useAmbientOcclusion`
-
-## IModelBuilder.Collecting
-
-*class* `net.minecraftforge.client.model.IModelBuilder.Collecting`
-
-Enclosing interface: IModelBuilder<T extends IModelBuilder<T>>
-
-### Fields
-- `private final List<BakedQuad> quads`
-
-### Methods
-- `public IModelBuilder.Collecting addCulledFace(Direction facing,  BakedQuad quad)`
-- `public IModelBuilder.Collecting addUnculledFace(BakedQuad quad)`
-- `public BakedModel build()`
-
-## IModelBuilder.Simple
-
-*class* `net.minecraftforge.client.model.IModelBuilder.Simple`
-
-Enclosing interface: IModelBuilder<T extends IModelBuilder<T>>
-
-### Fields
-- `private final SimpleBakedModel.Builder builder`
-- `private final RenderTypeGroup renderTypes`
-
-### Methods
-- `public IModelBuilder.Simple addCulledFace(Direction facing,  BakedQuad quad)`
-- `public IModelBuilder.Simple addUnculledFace(BakedQuad quad)`
-- `@Deprecated public BakedModel build()` (deprecated)
-
-## IModelBuilder>
-
-*interface* `net.minecraftforge.client.model.IModelBuilder>`
-
-Base interface for any object that collects culled and unculled faces and bakes them into a model.
-
- Provides a generic base implementation via of(boolean, boolean, boolean, ItemTransforms, ItemOverrides, TextureAtlasSprite, RenderTypeGroup)
- and a quad-collecting alternative via collecting(List).
-
-### Methods
-- `static IModelBuilder<?> of(boolean hasAmbientOcclusion,  boolean usesBlockLight,  boolean isGui3d,  ItemTransforms transforms,  ItemOverrides overrides,  TextureAtlasSprite particle,  RenderTypeGroup renderTypes)`
-  Creates a new model builder that uses the provided attributes in the final baked model.
-- `static IModelBuilder<?> collecting(List<BakedQuad> quads)`
-  Creates a new model builder that collects quads to the provided list, returning
-   an empty model if you call build().
-- `T addCulledFace(Direction facing,  BakedQuad quad)`
-- `T addUnculledFace(BakedQuad quad)`
-- `BakedModel build()`
-
-## IQuadTransformer
-
-*interface* `net.minecraftforge.client.model.IQuadTransformer`
-
-Transformer for baked quads.
-
-### Fields
-- `static final int STRIDE`
-- `static final int POSITION`
-- `static final int COLOR`
-- `static final int UV0`
-- `static final int UV1`
-- `static final int UV2`
-- `static final int NORMAL`
-
-### Methods
-- `void processInPlace(BakedQuad quad)`
-- `default void processInPlace(List<BakedQuad> quads)`
-- `default BakedQuad process(BakedQuad quad)`
-- `default List<BakedQuad> process(List<BakedQuad> inputs)`
-- `default IQuadTransformer andThen(IQuadTransformer other)`
-- `private static BakedQuad copy(BakedQuad quad)`
-- `private static int findOffset(VertexFormatElement element)`
+- `IModel process(IModel base)`
 
 ## ItemLayerModel
 
 *class* `net.minecraftforge.client.model.ItemLayerModel`
 
-Forge reimplementation of vanilla's ItemModelGenerator, i.e. builtin/generated models with some tweaks:
- - Represented as IUnbakedGeometry so it can be baked as usual instead of being special-cased
- - Not limited to an arbitrary number of layers (5)
- - Support for per-layer render types
+All Implemented Interfaces: IModel
 
 ### Fields
-- `@Nullable private @Nullable com.google.common.collect.ImmutableList<Material> textures`
-- `private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<ForgeFaceData> layerData`
-- `private final it.unimi.dsi.fastutil.ints.Int2ObjectMap<ResourceLocation> renderTypeNames`
+- `public static final ItemLayerModel INSTANCE`
 
 ### Methods
-- `public BakedModel bake(IGeometryBakingContext context,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ItemOverrides overrides,  ResourceLocation modelLocation)`
+- `public java.util.Collection<ResourceLocation> getTextures()`
+- `public ItemLayerModel retexture(<any> textures)`
+  Description copied from interface: IModel
+  Applies new textures to the model.
+   The returned model should be independent of the accessed one,
+   as a model should be able to be retextured multiple times producing
+   a separate model each time.
+  
+   The input map MAY map to an empty string "" which should be used
+   to indicate the texture was removed. Handling of that is up to
+   the model itself. Such as using default, missing texture, or
+   removing vertices.
+  
+   The input should be considered a DIFF of the old textures, not a
+   replacement as it may not contain everything.
+  - param: textures - New
+  - returns: Model with textures applied.
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `public static <any> getQuadsForSprite(int tint,  TextureAtlasSprite sprite,  VertexFormat format,  java.util.Optional<TRSRTransformation> transform)`
 
 ### Inherited methods
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `getConfigurableComponentNames`, `resolveParents`
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `getDependencies`, `gui3d`, `process`, `smoothLighting`, `uvlock`
 
 ## ItemLayerModel.Loader
 
-*class* `net.minecraftforge.client.model.ItemLayerModel.Loader`
+*enum* `net.minecraftforge.client.model.ItemLayerModel.Loader`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<ItemLayerModel.Loader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
 
 Enclosing class: ItemLayerModel
 
@@ -584,139 +343,562 @@ Enclosing class: ItemLayerModel
 - `public static final ItemLayerModel.Loader INSTANCE`
 
 ### Methods
-- `public ItemLayerModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)`
-- `protected void readLayerData(com.google.gson.JsonObject jsonObject,  String name,  it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap<ResourceLocation> renderTypeNames,  it.unimi.dsi.fastutil.ints.Int2ObjectMap<ForgeFaceData> layerData,  boolean logWarning)`
-
-## QuadTransformers
-
-*class* `net.minecraftforge.client.model.QuadTransformers`
-
-A collection of IQuadTransformer implementations.
-
-### Fields
-- `private static final IQuadTransformer EMPTY`
-- `private static final IQuadTransformer[] EMISSIVE_TRANSFORMERS`
-
-### Methods
-- `public static IQuadTransformer empty()`
-  Returns a BakedQuad transformer that does nothing.
-  - returns: a BakedQuad transformer that does nothing
-- `public static IQuadTransformer applying(Transformation transform)`
-  Returns a new BakedQuad transformer that applies the specified Transformation.
-  - returns: a new BakedQuad transformer that applies the specified Transformation
-- `public static IQuadTransformer applyingLightmap(int packedLight)`
-  - returns: A new BakedQuad transformer that applies the specified packed light value.
-- `public static IQuadTransformer applyingLightmap(int blockLight,  int skyLight)`
-  - returns: A new BakedQuad transformer that applies the specified block and sky light values.
-- `public static IQuadTransformer settingEmissivity(int emissivity)`
-  - returns: A BakedQuad transformer that sets the lightmap to the given emissivity (0-15)
-- `public static IQuadTransformer settingMaxEmissivity()`
-  - returns: A BakedQuad transformer that sets the lightmap to its max value
-- `public static IQuadTransformer applyingColor(int color)`
-  - param: color - The color in ARGB format.
-  - returns: A BakedQuad transformer that sets the color to the specified value.
-- `public static IQuadTransformer applyingColor(int red,  int green,  int blue)`
-  This method supplies a default alpha value of 255 (no transparency)
-  - param: red - The red value (0-255)
-  - param: green - The green value (0-255)
-  - param: blue - The blue value (0-255)
-  - returns: A BakedQuad transformer that sets the color to the specified value.
-- `public static IQuadTransformer applyingColor(int alpha,  int red,  int green,  int blue)`
-  - param: alpha - The alpha value (0-255)
-  - param: red - The red value (0-255)
-  - param: green - The green value (0-255)
-  - param: blue - The blue value (0-255)
-  - returns: A BakedQuad transformer that sets the color to the specified value.
-- `public static int toABGR(int argb)`
-  Converts an ARGB color to an ABGR color, as the commonly used color format is not the format colors end up packed into.
-   This function doubles as its own inverse.
-  - param: color - ARGB color
-  - returns: ABGR color
-
-## SeparateTransformsModel
-
-*class* `net.minecraftforge.client.model.SeparateTransformsModel`
-
-A model composed of multiple sub-models which are picked based on the ItemDisplayContext being used.
-
-### Fields
-- `private final BlockModel baseModel`
-- `private final com.google.common.collect.ImmutableMap<ItemDisplayContext,BlockModel> perspectives`
-
-### Methods
-- `public BakedModel bake(IGeometryBakingContext context,  ModelBaker baker,  Function<Material,TextureAtlasSprite> spriteGetter,  ModelState modelState,  ItemOverrides overrides,  ResourceLocation modelLocation)`
-- `public void resolveParents(Function<ResourceLocation,UnbakedModel> modelGetter,  IGeometryBakingContext context)`
-  Description copied from interface: IUnbakedGeometry
-  Resolve parents of nested BlockModels which are later used in
-   IUnbakedGeometry.bake(IGeometryBakingContext, ModelBaker, Function, ModelState, ItemOverrides, ResourceLocation)
-   via BlockModel.resolveParents(Function)
+- `public static ItemLayerModel.Loader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (ItemLayerModel.Loader c : ItemLayerModel.Loader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static ItemLayerModel.Loader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)`
 
 ### Inherited methods
-- from `net.minecraftforge.client.model.geometry.IUnbakedGeometry`: `getConfigurableComponentNames`
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
 
-## SeparateTransformsModel.Baked
+## ItemTextureQuadConverter
 
-*class* `net.minecraftforge.client.model.SeparateTransformsModel.Baked`
-
-Enclosing class: SeparateTransformsModel
-
-### Fields
-- `private final boolean isAmbientOcclusion`
-- `private final boolean isGui3d`
-- `private final boolean isSideLit`
-- `private final TextureAtlasSprite particle`
-- `private final ItemOverrides overrides`
-- `private final BakedModel baseModel`
-- `private final com.google.common.collect.ImmutableMap<ItemDisplayContext,BakedModel> perspectives`
+*class* `net.minecraftforge.client.model.ItemTextureQuadConverter`
 
 ### Methods
-- `@NotNull public @NotNull List<BakedQuad> getQuads(@Nullable  @Nullable BlockState state,  @Nullable  @Nullable Direction side,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData data,  @Nullable  @Nullable RenderType renderType)`
-  Description copied from interface: IForgeBakedModel
-  A null RenderType is used for the breaking overlay as well as non-standard rendering, so models should return all their quads.
-- `public boolean useAmbientOcclusion()`
-- `public boolean isGui3d()`
-- `public boolean usesBlockLight()`
-- `public boolean isCustomRenderer()`
-- `public TextureAtlasSprite getParticleIcon()`
-- `public ItemOverrides getOverrides()`
-- `public ItemTransforms getTransforms()`
-- `public BakedModel applyTransform(ItemDisplayContext cameraTransformType,  PoseStack poseStack,  boolean applyLeftHandTransform)`
-  Description copied from interface: IForgeBakedModel
-  Applies a transform for the given ItemTransforms.TransformType and applyLeftHandTransform, and
-   returns the model to be rendered.
-- `public ChunkRenderTypeSet getRenderTypes(@NotNull  @NotNull BlockState state,  @NotNull  @NotNull RandomSource rand,  @NotNull  @NotNull ModelData data)`
-  Description copied from interface: IForgeBakedModel
-  Gets the set of render types to use when drawing this block in the level.
-   Supported types are those returned by RenderType.chunkBufferLayers().
+- `@Deprecated public static java.util.List<UnpackedBakedQuad> convertTexture(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color)` (deprecated)
+  Deprecated. use convertTexture(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)
+- `public static java.util.List<UnpackedBakedQuad> convertTexture(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color,  int tint)`
+  Takes a texture and converts it into BakedQuads.
+   The conversion is done by scanning the texture horizontally and vertically and creating "strips" of the texture.
+   Strips that are of the same size and follow each other are converted into one bigger quad.
   
-   By default, defers query to ItemBlockRenderTypes.
+   The resulting list of quads is the texture represented as a list of horizontal OR vertical quads,
+   depending on which creates less quads. If the amount of quads is equal, horizontal is preferred.
+  - param: format -
+  - param: template - The input texture to convert
+  - param: sprite - The texture whose UVs shall be used
+  - returns: The generated quads.
+- `@Deprecated public static java.util.List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color)` (deprecated)
+  Deprecated. use convertTextureHorizontal(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)
+- `public static java.util.List<UnpackedBakedQuad> convertTextureHorizontal(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color,  int tint)`
+  Scans a texture and converts it into a list of horizontal strips stacked on top of each other.
+   The height of the strips is as big as possible.
+- `@Deprecated public static java.util.List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color)` (deprecated)
+  Deprecated. use convertTextureVertical(VertexFormat, TRSRTransformation, TextureAtlasSprite, TextureAtlasSprite, float, EnumFacing, int, int)
+- `public static java.util.List<UnpackedBakedQuad> convertTextureVertical(VertexFormat format,  TRSRTransformation transform,  TextureAtlasSprite template,  TextureAtlasSprite sprite,  float z,  EnumFacing facing,  int color,  int tint)`
+  Scans a texture and converts it into a list of vertical strips stacked next to each other from left to right.
+   The width of the strips is as big as possible.
+- `@Deprecated public static UnpackedBakedQuad genQuad(VertexFormat format,  TRSRTransformation transform,  float x1,  float y1,  float x2,  float y2,  float z,  TextureAtlasSprite sprite,  EnumFacing facing,  int color)` (deprecated)
+  Deprecated. use genQuad(VertexFormat, TRSRTransformation, float, float, float, float, float, TextureAtlasSprite, EnumFacing, int, int)
+- `public static UnpackedBakedQuad genQuad(VertexFormat format,  TRSRTransformation transform,  float x1,  float y1,  float x2,  float y2,  float z,  TextureAtlasSprite sprite,  EnumFacing facing,  int color,  int tint)`
+  Generates a Front/Back quad for an itemmodel. Therefore only supports facing NORTH and SOUTH.
+   Coordinates are [0,16] to match the usual coordinates used in TextureAtlasSprites
 
-### Inherited methods
-- from `net.minecraftforge.client.model.IDynamicBakedModel`: `getQuads`
-- from `net.minecraftforge.client.extensions.IForgeBakedModel`: `getModelData`, `getParticleIcon`, `getRenderPasses`, `getRenderTypes`, `useAmbientOcclusion`, `useAmbientOcclusion`
+## MapModelState
 
-## SeparateTransformsModel.Loader
+*class* `net.minecraftforge.client.model.MapModelState`
 
-*class* `net.minecraftforge.client.model.SeparateTransformsModel.Loader`
-
-Enclosing class: SeparateTransformsModel
-
-### Fields
-- `public static final SeparateTransformsModel.Loader INSTANCE`
+All Implemented Interfaces: IModelState
 
 ### Methods
-- `public SeparateTransformsModel read(com.google.gson.JsonObject jsonObject,  com.google.gson.JsonDeserializationContext deserializationContext)`
+- `public java.util.Optional<TRSRTransformation> apply(java.util.Optional<? extends IModelPart> part)`
+- `public IModelState getState(java.lang.Object obj)`
+- `public static MapModelState.Wrapper wrap(java.lang.Object obj)`
+
+## MapModelState.Wrapper
+
+*class* `net.minecraftforge.client.model.MapModelState.Wrapper`
+
+All Implemented Interfaces: IModelPart
+
+Enclosing class: MapModelState
+
+### Methods
+- `public int hashCode()`
+- `public boolean equals(java.lang.Object obj)`
+
+## ModelDynBucket
+
+*class* `net.minecraftforge.client.model.ModelDynBucket`
+
+All Implemented Interfaces: IModel
+
+### Fields
+- `public static final ModelResourceLocation LOCATION`
+- `public static final IModel MODEL`
+
+### Methods
+- `public java.util.Collection<ResourceLocation> getTextures()`
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `public ModelDynBucket process(<any> customData)`
+  Sets the fluid in the model.
+   "fluid" - Name of the fluid in the fluid registry.
+   "flipGas" - If "true" the model will be flipped upside down if the fluid is lighter than air. If "false" it won't.
+   "applyTint" - If "true" the model will tint the fluid quads according to the fluid's base color.
+  
+   If the fluid can't be found, water is used.
+  - returns: a new model, with data applied.
+- `public ModelDynBucket retexture(<any> textures)`
+  Allows to use different textures for the model.
+   There are 3 layers:
+   base - The empty bucket/container
+   fluid - A texture representing the liquid portion. Non-transparent = liquid
+   cover - An overlay that's put over the liquid (optional)
+  
+   If no liquid is given a hardcoded variant for the bucket is used.
+  - param: textures - New
+  - returns: Model with textures applied.
+
+### Inherited methods
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `getDependencies`, `gui3d`, `smoothLighting`, `uvlock`
+
+## ModelDynBucket.LoaderDynBucket
+
+*enum* `net.minecraftforge.client.model.ModelDynBucket.LoaderDynBucket`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<ModelDynBucket.LoaderDynBucket>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
+
+Enclosing class: ModelDynBucket
+
+### Fields
+- `public static final ModelDynBucket.LoaderDynBucket INSTANCE`
+
+### Methods
+- `public static ModelDynBucket.LoaderDynBucket[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (ModelDynBucket.LoaderDynBucket c : ModelDynBucket.LoaderDynBucket.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static ModelDynBucket.LoaderDynBucket valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public void register(TextureMap map)`
+- `protected static IResource getResource(ResourceLocation resourceLocation)`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
+
+## ModelFluid
+
+*class* `net.minecraftforge.client.model.ModelFluid`
+
+All Implemented Interfaces: IModel
+
+### Fields
+- `public static final ModelFluid WATER`
+- `public static final ModelFluid LAVA`
+
+### Methods
+- `public java.util.Collection<ResourceLocation> getTextures()`
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `public ModelFluid process(<any> customData)`
+  Description copied from interface: IModel
+  Allows the model to process custom data from the variant definition.
+   If unknown data is encountered it should be skipped.
+  - returns: a new model, with data applied.
+
+### Inherited methods
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `getDependencies`, `gui3d`, `retexture`, `smoothLighting`, `uvlock`
+
+## ModelFluid.FluidLoader
+
+*enum* `net.minecraftforge.client.model.ModelFluid.FluidLoader`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<ModelFluid.FluidLoader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
+
+Enclosing class: ModelFluid
+
+### Fields
+- `public static final ModelFluid.FluidLoader INSTANCE`
+
+### Methods
+- `public static ModelFluid.FluidLoader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (ModelFluid.FluidLoader c : ModelFluid.FluidLoader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static ModelFluid.FluidLoader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
+
+## ModelLoader
+
+*class* `net.minecraftforge.client.model.ModelLoader`
+
+### Inherited fields
+- from `net.minecraft.client.renderer.block.model.ModelBakery`: `bakedRegistry`, `blockModelShapes`, `LOCATIONS_BUILTIN_TEXTURES`, `MODEL_ENTITY`, `MODEL_GENERATED`, `MODEL_MISSING`, `resourceManager`, `sprites`, `textureMap`
+
+### Methods
+- `public boolean isLoading()`
+- `public IRegistry<ModelResourceLocation,IBakedModel> setupModelRegistry()`
+- `protected void loadVariantModels()`
+- `protected void loadMultipartVariantModels()`
+- `protected void loadBlocks()`
+- `protected void registerVariant(ModelBlockDefinition definition,  ModelResourceLocation location)`
+- `protected void registerMultipartVariant(ModelBlockDefinition definition,  java.util.Collection<ModelResourceLocation> locations)`
+- `protected ModelBlockDefinition getModelBlockDefinition(ResourceLocation location)`
+- `protected void loadItemModels()`
+- `public static ModelResourceLocation getInventoryVariant(java.lang.String s)`
+  Hooked from ModelBakery, allows using MRLs that don't end with "inventory" for items.
+- `protected ResourceLocation getModelLocation(ResourceLocation model)`
+- `protected IModel getMissingModel()`
+- `public void onPostBakeEvent(IRegistry<ModelResourceLocation,IBakedModel> modelRegistry)`
+  Internal, do not use.
+- `public static void setCustomStateMapper(Block block,  IStateMapper mapper)`
+  Adds a custom IBlockState -> model variant logic.
+- `public static void onRegisterAllBlocks(BlockModelShapes shapes)`
+  Internal, do not use.
+- `public static void setCustomModelResourceLocation(Item item,  int metadata,  ModelResourceLocation model)`
+  Adds a simple mapping from Item + metadata to the model variant.
+   Registers the variant with the ModelBakery too.
+- `public static void setCustomMeshDefinition(Item item,  ItemMeshDefinition meshDefinition)`
+  Adds generic ItemStack -> model variant logic.
+   You still need to manually call ModelBakery.registerItemVariants with all values that meshDefinition can return.
+- `public static void setBucketModelDefinition(Item item)`
+  Helper method for registering all itemstacks for given item to map to universal bucket model.
+- `public static void onRegisterItems(ItemModelMesher mesher)`
+  Internal, do not use.
+- `public static java.util.function.Function<ResourceLocation,TextureAtlasSprite> defaultTextureGetter()`
+  Get the default texture getter the models will be baked with.
+
+### Inherited methods
+- from `net.minecraft.client.renderer.block.model.ModelBakery`: `bakeModel`, `getItemLocation`, `getTextureLocations`, `getVariantNames`, `hasItemModel`, `isCustomRenderer`, `loadBlock`, `loadModel`, `loadVariantItemModels`, `loadVariantList`, `makeBakedQuad`, `makeItemModel`, `registerItemVariants`, `registerVariantNames`
+
+## ModelLoader.BakedModelCacheKey
+
+*class* `net.minecraftforge.client.model.ModelLoader.BakedModelCacheKey`
+
+Enclosing class: ModelLoader
+
+### Methods
+- `public boolean equals(java.lang.Object o)`
+- `public int hashCode()`
+
+## ModelLoader.VanillaLoader
+
+*enum* `net.minecraftforge.client.model.ModelLoader.VanillaLoader`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<ModelLoader.VanillaLoader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
+
+Enclosing class: ModelLoader
+
+### Fields
+- `public static final ModelLoader.VanillaLoader INSTANCE`
+
+### Methods
+- `public static ModelLoader.VanillaLoader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (ModelLoader.VanillaLoader c : ModelLoader.VanillaLoader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static ModelLoader.VanillaLoader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)  throws java.lang.Exception`
+  - throws: java.lang.Exception
+- `public java.lang.String toString()`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
+
+## ModelLoader.VariantLoader
+
+*enum* `net.minecraftforge.client.model.ModelLoader.VariantLoader`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<ModelLoader.VariantLoader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
+
+Enclosing class: ModelLoader
+
+### Fields
+- `public static final ModelLoader.VariantLoader INSTANCE`
+
+### Methods
+- `public static ModelLoader.VariantLoader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (ModelLoader.VariantLoader c : ModelLoader.VariantLoader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static ModelLoader.VariantLoader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)  throws java.lang.Exception`
+  - throws: java.lang.Exception
+- `public java.lang.String toString()`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
+
+## ModelLoader.White
+
+*class* `net.minecraftforge.client.model.ModelLoader.White`
+
+16x16 pure white sprite.
+
+Enclosing class: ModelLoader
+
+### Fields
+- `public static final ResourceLocation LOCATION`
+- `public static final ModelLoader.White INSTANCE`
+
+### Inherited fields
+- from `net.minecraft.client.renderer.texture.TextureAtlasSprite`: `frameCounter`, `framesTextureData`, `height`, `interpolatedFrameData`, `originX`, `originY`, `rotated`, `tickCounter`, `width`
+
+### Methods
+- `public boolean hasCustomLoader(IResourceManager manager,  ResourceLocation location)`
+  Description copied from class: TextureAtlasSprite
+  The result of this function determines is the below 'load' function is called, and the
+   default vanilla loading code is bypassed completely.
+  - param: manager - Main resource manager
+  - param: location - File resource location
+  - returns: True to use your own custom load code and bypass vanilla loading.
+- `public boolean load(IResourceManager manager,  ResourceLocation location,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> textureGetter)`
+  Description copied from class: TextureAtlasSprite
+  Load the specified resource as this sprite's data.
+   Returning false from this function will prevent this icon from being stitched onto the master texture.
+  - param: manager - Main resource manager
+  - param: location - File resource location
+  - param: textureGetter - accessor for dependencies. All of them will be loaded before this one
+  - returns: False to prevent this Icon from being stitched
+- `public void register(TextureMap map)`
+
+### Inherited methods
+- from `net.minecraft.client.renderer.texture.TextureAtlasSprite`: `clearFramesTextureData`, `copyFrom`, `generateMipmaps`, `getDependencies`, `getFrameCount`, `getFrameTextureData`, `getIconHeight`, `getIconName`, `getIconWidth`, `getInterpolatedU`, `getInterpolatedV`, `getMaxU`, `getMaxV`, `getMinU`, `getMinV`, `getOriginX`, `getOriginY`, `getUnInterpolatedU`, `getUnInterpolatedV`, `hasAnimationMetadata`, `initSprite`, `loadSprite`, `loadSpriteFrames`, `makeAtlasSprite`, `setFramesTextureData`, `setIconHeight`, `setIconWidth`, `toString`, `updateAnimation`
+
+## ModelLoaderRegistry
+
+*class* `net.minecraftforge.client.model.ModelLoaderRegistry`
+
+### Methods
+- `public static void registerLoader(ICustomModelLoader loader)`
+- `public static boolean loaded(ResourceLocation location)`
+- `public static ResourceLocation getActualLocation(ResourceLocation location)`
+- `public static IModel getModel(ResourceLocation location)  throws java.lang.Exception`
+  Primary method to get IModel instances.
+   ResourceLocation argument will be passed directly to the custom model loaders,
+   ModelResourceLocation argument will be loaded through the blockstate system.
+  - throws: java.lang.Exception
+- `public static IModel getModelOrMissing(ResourceLocation location)`
+  Use this if you don't care about the exception and want some model anyway.
+- `public static IModel getModelOrLogError(ResourceLocation location,  java.lang.String error)`
+  Use this if you want the model, but need to log the error.
+- `public static IModel getMissingModel()`
+- `public static void clearModelCache(IResourceManager manager)`
+- `public static IAnimationStateMachine loadASM(ResourceLocation location,  <any> customParameters)`
+
+## ModelLoaderRegistry.LoaderException
+
+*class* `net.minecraftforge.client.model.ModelLoaderRegistry.LoaderException`
+
+All Implemented Interfaces: java.io.Serializable
+
+Enclosing class: ModelLoaderRegistry
+
+### Inherited methods
+- from `java.lang.Throwable`: `addSuppressed`, `fillInStackTrace`, `getCause`, `getLocalizedMessage`, `getMessage`, `getStackTrace`, `getSuppressed`, `initCause`, `printStackTrace`, `printStackTrace`, `printStackTrace`, `setStackTrace`, `toString`
+
+## ModelStateComposition
+
+*class* `net.minecraftforge.client.model.ModelStateComposition`
+
+All Implemented Interfaces: IModelState
+
+### Methods
+- `public java.util.Optional<TRSRTransformation> apply(java.util.Optional<? extends IModelPart> part)`
+- `public boolean equals(java.lang.Object o)`
+- `public int hashCode()`
+
+## MultiLayerModel
+
+*class* `net.minecraftforge.client.model.MultiLayerModel`
+
+All Implemented Interfaces: IModel
+
+### Fields
+- `public static final MultiLayerModel INSTANCE`
+
+### Methods
+- `public java.util.Collection<ResourceLocation> getDependencies()`
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)`
+- `public MultiLayerModel process(<any> customData)`
+  Description copied from interface: IModel
+  Allows the model to process custom data from the variant definition.
+   If unknown data is encountered it should be skipped.
+  - returns: a new model, with data applied.
+
+### Inherited methods
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `getTextures`, `gui3d`, `retexture`, `smoothLighting`, `uvlock`
+
+## MultiLayerModel.Loader
+
+*enum* `net.minecraftforge.client.model.MultiLayerModel.Loader`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<MultiLayerModel.Loader>, IResourceManagerReloadListener, ICustomModelLoader, ISelectiveResourceReloadListener
+
+Enclosing class: MultiLayerModel
+
+### Fields
+- `public static final MultiLayerModel.Loader INSTANCE`
+
+### Methods
+- `public static MultiLayerModel.Loader[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (MultiLayerModel.Loader c : MultiLayerModel.Loader.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static MultiLayerModel.Loader valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean accepts(ResourceLocation modelLocation)`
+- `public IModel loadModel(ResourceLocation modelLocation)`
+
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraftforge.client.model.ICustomModelLoader`: `onResourceManagerReload`
+
+## MultiModel
+
+*class* `net.minecraftforge.client.model.MultiModel`
+
+Deprecated.
+
+All Implemented Interfaces: IModel
+
+### Methods
+- `public java.util.Collection<ResourceLocation> getDependencies()` (deprecated)
+  Deprecated.
+- `public java.util.Collection<ResourceLocation> getTextures()` (deprecated)
+  Deprecated.
+- `public IBakedModel bake(IModelState state,  VertexFormat format,  java.util.function.Function<ResourceLocation,TextureAtlasSprite> bakedTextureGetter)` (deprecated)
+  Deprecated.
+
+### Inherited methods
+- from `net.minecraftforge.client.model.IModel`: `asVanillaModel`, `getClip`, `getDefaultState`, `gui3d`, `process`, `retexture`, `smoothLighting`, `uvlock`
+
+## MultiModelState
+
+*class* `net.minecraftforge.client.model.MultiModelState`
+
+All Implemented Interfaces: IModelState
+
+### Methods
+- `public static IModelState getPartState(IModelState state,  IModel model,  int index)`
+- `public java.util.Optional<TRSRTransformation> apply(java.util.Optional<? extends IModelPart> part)`
+
+## PerspectiveMapWrapper
+
+*class* `net.minecraftforge.client.model.PerspectiveMapWrapper`
+
+All Implemented Interfaces: IBakedModel
+
+### Methods
+- `public static <any> getTransforms(IModelState state)`
+- `public static <any> getTransforms(ItemCameraTransforms transforms)`
+- `public static <any> handlePerspective(IBakedModel model,  <any> transforms,  ItemCameraTransforms.TransformType cameraTransformType)`
+- `public static <any> handlePerspective(IBakedModel model,  IModelState state,  ItemCameraTransforms.TransformType cameraTransformType)`
+- `public boolean isAmbientOcclusion()`
+- `public boolean isAmbientOcclusion(IBlockState state)`
+- `public boolean isGui3d()`
+- `public boolean isBuiltInRenderer()`
+- `public TextureAtlasSprite getParticleTexture()`
+- `public ItemCameraTransforms getItemCameraTransforms()`
+- `public java.util.List<BakedQuad> getQuads(IBlockState state,  EnumFacing side,  long rand)`
+- `public ItemOverrideList getOverrides()`
+- `public <any> handlePerspective(ItemCameraTransforms.TransformType cameraTransformType)`
+
+## SimpleModelFontRenderer
+
+*class* `net.minecraftforge.client.model.SimpleModelFontRenderer`
+
+All Implemented Interfaces: IResourceManagerReloadListener
+
+### Inherited fields
+- from `net.minecraft.client.gui.FontRenderer`: `charWidth`, `FONT_HEIGHT`, `fontRandom`, `glyphWidth`, `locationFontTexture`, `posX`, `posY`
+
+### Methods
+- `public void setSprite(TextureAtlasSprite sprite)`
+- `public void setFillBlanks(boolean fillBlanks)`
+- `protected float renderDefaultChar(int pos,  boolean italic)`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `protected abstract float renderUnicodeChar(char c,  boolean italic)`
+- `protected void doDraw(float shift)`
+- `protected void setColor(float r,  float g,  float b,  float a)`
+- `public void enableAlpha()`
+- `protected void bindTexture(ResourceLocation location)`
+- `public <any> build()`
+
+### Inherited methods
+- from `net.minecraft.client.gui.FontRenderer`: `drawSplitString`, `drawString`, `drawString`, `drawStringWithShadow`, `getBidiFlag`, `getCharWidth`, `getColorCode`, `getFormatFromString`, `getResource`, `getStringWidth`, `getUnicodeFlag`, `getWordWrappedHeight`, `listFormattedStringToWidth`, `setBidiFlag`, `setUnicodeFlag`, `trimStringToWidth`, `trimStringToWidth`
 
 ## SimpleModelState
 
 *class* `net.minecraftforge.client.model.SimpleModelState`
 
-Simple implementation of ModelState.
-
-### Fields
-- `private final Transformation transformation`
-- `private final boolean uvLocked`
+All Implemented Interfaces: IModelState
 
 ### Methods
-- `public Transformation getRotation()`
-- `public boolean isUvLocked()`
+- `public java.util.Optional<TRSRTransformation> apply(java.util.Optional<? extends IModelPart> part)`

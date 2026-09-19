@@ -1,16 +1,15 @@
 # customnpcs API
 
-Use the Markdown packages first. Open ../api.json only for structured lookup.
+Use the Markdown packages first. Don't open ../api.json directly, but use `node bin/get-class-info.js <name|fqn|package|source> [...]` to lookup types.
 
-- root.md: noppes.npcs.api
-- block.md: noppes.npcs.api.block
-- constants.md: noppes.npcs.api.constants
-- entity.md: noppes.npcs.api.entity
-- entity/data.md: noppes.npcs.api.entity.data
-- entity/data/role.md: noppes.npcs.api.entity.data.role
-- event.md: noppes.npcs.api.event
-- function/gui.md: noppes.npcs.api.function.gui
-- gui.md: noppes.npcs.api.gui
-- handler.md: noppes.npcs.api.handler
-- handler/data.md: noppes.npcs.api.handler.data
-- item.md: noppes.npcs.api.item
+- api.md: noppes.npcs.api
+- api/block.md: noppes.npcs.api.block
+- api/constants.md: noppes.npcs.api.constants
+- api/entity.md: noppes.npcs.api.entity
+- api/entity/data.md: noppes.npcs.api.entity.data
+- api/entity/data/role.md: noppes.npcs.api.entity.data.role
+- api/event.md: noppes.npcs.api.event
+- api/gui.md: noppes.npcs.api.gui
+- api/handler.md: noppes.npcs.api.handler
+- api/handler/data.md: noppes.npcs.api.handler.data
+- api/item.md: noppes.npcs.api.item

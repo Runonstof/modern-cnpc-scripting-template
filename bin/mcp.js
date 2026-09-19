@@ -20,7 +20,7 @@ var path = require("path");
 var readline = require("readline");
 
 var root = path.join(__dirname, "..");
-var defaultMap = path.join(root, "mcp", "1.20.1.tiny");
+var defaultMap = path.join(root, "mcp", "1.12.2.tiny");
 
 function printHelp() {
   process.stderr.write(

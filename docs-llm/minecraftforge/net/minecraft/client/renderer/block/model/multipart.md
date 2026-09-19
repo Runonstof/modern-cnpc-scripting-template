@@ -1,112 +1,91 @@
 # net.minecraft.client.renderer.block.model.multipart
 
-- [AndCondition](#andcondition)
-- [Condition](#condition)
-- [KeyValueCondition](#keyvaluecondition)
-- [MultiPart](#multipart)
-- [MultiPart.Deserializer](#multipart.deserializer)
-- [OrCondition](#orcondition)
+- [ConditionAnd](#conditionand)
+- [ConditionOr](#conditionor)
+- [ConditionPropertyValue](#conditionpropertyvalue)
+- [ICondition](#icondition)
+- [Multipart](#multipart)
+- [Multipart.Deserializer](#multipart.deserializer)
 - [Selector](#selector)
 - [Selector.Deserializer](#selector.deserializer)
-## AndCondition
+## ConditionAnd
 
-*class* `net.minecraft.client.renderer.block.model.multipart.AndCondition`
+*class* `net.minecraft.client.renderer.block.model.multipart.ConditionAnd`
 
-### Fields
-- `public static final String TOKEN` (= "AND")
-- `private final Iterable<? extends Condition> conditions`
+All Implemented Interfaces: ICondition
 
 ### Inherited fields
-- from `net.minecraft.client.renderer.block.model.multipart.Condition`: `FALSE`, `TRUE`
+- from `net.minecraft.client.renderer.block.model.multipart.ICondition`: `FALSE`, `TRUE`
 
 ### Methods
-- `public Predicate<BlockState> getPredicate(StateDefinition<Block,BlockState> p_111921_)`
+- `public <any> getPredicate(BlockStateContainer blockState)`
 
-## Condition
+## ConditionOr
 
-*interface* `net.minecraft.client.renderer.block.model.multipart.Condition`
+*class* `net.minecraft.client.renderer.block.model.multipart.ConditionOr`
 
-### Fields
-- `static final Condition TRUE`
-- `static final Condition FALSE`
-
-### Methods
-- `Predicate<BlockState> getPredicate(StateDefinition<Block,BlockState> p_111933_)`
-
-## KeyValueCondition
-
-*class* `net.minecraft.client.renderer.block.model.multipart.KeyValueCondition`
-
-### Fields
-- `private static final com.google.common.base.Splitter PIPE_SPLITTER`
-- `private final String key`
-- `private final String value`
+All Implemented Interfaces: ICondition
 
 ### Inherited fields
-- from `net.minecraft.client.renderer.block.model.multipart.Condition`: `FALSE`, `TRUE`
+- from `net.minecraft.client.renderer.block.model.multipart.ICondition`: `FALSE`, `TRUE`
 
 ### Methods
-- `public Predicate<BlockState> getPredicate(StateDefinition<Block,BlockState> p_111960_)`
-- `private Predicate<BlockState> getBlockStatePredicate(StateDefinition<Block,BlockState> p_111945_,  Property<?> p_111946_,  String p_111947_)`
-- `public String toString()`
+- `public <any> getPredicate(BlockStateContainer blockState)`
 
-## MultiPart
+## ConditionPropertyValue
 
-*class* `net.minecraft.client.renderer.block.model.multipart.MultiPart`
+*class* `net.minecraft.client.renderer.block.model.multipart.ConditionPropertyValue`
+
+All Implemented Interfaces: ICondition
+
+### Inherited fields
+- from `net.minecraft.client.renderer.block.model.multipart.ICondition`: `FALSE`, `TRUE`
+
+### Methods
+- `public <any> getPredicate(BlockStateContainer blockState)`
+- `public java.lang.String toString()`
+
+## ICondition
+
+*interface* `net.minecraft.client.renderer.block.model.multipart.ICondition`
 
 ### Fields
-- `private final StateDefinition<Block,BlockState> definition`
-- `private final List<Selector> selectors`
+- `static final ICondition TRUE`
+- `static final ICondition FALSE`
 
 ### Methods
-- `public List<Selector> getSelectors()`
-- `public Set<MultiVariant> getMultiVariants()`
-- `public boolean equals(Object p_111984_)`
+- `<any> getPredicate(BlockStateContainer blockState)`
+
+## Multipart
+
+*class* `net.minecraft.client.renderer.block.model.multipart.Multipart`
+
+### Methods
+- `public java.util.List<Selector> getSelectors()`
+- `public java.util.Set<VariantList> getVariants()`
+- `public void setStateContainer(BlockStateContainer stateContainerIn)`
+- `public BlockStateContainer getStateContainer()`
+- `public boolean equals(java.lang.Object p_equals_1_)`
 - `public int hashCode()`
-- `public Collection<ResourceLocation> getDependencies()`
-- `public void resolveParents(Function<ResourceLocation,UnbakedModel> p_251539_)`
-- `@Nullable public BakedModel bake(ModelBaker p_249988_,  Function<Material,TextureAtlasSprite> p_111972_,  ModelState p_111973_,  ResourceLocation p_111974_)`
 
-## MultiPart.Deserializer
+## Multipart.Deserializer
 
-*class* `net.minecraft.client.renderer.block.model.multipart.MultiPart.Deserializer`
+*class* `net.minecraft.client.renderer.block.model.multipart.Multipart.Deserializer`
 
-Enclosing class: MultiPart
-
-### Fields
-- `private final BlockModelDefinition.Context context`
+Enclosing class: Multipart
 
 ### Methods
-- `public MultiPart deserialize(com.google.gson.JsonElement p_111994_,  Type p_111995_,  com.google.gson.JsonDeserializationContext p_111996_)  throws com.google.gson.JsonParseException`
-  - throws: com.google.gson.JsonParseException
-- `private List<Selector> getSelectors(com.google.gson.JsonDeserializationContext p_111991_,  com.google.gson.JsonArray p_111992_)`
-
-## OrCondition
-
-*class* `net.minecraft.client.renderer.block.model.multipart.OrCondition`
-
-### Fields
-- `public static final String TOKEN` (= "OR")
-- `private final Iterable<? extends Condition> conditions`
-
-### Inherited fields
-- from `net.minecraft.client.renderer.block.model.multipart.Condition`: `FALSE`, `TRUE`
-
-### Methods
-- `public Predicate<BlockState> getPredicate(StateDefinition<Block,BlockState> p_112014_)`
+- `public Multipart deserialize(JsonElement p_deserialize_1_,  java.lang.reflect.Type p_deserialize_2_,  JsonDeserializationContext p_deserialize_3_)  throws JsonParseException`
+  - throws: JsonParseException
 
 ## Selector
 
 *class* `net.minecraft.client.renderer.block.model.multipart.Selector`
 
-### Fields
-- `private final Condition condition`
-- `private final MultiVariant variant`
-
 ### Methods
-- `public MultiVariant getVariant()`
-- `public Predicate<BlockState> getPredicate(StateDefinition<Block,BlockState> p_112022_)`
-- `public boolean equals(Object p_112024_)`
+- `public VariantList getVariantList()`
+- `public <any> getPredicate(BlockStateContainer state)`
+- `public boolean equals(java.lang.Object p_equals_1_)`
 - `public int hashCode()`
 
 ## Selector.Deserializer
@@ -116,8 +95,5 @@ Enclosing class: MultiPart
 Enclosing class: Selector
 
 ### Methods
-- `public Selector deserialize(com.google.gson.JsonElement p_112030_,  Type p_112031_,  com.google.gson.JsonDeserializationContext p_112032_)  throws com.google.gson.JsonParseException`
-  - throws: com.google.gson.JsonParseException
-- `private Condition getSelector(com.google.gson.JsonObject p_112040_)`
-- `static Condition getCondition(com.google.gson.JsonObject p_112034_)`
-- `private static Condition getKeyValueCondition(Map.Entry<String,com.google.gson.JsonElement> p_112036_)`
+- `public Selector deserialize(JsonElement p_deserialize_1_,  java.lang.reflect.Type p_deserialize_2_,  JsonDeserializationContext p_deserialize_3_)  throws JsonParseException`
+  - throws: JsonParseException

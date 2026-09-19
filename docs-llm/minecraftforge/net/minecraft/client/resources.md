@@ -1,384 +1,516 @@
 # net.minecraft.client.resources
 
-- [Class PlayerSkin.Model](#class-playerskin.model)
-- [ClientPackSource](#clientpacksource)
+- [AbstractResourcePack](#abstractresourcepack)
 - [DefaultPlayerSkin](#defaultplayerskin)
-- [DownloadedPackSource](#downloadedpacksource)
+- [DefaultResourcePack](#defaultresourcepack)
+- [FallbackResourceManager](#fallbackresourcemanager)
+- [FileResourcePack](#fileresourcepack)
+- [FolderResourcePack](#folderresourcepack)
 - [FoliageColorReloadListener](#foliagecolorreloadlistener)
 - [GrassColorReloadListener](#grasscolorreloadlistener)
-- [IndexedAssetSource](#indexedassetsource)
-- [LegacyStuffWrapper](#legacystuffwrapper)
-- [MobEffectTextureManager](#mobeffecttexturemanager)
-- [PaintingTextureManager](#paintingtexturemanager)
-- [PlayerSkin](#playerskin)
+- [I18n](#i18n)
+- [IReloadableResourceManager](#ireloadableresourcemanager)
+- [IResource](#iresource)
+- [IResourceManager](#iresourcemanager)
+- [IResourceManagerReloadListener](#iresourcemanagerreloadlistener)
+- [IResourcePack](#iresourcepack)
+- [Language](#language)
+- [LanguageManager](#languagemanager)
+- [LegacyV2Adapter](#legacyv2adapter)
+- [Locale](#locale)
+- [ResourceIndex](#resourceindex)
+- [ResourceIndexFolder](#resourceindexfolder)
+- [ResourcePackFileNotFoundException](#resourcepackfilenotfoundexception)
+- [ResourcePackListEntry](#resourcepacklistentry)
+- [ResourcePackListEntryDefault](#resourcepacklistentrydefault)
+- [ResourcePackListEntryFound](#resourcepacklistentryfound)
+- [ResourcePackListEntryServer](#resourcepacklistentryserver)
+- [ResourcePackRepository](#resourcepackrepository)
+- [ResourcePackRepository.Entry](#resourcepackrepository.entry)
+- [SimpleReloadableResourceManager](#simplereloadableresourcemanager)
+- [SimpleResource](#simpleresource)
 - [SkinManager](#skinmanager)
-- [SkinManager.CacheKey](#skinmanager.cachekey)
-- [SkinManager.TextureCache](#skinmanager.texturecache)
-- [SkinManager.TextureInfo](#skinmanager.textureinfo)
-- [SplashManager](#splashmanager)
-- [TextureAtlasHolder](#textureatlasholder)
-## Class PlayerSkin.Model
+- [SkinManager.SkinAvailableCallback](#skinmanager.skinavailablecallback)
+## AbstractResourcePack
 
-*enum* `net.minecraft.client.resources.Class PlayerSkin.Model`
+*class* `net.minecraft.client.resources.AbstractResourcePack`
 
-Enclosing class: PlayerSkin
+All Implemented Interfaces: IResourcePack
 
 ### Fields
-- `private final String id`
+- `protected final java.io.File resourcePackFile`
 
 ### Methods
-- `public static PlayerSkin.Model[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static PlayerSkin.Model valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
-  The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
-  not permitted.)
-  - param: name - the name of the enum constant to be returned.
-  - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-- `public static PlayerSkin.Model byName(@Nullable  String p_299354_)`
-- `public String id()`
+- `protected static java.lang.String getRelativeName(java.io.File p_110595_0_,  java.io.File p_110595_1_)`
+- `public java.io.InputStream getInputStream(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public boolean resourceExists(ResourceLocation location)`
+- `protected abstract java.io.InputStream getInputStreamByName(java.lang.String name)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `protected abstract boolean hasResourceName(java.lang.String name)`
+- `protected void logNameNotLowercase(java.lang.String name)`
+- `public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer,  java.lang.String metadataSectionName)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.awt.image.BufferedImage getPackImage()  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.lang.String getPackName()`
 
 ### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
-
-## ClientPackSource
-
-*class* `net.minecraft.client.resources.ClientPackSource`
-
-### Fields
-- `private static final PackMetadataSection VERSION_METADATA_SECTION`
-- `private static final BuiltInMetadata BUILT_IN_METADATA`
-- `private static final Component VANILLA_NAME`
-- `public static final String HIGH_CONTRAST_PACK` (= "high_contrast")
-- `private static final Map<String,Component> SPECIAL_PACK_NAMES`
-- `private static final ResourceLocation PACKS_DIR`
-- `@Nullable private final Path externalAssetDir`
-
-### Inherited fields
-- from `net.minecraft.server.packs.repository.BuiltInPackSource`: `VANILLA_ID`
-
-### Methods
-- `@Nullable private Path findExplodedAssetPacks(Path p_251339_)`
-- `public static VanillaPackResources createVanillaPackSource(Path p_250749_)`
-- `protected Component getPackTitle(String p_250421_)`
-- `@Nullable protected Pack createVanillaPack(PackResources p_250048_)`
-- `@Nullable protected Pack createBuiltinPack(String p_250992_,  Pack.ResourcesSupplier p_250814_,  Component p_249835_)`
-- `protected void populatePackList(BiConsumer<String,Function<String,Pack>> p_249851_)`
-
-### Inherited methods
-- from `net.minecraft.server.packs.repository.BuiltInPackSource`: `discoverPacksInPath`, `fixedResources`, `getVanillaPack`, `loadPacks`
+- from `net.minecraft.client.resources.IResourcePack`: `getResourceDomains`
 
 ## DefaultPlayerSkin
 
 *class* `net.minecraft.client.resources.DefaultPlayerSkin`
 
-### Fields
-- `private static final PlayerSkin[] DEFAULT_SKINS`
-
 ### Methods
-- `public static ResourceLocation getDefaultTexture()`
-- `public static PlayerSkin get(UUID p_297375_)`
-- `public static PlayerSkin get(com.mojang.authlib.GameProfile p_298897_)`
-- `private static PlayerSkin create(String p_298713_,  PlayerSkin.Model p_297716_)`
+- `public static ResourceLocation getDefaultSkinLegacy()`
+- `public static ResourceLocation getDefaultSkin(java.util.UUID playerUUID)`
+- `public static java.lang.String getSkinType(java.util.UUID playerUUID)`
 
-## DownloadedPackSource
+## DefaultResourcePack
 
-*class* `net.minecraft.client.resources.DownloadedPackSource`
+*class* `net.minecraft.client.resources.DefaultResourcePack`
+
+All Implemented Interfaces: IResourcePack
 
 ### Fields
-- `private static final org.slf4j.Logger LOGGER`
-- `private static final Pattern SHA1`
-- `private static final int MAX_PACK_SIZE_BYTES` (= 262144000)
-- `private static final int MAX_KEPT_PACKS` (= 10)
-- `private static final String SERVER_ID` (= "server")
-- `private static final Component SERVER_NAME`
-- `private static final Component APPLYING_PACK_TEXT`
-- `private final File serverPackDir`
-- `private final ReentrantLock downloadLock`
-- `@Nullable private CompletableFuture<?> currentDownload`
-- `@Nullable private Pack serverPack`
+- `public static final java.util.Set<java.lang.String> DEFAULT_RESOURCE_DOMAINS`
 
 ### Methods
-- `public void loadPacks(Consumer<Pack> p_251994_)`
-- `private static Map<String,String> getDownloadHeaders()`
-- `public CompletableFuture<?> downloadAndSelectResourcePack(URL p_249839_,  String p_249218_,  boolean p_251033_)`
-- `private static void deleteQuietly(File p_251727_)`
-- `public CompletableFuture<Void> clearServerPack()`
-- `private boolean checkHash(String p_251365_,  File p_249356_)`
-- `private void clearOldDownloads()`
-- `public CompletableFuture<Void> setServerPack(File p_249885_,  PackSource p_251105_)`
-- `public CompletableFuture<Void> loadBundledResourcePack(LevelStorageSource.LevelStorageAccess p_248756_)`
+- `public java.io.InputStream getInputStream(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.io.InputStream getInputStreamAssets(ResourceLocation location)  throws java.io.IOException,  java.io.FileNotFoundException`
+  - throws: java.io.IOException
+  - throws: java.io.FileNotFoundException
+- `public boolean resourceExists(ResourceLocation location)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+- `public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer,  java.lang.String metadataSectionName)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.awt.image.BufferedImage getPackImage()  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.lang.String getPackName()`
+
+## FallbackResourceManager
+
+*class* `net.minecraft.client.resources.FallbackResourceManager`
+
+All Implemented Interfaces: IResourceManager
+
+### Fields
+- `protected final java.util.List<IResourcePack> resourcePacks`
+
+### Methods
+- `public void addResourcePack(IResourcePack resourcePack)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+- `public IResource getResource(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `protected java.io.InputStream getInputStream(ResourceLocation location,  IResourcePack resourcePack)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.util.List<IResource> getAllResources(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+
+## FileResourcePack
+
+*class* `net.minecraft.client.resources.FileResourcePack`
+
+All Implemented Interfaces: java.io.Closeable, java.lang.AutoCloseable, IResourcePack
+
+### Fields
+- `public static final Splitter ENTRY_NAME_SPLITTER`
+
+### Inherited fields
+- from `net.minecraft.client.resources.AbstractResourcePack`: `resourcePackFile`
+
+### Methods
+- `protected java.io.InputStream getInputStreamByName(java.lang.String name)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public boolean hasResourceName(java.lang.String name)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+- `protected void finalize()  throws java.lang.Throwable`
+  - throws: java.lang.Throwable
+- `public void close()  throws java.io.IOException`
+  - throws: java.io.IOException
+
+### Inherited methods
+- from `net.minecraft.client.resources.AbstractResourcePack`: `getInputStream`, `getPackImage`, `getPackMetadata`, `getPackName`, `getRelativeName`, `logNameNotLowercase`, `resourceExists`
+
+## FolderResourcePack
+
+*class* `net.minecraft.client.resources.FolderResourcePack`
+
+All Implemented Interfaces: IResourcePack
+
+### Inherited fields
+- from `net.minecraft.client.resources.AbstractResourcePack`: `resourcePackFile`
+
+### Methods
+- `protected static boolean validatePath(java.io.File p_191384_0_,  java.lang.String p_191384_1_)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `protected java.io.InputStream getInputStreamByName(java.lang.String name)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `protected boolean hasResourceName(java.lang.String name)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+
+### Inherited methods
+- from `net.minecraft.client.resources.AbstractResourcePack`: `getInputStream`, `getPackImage`, `getPackMetadata`, `getPackName`, `getRelativeName`, `logNameNotLowercase`, `resourceExists`
 
 ## FoliageColorReloadListener
 
 *class* `net.minecraft.client.resources.FoliageColorReloadListener`
 
-### Fields
-- `private static final ResourceLocation LOCATION`
+All Implemented Interfaces: IResourceManagerReloadListener
 
 ### Methods
-- `protected int[] prepare(ResourceManager p_118660_,  ProfilerFiller p_118661_)`
-- `protected void apply(int[] p_118667_,  ResourceManager p_118668_,  ProfilerFiller p_118669_)`
-
-### Inherited methods
-- from `net.minecraft.server.packs.resources.SimplePreparableReloadListener`: `reload`
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
 
 ## GrassColorReloadListener
 
 *class* `net.minecraft.client.resources.GrassColorReloadListener`
 
-### Fields
-- `private static final ResourceLocation LOCATION`
+All Implemented Interfaces: IResourceManagerReloadListener
 
 ### Methods
-- `protected int[] prepare(ResourceManager p_118677_,  ProfilerFiller p_118678_)`
-- `protected void apply(int[] p_118684_,  ResourceManager p_118685_,  ProfilerFiller p_118686_)`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+
+## I18n
+
+*class* `net.minecraft.client.resources.I18n`
+
+### Methods
+- `public static java.lang.String format(java.lang.String translateKey,  java.lang.Object... parameters)`
+- `public static boolean hasKey(java.lang.String key)`
+
+## IReloadableResourceManager
+
+*interface* `net.minecraft.client.resources.IReloadableResourceManager`
+
+All Superinterfaces: IResourceManager
+
+### Methods
+- `void reloadResources(java.util.List<IResourcePack> resourcesPacksList)`
+- `void registerReloadListener(IResourceManagerReloadListener reloadListener)`
 
 ### Inherited methods
-- from `net.minecraft.server.packs.resources.SimplePreparableReloadListener`: `reload`
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
+- from `net.minecraft.client.resources.IResourceManager`: `getAllResources`, `getResource`, `getResourceDomains`
 
-## IndexedAssetSource
+## IResource
 
-*class* `net.minecraft.client.resources.IndexedAssetSource`
+*interface* `net.minecraft.client.resources.IResource`
+
+All Superinterfaces: java.lang.AutoCloseable, java.io.Closeable
+
+### Methods
+- `ResourceLocation getResourceLocation()`
+- `java.io.InputStream getInputStream()`
+- `boolean hasMetadata()`
+- `<T extends IMetadataSection> T getMetadata(java.lang.String sectionName)`
+- `java.lang.String getResourcePackName()`
+
+### Inherited methods
+- from `java.io.Closeable`: `close`
+
+## IResourceManager
+
+*interface* `net.minecraft.client.resources.IResourceManager`
+
+### Methods
+- `java.util.Set<java.lang.String> getResourceDomains()`
+- `IResource getResource(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `java.util.List<IResource> getAllResources(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+
+## IResourceManagerReloadListener
+
+*interface* `net.minecraft.client.resources.IResourceManagerReloadListener`
+
+Deprecated.
+Forge: ISelectiveResourceReloadListener, which selectively allows
+ individual resource types being reloaded should rather be used where possible.
+
+### Methods
+- `void onResourceManagerReload(IResourceManager resourceManager)` (deprecated)
+  Deprecated.
+
+## IResourcePack
+
+*interface* `net.minecraft.client.resources.IResourcePack`
+
+### Methods
+- `java.io.InputStream getInputStream(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `boolean resourceExists(ResourceLocation location)`
+- `java.util.Set<java.lang.String> getResourceDomains()`
+- `<T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer,  java.lang.String metadataSectionName)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `java.awt.image.BufferedImage getPackImage()  throws java.io.IOException`
+  - throws: java.io.IOException
+- `java.lang.String getPackName()`
+
+## Language
+
+*class* `net.minecraft.client.resources.Language`
+
+All Implemented Interfaces: java.lang.Comparable<Language>
+
+### Methods
+- `public java.lang.String getLanguageCode()`
+- `public boolean isBidirectional()`
+- `public java.lang.String toString()`
+- `public boolean equals(java.lang.Object p_equals_1_)`
+- `public int hashCode()`
+- `public int compareTo(Language p_compareTo_1_)`
+- `public java.util.Locale getJavaLocale()`
+
+## LanguageManager
+
+*class* `net.minecraft.client.resources.LanguageManager`
+
+All Implemented Interfaces: IResourceManagerReloadListener
 
 ### Fields
-- `private static final org.slf4j.Logger LOGGER`
-- `public static final com.google.common.base.Splitter PATH_SPLITTER`
+- `protected static final Locale CURRENT_LOCALE`
 
 ### Methods
-- `public static Path createIndexFs(Path p_248776_,  String p_250235_)`
+- `public void parseLanguageMetadata(java.util.List<IResourcePack> resourcesPacks)`
+- `public void onResourceManagerReload(IResourceManager resourceManager)`
+- `public boolean isCurrentLocaleUnicode()`
+- `public boolean isCurrentLanguageBidirectional()`
+- `public void setCurrentLanguage(Language currentLanguageIn)`
+- `public Language getCurrentLanguage()`
+- `public java.util.SortedSet<Language> getLanguages()`
+- `public Language getLanguage(java.lang.String p_191960_1_)`
 
-## LegacyStuffWrapper
+## LegacyV2Adapter
 
-*class* `net.minecraft.client.resources.LegacyStuffWrapper`
+*class* `net.minecraft.client.resources.LegacyV2Adapter`
+
+All Implemented Interfaces: IResourcePack
 
 ### Methods
-- `@Deprecated public static int[] getPixels(ResourceManager p_118727_,  ResourceLocation p_118728_)  throws IOException` (deprecated)
-  - throws: IOException
+- `public java.io.InputStream getInputStream(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public boolean resourceExists(ResourceLocation location)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+- `public <T extends IMetadataSection> T getPackMetadata(MetadataSerializer metadataSerializer,  java.lang.String metadataSectionName)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.awt.image.BufferedImage getPackImage()  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.lang.String getPackName()`
 
-## MobEffectTextureManager
+## Locale
 
-*class* `net.minecraft.client.resources.MobEffectTextureManager`
+*class* `net.minecraft.client.resources.Locale`
+
+### Methods
+- `public void loadLocaleDataFiles(IResourceManager resourceManager,  java.util.List<java.lang.String> languageList)`
+- `public boolean isUnicode()`
+- `public java.lang.String formatMessage(java.lang.String translateKey,  java.lang.Object[] parameters)`
+- `public boolean hasKey(java.lang.String key)`
+
+## ResourceIndex
+
+*class* `net.minecraft.client.resources.ResourceIndex`
+
+### Methods
+- `public java.io.File getFile(ResourceLocation location)`
+- `public boolean isFileExisting(ResourceLocation location)`
+- `public java.io.File getPackMcmeta()`
+
+## ResourceIndexFolder
+
+*class* `net.minecraft.client.resources.ResourceIndexFolder`
+
+### Methods
+- `public java.io.File getFile(ResourceLocation location)`
+- `public java.io.File getPackMcmeta()`
+
+### Inherited methods
+- from `net.minecraft.client.resources.ResourceIndex`: `isFileExisting`
+
+## ResourcePackFileNotFoundException
+
+*class* `net.minecraft.client.resources.ResourcePackFileNotFoundException`
+
+All Implemented Interfaces: java.io.Serializable
+
+### Inherited methods
+- from `java.lang.Throwable`: `addSuppressed`, `fillInStackTrace`, `getCause`, `getLocalizedMessage`, `getMessage`, `getStackTrace`, `getSuppressed`, `initCause`, `printStackTrace`, `printStackTrace`, `printStackTrace`, `setStackTrace`, `toString`
+
+## ResourcePackListEntry
+
+*class* `net.minecraft.client.resources.ResourcePackListEntry`
+
+All Implemented Interfaces: GuiListExtended.IGuiListEntry
+
+### Fields
+- `protected final Minecraft mc`
+- `protected final GuiScreenResourcePacks resourcePacksGUI`
+
+### Methods
+- `public void drawEntry(int slotIndex,  int x,  int y,  int listWidth,  int slotHeight,  int mouseX,  int mouseY,  boolean isSelected,  float partialTicks)`
+- `protected abstract int getResourcePackFormat()`
+- `protected abstract java.lang.String getResourcePackDescription()`
+- `protected abstract java.lang.String getResourcePackName()`
+- `protected abstract void bindResourcePackIcon()`
+- `protected boolean showHoverOverlay()`
+- `protected boolean canMoveRight()`
+- `protected boolean canMoveLeft()`
+- `protected boolean canMoveUp()`
+- `protected boolean canMoveDown()`
+- `public boolean mousePressed(int slotIndex,  int mouseX,  int mouseY,  int mouseEvent,  int relativeX,  int relativeY)`
+- `public void updatePosition(int slotIndex,  int x,  int y,  float partialTicks)`
+- `public void mouseReleased(int slotIndex,  int x,  int y,  int mouseEvent,  int relativeX,  int relativeY)`
+- `public boolean isServerPack()`
+
+## ResourcePackListEntryDefault
+
+*class* `net.minecraft.client.resources.ResourcePackListEntryDefault`
+
+All Implemented Interfaces: GuiListExtended.IGuiListEntry
 
 ### Inherited fields
-- from `net.minecraft.client.resources.TextureAtlasHolder`: `textureAtlas`
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `mc`, `resourcePacksGUI`
 
 ### Methods
-- `public TextureAtlasSprite get(MobEffect p_118733_)`
+- `protected java.lang.String getResourcePackName()`
+- `public boolean isServerPack()`
 
 ### Inherited methods
-- from `net.minecraft.client.resources.TextureAtlasHolder`: `close`, `getSprite`, `reload`
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
+- from `net.minecraft.client.resources.ResourcePackListEntryServer`: `bindResourcePackIcon`, `canMoveDown`, `canMoveLeft`, `canMoveRight`, `canMoveUp`, `getResourcePackDescription`, `getResourcePackFormat`, `showHoverOverlay`
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `drawEntry`, `mousePressed`, `mouseReleased`, `updatePosition`
 
-## PaintingTextureManager
+## ResourcePackListEntryFound
 
-*class* `net.minecraft.client.resources.PaintingTextureManager`
+*class* `net.minecraft.client.resources.ResourcePackListEntryFound`
 
-### Fields
-- `private static final ResourceLocation BACK_SPRITE_LOCATION`
+All Implemented Interfaces: GuiListExtended.IGuiListEntry
 
 ### Inherited fields
-- from `net.minecraft.client.resources.TextureAtlasHolder`: `textureAtlas`
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `mc`, `resourcePacksGUI`
 
 ### Methods
-- `public TextureAtlasSprite get(PaintingVariant p_235034_)`
-- `public TextureAtlasSprite getBackSprite()`
+- `protected void bindResourcePackIcon()`
+- `protected int getResourcePackFormat()`
+- `protected java.lang.String getResourcePackDescription()`
+- `protected java.lang.String getResourcePackName()`
+- `public ResourcePackRepository.Entry getResourcePackEntry()`
 
 ### Inherited methods
-- from `net.minecraft.client.resources.TextureAtlasHolder`: `close`, `getSprite`, `reload`
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `canMoveDown`, `canMoveLeft`, `canMoveRight`, `canMoveUp`, `drawEntry`, `isServerPack`, `mousePressed`, `mouseReleased`, `showHoverOverlay`, `updatePosition`
 
-## PlayerSkin
+## ResourcePackListEntryServer
 
-*record* `net.minecraft.client.resources.PlayerSkin`
+*class* `net.minecraft.client.resources.ResourcePackListEntryServer`
 
-### Fields
-- `private final ResourceLocation texture`
-  The field for the texture record component.
-- `@Nullable private final String textureUrl`
-  The field for the textureUrl record component.
-- `@Nullable private final ResourceLocation capeTexture`
-  The field for the capeTexture record component.
-- `@Nullable private final ResourceLocation elytraTexture`
-  The field for the elytraTexture record component.
-- `private final PlayerSkin.Model model`
-  The field for the model record component.
-- `private final boolean secure`
-  The field for the secure record component.
+All Implemented Interfaces: GuiListExtended.IGuiListEntry
+
+### Inherited fields
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `mc`, `resourcePacksGUI`
 
 ### Methods
-- `public final String toString()`
-  Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.
-  - returns: a string representation of this object
-- `public final int hashCode()`
-  Returns a hash code value for this object. The value is derived from the hash code of each of the record components.
-  - returns: a hash code value for this object
-- `public final boolean equals(Object o)`
-  Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with Objects::equals(Object,Object); primitive components are compared with '=='.
-  - param: o - the object with which to compare
-  - returns: true if this object is the same as the o argument; false otherwise.
-- `public ResourceLocation texture()`
-  Returns the value of the texture record component.
-  - returns: the value of the texture record component
-- `@Nullable public String textureUrl()`
-  Returns the value of the textureUrl record component.
-  - returns: the value of the textureUrl record component
-- `@Nullable public ResourceLocation capeTexture()`
-  Returns the value of the capeTexture record component.
-  - returns: the value of the capeTexture record component
-- `@Nullable public ResourceLocation elytraTexture()`
-  Returns the value of the elytraTexture record component.
-  - returns: the value of the elytraTexture record component
-- `public PlayerSkin.Model model()`
-  Returns the value of the model record component.
-  - returns: the value of the model record component
-- `public boolean secure()`
-  Returns the value of the secure record component.
-  - returns: the value of the secure record component
+- `protected int getResourcePackFormat()`
+- `protected java.lang.String getResourcePackDescription()`
+- `protected boolean canMoveRight()`
+- `protected boolean canMoveLeft()`
+- `protected boolean canMoveUp()`
+- `protected boolean canMoveDown()`
+- `protected java.lang.String getResourcePackName()`
+- `protected void bindResourcePackIcon()`
+- `protected boolean showHoverOverlay()`
+- `public boolean isServerPack()`
+
+### Inherited methods
+- from `net.minecraft.client.resources.ResourcePackListEntry`: `drawEntry`, `mousePressed`, `mouseReleased`, `updatePosition`
+
+## ResourcePackRepository
+
+*class* `net.minecraft.client.resources.ResourcePackRepository`
+
+### Fields
+- `public final IResourcePack rprDefaultResourcePack`
+- `public final MetadataSerializer rprMetadataSerializer`
+
+### Methods
+- `public static java.util.Map<java.lang.String,java.lang.String> getDownloadHeaders()`
+- `public void updateRepositoryEntriesAll()`
+- `public ResourcePackRepository.Entry getResourcePackEntry()`
+- `public java.util.List<ResourcePackRepository.Entry> getRepositoryEntriesAll()`
+- `public java.util.List<ResourcePackRepository.Entry> getRepositoryEntries()`
+- `public void setRepositories(java.util.List<ResourcePackRepository.Entry> repositories)`
+- `public java.io.File getDirResourcepacks()`
+- `public <any> downloadResourcePack(java.lang.String url,  java.lang.String hash)`
+- `public <any> setServerResourcePack(java.io.File resourceFile)`
+- `public IResourcePack getServerResourcePack()`
+- `public void clearResourcePack()`
+
+## ResourcePackRepository.Entry
+
+*class* `net.minecraft.client.resources.ResourcePackRepository.Entry`
+
+Enclosing class: ResourcePackRepository
+
+### Methods
+- `public void updateResourcePack()  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public void bindTexturePackIcon(TextureManager textureManagerIn)`
+- `public void closeResourcePack()`
+- `public IResourcePack getResourcePack()`
+- `public java.lang.String getResourcePackName()`
+- `public java.lang.String getTexturePackDescription()`
+- `public int getPackFormat()`
+- `public boolean equals(java.lang.Object p_equals_1_)`
+- `public int hashCode()`
+- `public java.lang.String toString()`
+
+## SimpleReloadableResourceManager
+
+*class* `net.minecraft.client.resources.SimpleReloadableResourceManager`
+
+All Implemented Interfaces: IReloadableResourceManager, IResourceManager
+
+### Methods
+- `public void reloadResourcePack(IResourcePack resourcePack)`
+- `public java.util.Set<java.lang.String> getResourceDomains()`
+- `public IResource getResource(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public java.util.List<IResource> getAllResources(ResourceLocation location)  throws java.io.IOException`
+  - throws: java.io.IOException
+- `public void reloadResources(java.util.List<IResourcePack> resourcesPacksList)`
+- `public void registerReloadListener(IResourceManagerReloadListener reloadListener)`
+
+## SimpleResource
+
+*class* `net.minecraft.client.resources.SimpleResource`
+
+All Implemented Interfaces: java.io.Closeable, java.lang.AutoCloseable, IResource
+
+### Methods
+- `public ResourceLocation getResourceLocation()`
+- `public java.io.InputStream getInputStream()`
+- `public boolean hasMetadata()`
+- `public <T extends IMetadataSection> T getMetadata(java.lang.String sectionName)`
+- `public java.lang.String getResourcePackName()`
+- `public boolean equals(java.lang.Object p_equals_1_)`
+- `public int hashCode()`
+- `public void close()  throws java.io.IOException`
+  - throws: java.io.IOException
 
 ## SkinManager
 
 *class* `net.minecraft.client.resources.SkinManager`
 
-### Fields
-- `private static final String PROPERTY_TEXTURES` (= "textures")
-- `private final com.google.common.cache.LoadingCache<SkinManager.CacheKey,CompletableFuture<PlayerSkin>> skinCache`
-- `private final SkinManager.TextureCache skinTextures`
-- `private final SkinManager.TextureCache capeTextures`
-- `private final SkinManager.TextureCache elytraTextures`
-
 ### Methods
-- `public Supplier<PlayerSkin> lookupInsecure(com.mojang.authlib.GameProfile p_298295_)`
-- `public PlayerSkin getInsecureSkin(com.mojang.authlib.GameProfile p_298019_)`
-- `public CompletableFuture<PlayerSkin> getOrLoad(com.mojang.authlib.GameProfile p_298661_)`
-- `CompletableFuture<PlayerSkin> registerTextures(com.mojang.authlib.GameProfile p_299268_,  SkinManager.TextureInfo p_298597_)`
-- `@Nullable static com.mojang.authlib.properties.Property getTextureProperty(com.mojang.authlib.GameProfile p_300071_)`
+- `public ResourceLocation loadSkin(MinecraftProfileTexture profileTexture,  Type textureType)`
+- `public ResourceLocation loadSkin(MinecraftProfileTexture profileTexture,  Type textureType,  SkinManager.SkinAvailableCallback skinAvailableCallback)`
+- `public void loadProfileTextures(GameProfile profile,  SkinManager.SkinAvailableCallback skinAvailableCallback,  boolean requireSecure)`
+- `public java.util.Map<Type,MinecraftProfileTexture> loadSkinFromCache(GameProfile profile)`
 
-## SkinManager.CacheKey
+## SkinManager.SkinAvailableCallback
 
-*record* `net.minecraft.client.resources.SkinManager.CacheKey`
+*interface* `net.minecraft.client.resources.SkinManager.SkinAvailableCallback`
 
 Enclosing class: SkinManager
 
-### Fields
-- `private final com.mojang.authlib.GameProfile profile`
-  The field for the profile record component.
-
 ### Methods
-- `public boolean equals(Object p_299382_)`
-  Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. All components in this record class are compared with Objects::equals(Object,Object).
-  - param: p_299382_ - the object with which to compare
-  - returns: true if this object is the same as the p_299382_ argument; false otherwise.
-- `public int hashCode()`
-  Returns a hash code value for this object. The value is derived from the hash code of each of the record components.
-  - returns: a hash code value for this object
-- `@Nullable private String texturesData()`
-- `public final String toString()`
-  Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.
-  - returns: a string representation of this object
-- `public com.mojang.authlib.GameProfile profile()`
-  Returns the value of the profile record component.
-  - returns: the value of the profile record component
-
-## SkinManager.TextureCache
-
-*class* `net.minecraft.client.resources.SkinManager.TextureCache`
-
-Enclosing class: SkinManager
-
-### Fields
-- `private final TextureManager textureManager`
-- `private final Path root`
-- `private final com.mojang.authlib.minecraft.MinecraftProfileTexture.Type type`
-- `private final Map<String,CompletableFuture<ResourceLocation>> textures`
-
-### Methods
-- `public CompletableFuture<ResourceLocation> getOrLoad(com.mojang.authlib.minecraft.MinecraftProfileTexture p_300959_)`
-- `private CompletableFuture<ResourceLocation> registerTexture(com.mojang.authlib.minecraft.MinecraftProfileTexture p_300607_)`
-- `private ResourceLocation getTextureLocation(String p_297392_)`
-
-## SkinManager.TextureInfo
-
-*record* `net.minecraft.client.resources.SkinManager.TextureInfo`
-
-Enclosing class: SkinManager
-
-### Fields
-- `@Nullable private final com.mojang.authlib.minecraft.MinecraftProfileTexture skin`
-  The field for the skin record component.
-- `@Nullable private final com.mojang.authlib.minecraft.MinecraftProfileTexture cape`
-  The field for the cape record component.
-- `@Nullable private final com.mojang.authlib.minecraft.MinecraftProfileTexture elytra`
-  The field for the elytra record component.
-- `private final boolean secure`
-  The field for the secure record component.
-- `public static final SkinManager.TextureInfo EMPTY`
-
-### Methods
-- `public static SkinManager.TextureInfo unpack(Map<com.mojang.authlib.minecraft.MinecraftProfileTexture.Type,com.mojang.authlib.minecraft.MinecraftProfileTexture> p_297479_,  boolean p_297713_)`
-- `public final String toString()`
-  Returns a string representation of this record class. The representation contains the name of the class, followed by the name and value of each of the record components.
-  - returns: a string representation of this object
-- `public final int hashCode()`
-  Returns a hash code value for this object. The value is derived from the hash code of each of the record components.
-  - returns: a hash code value for this object
-- `public final boolean equals(Object o)`
-  Indicates whether some other object is "equal to" this one. The objects are equal if the other object is of the same class and if all the record components are equal. Reference components are compared with Objects::equals(Object,Object); primitive components are compared with '=='.
-  - param: o - the object with which to compare
-  - returns: true if this object is the same as the o argument; false otherwise.
-- `@Nullable public com.mojang.authlib.minecraft.MinecraftProfileTexture skin()`
-  Returns the value of the skin record component.
-  - returns: the value of the skin record component
-- `@Nullable public com.mojang.authlib.minecraft.MinecraftProfileTexture cape()`
-  Returns the value of the cape record component.
-  - returns: the value of the cape record component
-- `@Nullable public com.mojang.authlib.minecraft.MinecraftProfileTexture elytra()`
-  Returns the value of the elytra record component.
-  - returns: the value of the elytra record component
-- `public boolean secure()`
-  Returns the value of the secure record component.
-  - returns: the value of the secure record component
-
-## SplashManager
-
-*class* `net.minecraft.client.resources.SplashManager`
-
-### Fields
-- `private static final ResourceLocation SPLASHES_LOCATION`
-- `private static final RandomSource RANDOM`
-- `private final List<String> splashes`
-- `private final User user`
-
-### Methods
-- `protected List<String> prepare(ResourceManager p_118869_,  ProfilerFiller p_118870_)`
-- `protected void apply(List<String> p_118878_,  ResourceManager p_118879_,  ProfilerFiller p_118880_)`
-- `@Nullable public SplashRenderer getSplash()`
-
-### Inherited methods
-- from `net.minecraft.server.packs.resources.SimplePreparableReloadListener`: `reload`
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
-
-## TextureAtlasHolder
-
-*class* `net.minecraft.client.resources.TextureAtlasHolder`
-
-### Fields
-- `protected final TextureAtlas textureAtlas`
-- `private final ResourceLocation atlasInfoLocation`
-- `private final Set<MetadataSectionSerializer<?>> metadataSections`
-
-### Methods
-- `protected TextureAtlasSprite getSprite(ResourceLocation p_118902_)`
-- `public final CompletableFuture<Void> reload(PreparableReloadListener.PreparationBarrier p_249641_,  ResourceManager p_250036_,  ProfilerFiller p_249806_,  ProfilerFiller p_250732_,  Executor p_249427_,  Executor p_250510_)`
-- `private void apply(SpriteLoader.Preparations p_252333_,  ProfilerFiller p_250624_)`
-- `public void close()`
-
-### Inherited methods
-- from `net.minecraft.server.packs.resources.PreparableReloadListener`: `getName`
+- `void skinAvailable(Type typeIn,  ResourceLocation location,  MinecraftProfileTexture profileTexture)`

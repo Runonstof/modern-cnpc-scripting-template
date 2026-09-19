@@ -1,70 +1,96 @@
 # net.minecraft.util.datafix
 
-- [Class DataFixTypes](#class-datafixtypes)
-- [DataFixers](#datafixers)
-- [PackedBitStorage](#packedbitstorage)
-## Class DataFixTypes
+- [DataFixer](#datafixer)
+- [DataFixesManager](#datafixesmanager)
+- [FixTypes](#fixtypes)
+- [IDataFixer](#idatafixer)
+- [IDataWalker](#idatawalker)
+- [IFixableData](#ifixabledata)
+- [IFixType](#ifixtype)
+## DataFixer
 
-*enum* `net.minecraft.util.datafix.Class DataFixTypes`
+*class* `net.minecraft.util.datafix.DataFixer`
+
+All Implemented Interfaces: IDataFixer
 
 ### Fields
-- `public static final Set<com.mojang.datafixers.DSL.TypeReference> TYPES_FOR_LEVEL_LIST`
-- `private final com.mojang.datafixers.DSL.TypeReference type`
+- `public final int version`
 
 ### Methods
-- `public static DataFixTypes[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static DataFixTypes valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
+- `public NBTTagCompound process(IFixType type,  NBTTagCompound compound)`
+- `public NBTTagCompound process(IFixType type,  NBTTagCompound compound,  int versionIn)`
+- `public void registerWalker(FixTypes type,  IDataWalker walker)`
+- `public void registerVanillaWalker(IFixType type,  IDataWalker walker)`
+- `public void registerFix(IFixType type,  IFixableData fixable)`
+
+## DataFixesManager
+
+*class* `net.minecraft.util.datafix.DataFixesManager`
+
+### Methods
+- `public static DataFixer createFixer()`
+- `public static NBTTagCompound processItemStack(IDataFixer fixer,  NBTTagCompound compound,  int version,  java.lang.String key)`
+- `public static NBTTagCompound processInventory(IDataFixer fixer,  NBTTagCompound compound,  int version,  java.lang.String key)`
+
+## FixTypes
+
+*enum* `net.minecraft.util.datafix.FixTypes`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<FixTypes>, IFixType
+
+### Fields
+- `public static final FixTypes LEVEL`
+- `public static final FixTypes PLAYER`
+- `public static final FixTypes CHUNK`
+- `public static final FixTypes BLOCK_ENTITY`
+- `public static final FixTypes ENTITY`
+- `public static final FixTypes ITEM_INSTANCE`
+- `public static final FixTypes OPTIONS`
+- `public static final FixTypes STRUCTURE`
+
+### Methods
+- `public static FixTypes[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (FixTypes c : FixTypes.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static FixTypes valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
   The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
+  enum constant in this type. (Extraneous whitespace characters are
   not permitted.)
   - param: name - the name of the enum constant to be returned.
   - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-- `static int currentVersion()`
-- `public <A> com.mojang.serialization.Codec<A> wrapCodec(com.mojang.serialization.Codec<A> p_300412_,  com.mojang.datafixers.DataFixer p_297748_,  int p_299395_)`
-- `public <T> com.mojang.serialization.Dynamic<T> update(com.mojang.datafixers.DataFixer p_265388_,  com.mojang.serialization.Dynamic<T> p_265179_,  int p_265372_,  int p_265168_)`
-- `public <T> com.mojang.serialization.Dynamic<T> updateToCurrentVersion(com.mojang.datafixers.DataFixer p_265085_,  com.mojang.serialization.Dynamic<T> p_265237_,  int p_265099_)`
-- `public CompoundTag update(com.mojang.datafixers.DataFixer p_265128_,  CompoundTag p_265422_,  int p_265549_,  int p_265304_)`
-- `public CompoundTag updateToCurrentVersion(com.mojang.datafixers.DataFixer p_265583_,  CompoundTag p_265401_,  int p_265111_)`
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
 
 ### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
 
-## DataFixers
+## IDataFixer
 
-*class* `net.minecraft.util.datafix.DataFixers`
-
-### Fields
-- `private static final BiFunction<Integer,com.mojang.datafixers.schemas.Schema,com.mojang.datafixers.schemas.Schema> SAME`
-- `private static final BiFunction<Integer,com.mojang.datafixers.schemas.Schema,com.mojang.datafixers.schemas.Schema> SAME_NAMESPACED`
-- `private static final com.mojang.datafixers.DataFixer dataFixer`
-- `public static final int BLENDING_VERSION` (= 3441)
+*interface* `net.minecraft.util.datafix.IDataFixer`
 
 ### Methods
-- `public static com.mojang.datafixers.DataFixer getDataFixer()`
-- `private static com.mojang.datafixers.DataFixer createFixerUpper(Set<com.mojang.datafixers.DSL.TypeReference> p_275618_)`
-- `private static void addFixers(com.mojang.datafixers.DataFixerBuilder p_14514_)`
-- `private static UnaryOperator<String> createRenamer(Map<String,String> p_14525_)`
-- `private static UnaryOperator<String> createRenamer(String p_14518_,  String p_14519_)`
+- `NBTTagCompound process(IFixType type,  NBTTagCompound compound,  int versionIn)`
 
-## PackedBitStorage
+## IDataWalker
 
-*class* `net.minecraft.util.datafix.PackedBitStorage`
-
-### Fields
-- `private static final int BIT_TO_LONG_SHIFT` (= 6)
-- `private final long[] data`
-- `private final int bits`
-- `private final long mask`
-- `private final int size`
+*interface* `net.minecraft.util.datafix.IDataWalker`
 
 ### Methods
-- `public void set(int p_14565_,  int p_14566_)`
-- `public int get(int p_14563_)`
-- `public long[] getRaw()`
-- `public int getBits()`
+- `NBTTagCompound process(IDataFixer fixer,  NBTTagCompound compound,  int versionIn)`
+
+## IFixableData
+
+*interface* `net.minecraft.util.datafix.IFixableData`
+
+### Methods
+- `int getFixVersion()`
+- `NBTTagCompound fixTagCompound(NBTTagCompound compound)`
+
+## IFixType
+
+*interface* `net.minecraft.util.datafix.IFixType`

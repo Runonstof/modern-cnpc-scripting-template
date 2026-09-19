@@ -10,27 +10,27 @@
 
 This event is called when a player picks up a potion from a brewing stand.
 
-### Fields
-- `private final ItemStack stack`
-
 ### Methods
-- `@NotNull public @NotNull ItemStack getStack()`
+- `public ItemStack getStack()`
   The ItemStack of the potion.
 
 ### Inherited methods
-- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntity`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## PotionBrewEvent
 
 *class* `net.minecraftforge.event.brewing.PotionBrewEvent`
 
-### Fields
-- `private NonNullList<ItemStack> stacks`
-
 ### Methods
-- `@NotNull public @NotNull ItemStack getItem(int index)`
-- `public void setItem(int index,  @NotNull  @NotNull ItemStack stack)`
+- `public ItemStack getItem(int index)`
+- `public void setItem(int index,  ItemStack stack)`
 - `public int getLength()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## PotionBrewEvent.Post
 
@@ -38,7 +38,7 @@ This event is called when a player picks up a potion from a brewing stand.
 
 PotionBrewEvent.Post is fired when a potion is brewed in the brewing stand.
 
- The event is fired during the BrewingStandBlockEntity#doBrew(Level, BlockPos, NonNullList) method invocation.
+ The event is fired during the TileEntityBrewingStand.brewPotions() method invocation.
 
  PotionBrewEvent.stacks contains the itemstack array from the TileEntityBrewer holding all items in Brewer.
 
@@ -52,6 +52,7 @@ Enclosing class: PotionBrewEvent
 
 ### Inherited methods
 - from `net.minecraftforge.event.brewing.PotionBrewEvent`: `getItem`, `getLength`, `setItem`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## PotionBrewEvent.Pre
 
@@ -60,7 +61,7 @@ Enclosing class: PotionBrewEvent
 PotionBrewEvent.Pre is fired before vanilla brewing takes place.
  All changes made to the event's array will be made to the TileEntity if the event is canceled.
 
- The event is fired during the BrewingStandBlockEntity#doBrew(Level, BlockPos, NonNullList) method invocation.
+ The event is fired during the TileEntityBrewingStand.brewPotions() method invocation.
 
  PotionBrewEvent.stacks contains the itemstack array from the TileEntityBrewer holding all items in Brewer.
 
@@ -78,3 +79,4 @@ Enclosing class: PotionBrewEvent
 
 ### Inherited methods
 - from `net.minecraftforge.event.brewing.PotionBrewEvent`: `getItem`, `getLength`, `setItem`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`

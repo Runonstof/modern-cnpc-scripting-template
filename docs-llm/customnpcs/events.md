@@ -41,10 +41,10 @@ export function interact(e) {
 
 | Hook | Event | Fields | Notes |
 |---|---|---|---|
-| `—` | `ForgeEvent` | `event`, `API` | Called for most Forge events. For the events I use the forges name and make the first letter lowercase.   Eg:   - EntityEvent.EntityJoinLevelEvent becomes entityEventEntityJoinLevelEvent   - PlayerEvent.StartTracking becomes playerEventStartTracking   - etc   Note that these events can change anytime and that I have no control over these. Use at own risk |
+| `—` | `ForgeEvent` | `event`, `API` | Called for most Forge events. For the events I use the forges name and make the first letter lowercase.   Eg:   - EntityEvent.EntityJoinWorldEvent becomes entityEventEntityJoinWorldEvent   - PlayerEvent.StartTracking becomes playerEventStartTracking   - etc   Note that these events can change anytime and that I have no control over these. Use at own risk |
 | `—` | `ForgeEvent.EntityEvent` | `entity`, `event`, `API` | This event is used for every forge event which extends EntityEvent   EventyEvent   LivingEvent   PlayerEvent |
 | `init` | `ForgeEvent.InitEvent` | `event`, `API` | The init event has no forge event |
-| `—` | `ForgeEvent.LevelEvent` | `world`, `event`, `API` | This event is used for every forge event which extends LevelEvent   LevelEvent |
+| `—` | `ForgeEvent.WorldEvent` | `world`, `event`, `API` | This event is used for every forge event which extends WorldEvent   WorldEvent |
 
 ## global
 
@@ -57,11 +57,11 @@ export function interact(e) {
 | Hook | Event | Fields | Notes |
 |---|---|---|---|
 | `—` | `CustomGuiEvent` | `player`, `gui`, `API` |  |
-| `customGuiButton` | `CustomGuiEvent.ButtonEvent` | `buttonId`, `button`, `gui`, `player`, `API` |  |
-| `customGuiClosed` | `CustomGuiEvent.CloseEvent` | `gui`, `player`, `API` |  |
-| `customGuiScroll` | `CustomGuiEvent.ScrollEvent` | `scrollId`, `selection`, `doubleClick`, `scrollIndex`, `scroll`, `gui`, `player`, `API` |  |
-| `customGuiSlotClicked` | `CustomGuiEvent.SlotClickEvent` | `dragType`, `clickType`, `slot`, `slotId`, `stack`, `gui`, `player`, `API` |  |
-| `customGuiSlot` | `CustomGuiEvent.SlotEvent` | `slotId`, `stack`, `slot`, `gui`, `player`, `API` |  |
+| `—` | `CustomGuiEvent.ButtonEvent` | `buttonId`, `gui`, `player`, `API` |  |
+| `—` | `CustomGuiEvent.CloseEvent` | `gui`, `player`, `API` |  |
+| `—` | `CustomGuiEvent.ScrollEvent` | `scrollId`, `selection`, `doubleClick`, `scrollIndex`, `gui`, `player`, `API` |  |
+| `—` | `CustomGuiEvent.SlotClickEvent` | `slotId`, `stack`, `dragType`, `clickType`, `gui`, `player`, `API` |  |
+| `—` | `CustomGuiEvent.SlotEvent` | `slotId`, `stack`, `gui`, `player`, `API` |  |
 
 ## handler
 
@@ -76,12 +76,12 @@ export function interact(e) {
 | Hook | Event | Fields | Notes |
 |---|---|---|---|
 | `—` | `ItemEvent` | `item`, `API` |  |
-| `attack` | `ItemEvent.AttackEvent` | `type`, `target`, `player`, `damageSource`, `item`, `API` | Will trigger if you have an item and left click into the air or left  click a block or left click an entity |
+| `attack` | `ItemEvent.AttackEvent` | `type`, `target`, `player`, `item`, `API` | Will trigger if you have an item and left click into the air or left  click a block or left click an entity |
 | `init` | `ItemEvent.InitEvent` | `item`, `API` |  |
 | `interact` | `ItemEvent.InteractEvent` | `type`, `target`, `player`, `item`, `API` | Will trigger if you have an item and right click into the air Or right  click a block Or right click an entity |
-| `pickedUp` | `ItemEvent.PickedUpEvent` | `entity`, `player`, `item`, `API` | When Cancelled it prevents the item from spawning in the level, the item still disappears from the inventory |
+| `pickedUp` | `ItemEvent.PickedUpEvent` | `entity`, `player`, `item`, `API` | When Cancelled it prevents the item from spawning in the world, the item still disappears from the inventory |
 | `spawn` | `ItemEvent.SpawnEvent` | `entity`, `item`, `API` |  |
-| `toss` | `ItemEvent.TossedEvent` | `entity`, `player`, `item`, `API` | When Cancelled it prevents the item from spawning in the level, the item still disappears from the inventory |
+| `toss` | `ItemEvent.TossedEvent` | `entity`, `player`, `item`, `API` | When Cancelled it prevents the item from spawning in the world, the item still disappears from the inventory |
 | `tick` | `ItemEvent.UpdateEvent` | `player`, `item`, `API` | When the item is in an inventory this will be called every 10 ticks (0.5 seconds) |
 
 ## npc
@@ -102,12 +102,20 @@ export function interact(e) {
 | `timer` | `NpcEvent.TimerEvent` | `id`, `npc`, `API` |  |
 | `tick` | `NpcEvent.UpdateEvent` | `npc`, `API` |  |
 
+## other
+
+| Hook | Event | Fields | Notes |
+|---|---|---|---|
+| `—` | `CustomContainerEvent` | `container`, `player`, `API` |  |
+| `—` | `CustomContainerEvent.CloseEvent` | `container`, `player`, `API` |  |
+| `—` | `CustomContainerEvent.SlotClickedEvent` | `slotItem`, `heldItem`, `slot`, `container`, `player`, `API` |  |
+
 ## player
 
 | Hook | Event | Fields | Notes |
 |---|---|---|---|
 | `—` | `PlayerEvent` | `player`, `API` |  |
-| `attack` | `PlayerEvent.AttackEvent` | `type`, `target`, `damageSource`, `player`, `API` | Will trigger if you have an item and left click into the air or left  click a block or left click an entity |
+| `attack` | `PlayerEvent.AttackEvent` | `type`, `target`, `player`, `API` | Will trigger if you have an item and left click into the air or left  click a block or left click an entity |
 | `broken` | `PlayerEvent.BreakEvent` | `block`, `exp`, `player`, `API` |  |
 | `chat` | `PlayerEvent.ChatEvent` | `message`, `player`, `API` |  |
 | `containerClosed` | `PlayerEvent.ContainerClosed` | `container`, `player`, `API` |  |
@@ -118,14 +126,12 @@ export function interact(e) {
 | `factionUpdate` | `PlayerEvent.FactionUpdateEvent` | `faction`, `points`, `init`, `player`, `API` | Called when a players faction points change |
 | `init` | `PlayerEvent.InitEvent` | `player`, `API` |  |
 | `interact` | `PlayerEvent.InteractEvent` | `type`, `target`, `player`, `API` | Will trigger if you have an item and right click into the air Or right  click a block Or right click an entity |
-| `keyPressed` | `PlayerEvent.KeyPressedEvent` | `key`, `isCtrlPressed`, `isAltPressed`, `isShiftPressed`, `isMetaPressed`, `openGui`, `player`, `API` | Called when a player presses a button. |
-| `keyReleased` | `PlayerEvent.KeyReleasedEvent` | `key`, `isCtrlPressed`, `isAltPressed`, `isShiftPressed`, `isMetaPressed`, `openGui`, `player`, `API` | Called when a player releases a button. |
+| `keyPressed` | `PlayerEvent.KeyPressedEvent` | `key`, `isCtrlPressed`, `isAltPressed`, `isShiftPressed`, `isMetaPressed`, `player`, `API` | Called when a players press and releases a button, Wont be called when a gui or chat is opened or if a button is held for a longer time.   Button has to be held less then 0.5 seconds.   Currently does not support multiple button presses,   eg: pressing 'a' and then 'd' and then releasing 'a' and then 'd' will no cause the event to trigger |
 | `kill` | `PlayerEvent.KilledEntityEvent` | `entity`, `player`, `API` |  |
 | `levelUp` | `PlayerEvent.LevelUpEvent` | `change`, `player`, `API` | Called when a players level changes |
 | `login` | `PlayerEvent.LoginEvent` | `player`, `API` |  |
 | `logout` | `PlayerEvent.LogoutEvent` | `player`, `API` |  |
 | `pickedUp` | `PlayerEvent.PickUpEvent` | `item`, `player`, `API` |  |
-| `playSound` | `PlayerEvent.PlaySoundEvent` | `sound`, `category`, `looping`, `player`, `API` |  |
 | `rangedLaunched` | `PlayerEvent.RangedLaunchedEvent` | `player`, `API` |  |
 | `timer` | `PlayerEvent.TimerEvent` | `id`, `player`, `API` |  |
 | `toss` | `PlayerEvent.TossEvent` | `item`, `player`, `API` |  |
@@ -168,4 +174,4 @@ export function interact(e) {
 | Hook | Event | Fields | Notes |
 |---|---|---|---|
 | `—` | `WorldEvent` | `world`, `API` |  |
-| `—` | `WorldEvent.ScriptTriggerEvent` | `arguments`, `pos`, `entity`, `id`, `world`, `API` |  |
+| `—` | `WorldEvent.ScriptCommandEvent` | `arguments`, `pos`, `world`, `API` |  |

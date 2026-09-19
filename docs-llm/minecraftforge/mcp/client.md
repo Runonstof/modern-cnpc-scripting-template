@@ -6,5 +6,5 @@
 *class* `mcp.client.Start`
 
 ### Methods
-- `public static void main(String[] args)`
+- `public static void main(java.lang.String[] args)`
 - `public static <T> T[] concat(T[] first,  T[] second)`

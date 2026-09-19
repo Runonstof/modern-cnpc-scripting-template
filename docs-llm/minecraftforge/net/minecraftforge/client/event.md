@@ -1,3527 +1,1351 @@
 # net.minecraftforge.client.event
 
-- [Class RegisterGuiOverlaysEvent.Ordering](#class-registerguioverlaysevent.ordering)
-- [Class RenderBlockScreenEffectEvent.OverlayType](#class-renderblockscreeneffectevent.overlaytype)
 - [ClientChatEvent](#clientchatevent)
 - [ClientChatReceivedEvent](#clientchatreceivedevent)
-- [ClientChatReceivedEvent.Player](#clientchatreceivedevent.player)
-- [ClientChatReceivedEvent.System](#clientchatreceivedevent.system)
-- [ClientPlayerChangeGameTypeEvent](#clientplayerchangegametypeevent)
-- [ClientPlayerNetworkEvent](#clientplayernetworkevent)
-- [ClientPlayerNetworkEvent.Clone](#clientplayernetworkevent.clone)
-- [ClientPlayerNetworkEvent.LoggingIn](#clientplayernetworkevent.loggingin)
-- [ClientPlayerNetworkEvent.LoggingOut](#clientplayernetworkevent.loggingout)
-- [ComputeFovModifierEvent](#computefovmodifierevent)
-- [ContainerScreenEvent](#containerscreenevent)
-- [ContainerScreenEvent.Render](#containerscreenevent.render)
-- [ContainerScreenEvent.Render.Background](#containerscreenevent.render.background)
-- [ContainerScreenEvent.Render.Foreground](#containerscreenevent.render.foreground)
-- [CustomizeGuiOverlayEvent](#customizeguioverlayevent)
-- [CustomizeGuiOverlayEvent.BossEventProgress](#customizeguioverlayevent.bosseventprogress)
-- [CustomizeGuiOverlayEvent.Chat](#customizeguioverlayevent.chat)
-- [CustomizeGuiOverlayEvent.DebugText](#customizeguioverlayevent.debugtext)
-- [EntityRenderersEvent](#entityrenderersevent)
-- [EntityRenderersEvent.AddLayers](#entityrenderersevent.addlayers)
-- [EntityRenderersEvent.CreateSkullModels](#entityrenderersevent.createskullmodels)
-- [EntityRenderersEvent.RegisterLayerDefinitions](#entityrenderersevent.registerlayerdefinitions)
-- [EntityRenderersEvent.RegisterRenderers](#entityrenderersevent.registerrenderers)
-- [ForgeEventFactoryClient](#forgeeventfactoryclient)
-- [InputEvent](#inputevent)
-- [InputEvent.InteractionKeyMappingTriggered](#inputevent.interactionkeymappingtriggered)
-- [InputEvent.Key](#inputevent.key)
-- [InputEvent.MouseButton](#inputevent.mousebutton)
-- [InputEvent.MouseButton.Post](#inputevent.mousebutton.post)
-- [InputEvent.MouseButton.Pre](#inputevent.mousebutton.pre)
-- [InputEvent.MouseScrollingEvent](#inputevent.mousescrollingevent)
-- [ModelEvent](#modelevent)
-- [ModelEvent.BakingCompleted](#modelevent.bakingcompleted)
-- [ModelEvent.ModifyBakingResult](#modelevent.modifybakingresult)
-- [ModelEvent.RegisterAdditional](#modelevent.registeradditional)
-- [ModelEvent.RegisterGeometryLoaders](#modelevent.registergeometryloaders)
-- [MovementInputUpdateEvent](#movementinputupdateevent)
-- [RecipesUpdatedEvent](#recipesupdatedevent)
-- [RegisterClientCommandsEvent](#registerclientcommandsevent)
-- [RegisterClientReloadListenersEvent](#registerclientreloadlistenersevent)
-- [RegisterClientTooltipComponentFactoriesEvent](#registerclienttooltipcomponentfactoriesevent)
-- [RegisterColorHandlersEvent](#registercolorhandlersevent)
-- [RegisterColorHandlersEvent.Block](#registercolorhandlersevent.block)
-- [RegisterColorHandlersEvent.ColorResolvers](#registercolorhandlersevent.colorresolvers)
-- [RegisterColorHandlersEvent.Item](#registercolorhandlersevent.item)
-- [RegisterDimensionSpecialEffectsEvent](#registerdimensionspecialeffectsevent)
-- [RegisterEntitySpectatorShadersEvent](#registerentityspectatorshadersevent)
-- [RegisterGuiOverlaysEvent](#registerguioverlaysevent)
-- [RegisterItemDecorationsEvent](#registeritemdecorationsevent)
-- [RegisterKeyMappingsEvent](#registerkeymappingsevent)
-- [RegisterNamedRenderTypesEvent](#registernamedrendertypesevent)
-- [RegisterParticleProvidersEvent](#registerparticleprovidersevent)
-- [RegisterPresetEditorsEvent](#registerpreseteditorsevent)
-- [RegisterRecipeBookCategoriesEvent](#registerrecipebookcategoriesevent)
-- [RegisterShadersEvent](#registershadersevent)
-- [RegisterTextureAtlasSpriteLoadersEvent](#registertextureatlasspriteloadersevent)
-- [RenderArmEvent](#renderarmevent)
-- [RenderBlockScreenEffectEvent](#renderblockscreeneffectevent)
-- [RenderGuiEvent](#renderguievent)
-- [RenderGuiEvent.Post](#renderguievent.post)
-- [RenderGuiEvent.Pre](#renderguievent.pre)
-- [RenderGuiOverlayEvent](#renderguioverlayevent)
-- [RenderGuiOverlayEvent.Post](#renderguioverlayevent.post)
-- [RenderGuiOverlayEvent.Pre](#renderguioverlayevent.pre)
+- [ColorHandlerEvent](#colorhandlerevent)
+- [ColorHandlerEvent.Block](#colorhandlerevent.block)
+- [ColorHandlerEvent.Item](#colorhandlerevent.item)
+- [DrawBlockHighlightEvent](#drawblockhighlightevent)
+- [EntityViewRenderEvent](#entityviewrenderevent)
+- [EntityViewRenderEvent.CameraSetup](#entityviewrenderevent.camerasetup)
+- [EntityViewRenderEvent.FogColors](#entityviewrenderevent.fogcolors)
+- [EntityViewRenderEvent.FogDensity](#entityviewrenderevent.fogdensity)
+- [EntityViewRenderEvent.FOVModifier](#entityviewrenderevent.fovmodifier)
+- [EntityViewRenderEvent.RenderFogEvent](#entityviewrenderevent.renderfogevent)
+- [FOVUpdateEvent](#fovupdateevent)
+- [GuiContainerEvent](#guicontainerevent)
+- [GuiContainerEvent.DrawForeground](#guicontainerevent.drawforeground)
+- [GuiOpenEvent](#guiopenevent)
+- [GuiScreenEvent](#guiscreenevent)
+- [GuiScreenEvent.ActionPerformedEvent](#guiscreenevent.actionperformedevent)
+- [GuiScreenEvent.ActionPerformedEvent.Post](#guiscreenevent.actionperformedevent.post)
+- [GuiScreenEvent.ActionPerformedEvent.Pre](#guiscreenevent.actionperformedevent.pre)
+- [GuiScreenEvent.BackgroundDrawnEvent](#guiscreenevent.backgrounddrawnevent)
+- [GuiScreenEvent.DrawScreenEvent](#guiscreenevent.drawscreenevent)
+- [GuiScreenEvent.DrawScreenEvent.Post](#guiscreenevent.drawscreenevent.post)
+- [GuiScreenEvent.DrawScreenEvent.Pre](#guiscreenevent.drawscreenevent.pre)
+- [GuiScreenEvent.InitGuiEvent](#guiscreenevent.initguievent)
+- [GuiScreenEvent.InitGuiEvent.Post](#guiscreenevent.initguievent.post)
+- [GuiScreenEvent.InitGuiEvent.Pre](#guiscreenevent.initguievent.pre)
+- [GuiScreenEvent.KeyboardInputEvent](#guiscreenevent.keyboardinputevent)
+- [GuiScreenEvent.KeyboardInputEvent.Post](#guiscreenevent.keyboardinputevent.post)
+- [GuiScreenEvent.KeyboardInputEvent.Pre](#guiscreenevent.keyboardinputevent.pre)
+- [GuiScreenEvent.MouseInputEvent](#guiscreenevent.mouseinputevent)
+- [GuiScreenEvent.MouseInputEvent.Post](#guiscreenevent.mouseinputevent.post)
+- [GuiScreenEvent.MouseInputEvent.Pre](#guiscreenevent.mouseinputevent.pre)
+- [GuiScreenEvent.PotionShiftEvent](#guiscreenevent.potionshiftevent)
+- [InputUpdateEvent](#inputupdateevent)
+- [ModelBakeEvent](#modelbakeevent)
+- [ModelRegistryEvent](#modelregistryevent)
+- [MouseEvent](#mouseevent)
+- [PlayerSPPushOutOfBlocksEvent](#playersppushoutofblocksevent)
+- [RenderBlockOverlayEvent](#renderblockoverlayevent)
+- [RenderBlockOverlayEvent.OverlayType](#renderblockoverlayevent.overlaytype)
+- [RenderGameOverlayEvent](#rendergameoverlayevent)
+- [RenderGameOverlayEvent.BossInfo](#rendergameoverlayevent.bossinfo)
+- [RenderGameOverlayEvent.Chat](#rendergameoverlayevent.chat)
+- [RenderGameOverlayEvent.ElementType](#rendergameoverlayevent.elementtype)
+- [RenderGameOverlayEvent.Post](#rendergameoverlayevent.post)
+- [RenderGameOverlayEvent.Pre](#rendergameoverlayevent.pre)
+- [RenderGameOverlayEvent.Text](#rendergameoverlayevent.text)
 - [RenderHandEvent](#renderhandevent)
-- [RenderHighlightEvent](#renderhighlightevent)
-- [RenderHighlightEvent.Block](#renderhighlightevent.block)
-- [RenderHighlightEvent.Entity](#renderhighlightevent.entity)
 - [RenderItemInFrameEvent](#renderiteminframeevent)
-- [RenderLevelStageEvent](#renderlevelstageevent)
-- [RenderLevelStageEvent.RegisterStageEvent](#renderlevelstageevent.registerstageevent)
-- [RenderLevelStageEvent.Stage](#renderlevelstageevent.stage)
-- [RenderLivingEvent.Post>](#renderlivingevent.post)
-- [RenderLivingEvent.Pre>](#renderlivingevent.pre)
-- [RenderLivingEvent>](#renderlivingevent)
-- [RenderNameTagEvent](#rendernametagevent)
+- [RenderLivingEvent](#renderlivingevent)
+- [RenderLivingEvent.Post](#renderlivingevent.post)
+- [RenderLivingEvent.Pre](#renderlivingevent.pre)
+- [RenderLivingEvent.Specials](#renderlivingevent.specials)
+- [RenderLivingEvent.Specials.Post](#renderlivingevent.specials.post)
+- [RenderLivingEvent.Specials.Pre](#renderlivingevent.specials.pre)
 - [RenderPlayerEvent](#renderplayerevent)
 - [RenderPlayerEvent.Post](#renderplayerevent.post)
 - [RenderPlayerEvent.Pre](#renderplayerevent.pre)
+- [RenderPlayerEvent.SetArmorModel](#renderplayerevent.setarmormodel)
+- [RenderPlayerEvent.Specials](#renderplayerevent.specials)
+- [RenderPlayerEvent.Specials.Post](#renderplayerevent.specials.post)
+- [RenderPlayerEvent.Specials.Pre](#renderplayerevent.specials.pre)
+- [RenderSpecificHandEvent](#renderspecifichandevent)
 - [RenderTooltipEvent](#rendertooltipevent)
 - [RenderTooltipEvent.Color](#rendertooltipevent.color)
-- [RenderTooltipEvent.GatherComponents](#rendertooltipevent.gathercomponents)
+- [RenderTooltipEvent.Post](#rendertooltipevent.post)
+- [RenderTooltipEvent.PostBackground](#rendertooltipevent.postbackground)
+- [RenderTooltipEvent.PostText](#rendertooltipevent.posttext)
 - [RenderTooltipEvent.Pre](#rendertooltipevent.pre)
-- [ScreenEvent](#screenevent)
-- [ScreenEvent.BackgroundRendered](#screenevent.backgroundrendered)
-- [ScreenEvent.CharacterTyped](#screenevent.charactertyped)
-- [ScreenEvent.CharacterTyped.Post](#screenevent.charactertyped.post)
-- [ScreenEvent.CharacterTyped.Pre](#screenevent.charactertyped.pre)
-- [ScreenEvent.Closing](#screenevent.closing)
-- [ScreenEvent.Init](#screenevent.init)
-- [ScreenEvent.Init.Post](#screenevent.init.post)
-- [ScreenEvent.Init.Pre](#screenevent.init.pre)
-- [ScreenEvent.KeyInput](#screenevent.keyinput)
-- [ScreenEvent.KeyPressed](#screenevent.keypressed)
-- [ScreenEvent.KeyPressed.Post](#screenevent.keypressed.post)
-- [ScreenEvent.KeyPressed.Pre](#screenevent.keypressed.pre)
-- [ScreenEvent.KeyReleased](#screenevent.keyreleased)
-- [ScreenEvent.KeyReleased.Post](#screenevent.keyreleased.post)
-- [ScreenEvent.KeyReleased.Pre](#screenevent.keyreleased.pre)
-- [ScreenEvent.MouseButtonPressed](#screenevent.mousebuttonpressed)
-- [ScreenEvent.MouseButtonPressed.Post](#screenevent.mousebuttonpressed.post)
-- [ScreenEvent.MouseButtonPressed.Pre](#screenevent.mousebuttonpressed.pre)
-- [ScreenEvent.MouseButtonReleased](#screenevent.mousebuttonreleased)
-- [ScreenEvent.MouseButtonReleased.Post](#screenevent.mousebuttonreleased.post)
-- [ScreenEvent.MouseButtonReleased.Pre](#screenevent.mousebuttonreleased.pre)
-- [ScreenEvent.MouseDragged](#screenevent.mousedragged)
-- [ScreenEvent.MouseDragged.Post](#screenevent.mousedragged.post)
-- [ScreenEvent.MouseDragged.Pre](#screenevent.mousedragged.pre)
-- [ScreenEvent.MouseInput](#screenevent.mouseinput)
-- [ScreenEvent.MouseScrolled](#screenevent.mousescrolled)
-- [ScreenEvent.MouseScrolled.Post](#screenevent.mousescrolled.post)
-- [ScreenEvent.MouseScrolled.Pre](#screenevent.mousescrolled.pre)
-- [ScreenEvent.Opening](#screenevent.opening)
-- [ScreenEvent.Render](#screenevent.render)
-- [ScreenEvent.Render.Post](#screenevent.render.post)
-- [ScreenEvent.Render.Pre](#screenevent.render.pre)
-- [ScreenEvent.RenderInventoryMobEffects](#screenevent.renderinventorymobeffects)
+- [RenderWorldLastEvent](#renderworldlastevent)
 - [ScreenshotEvent](#screenshotevent)
 - [TextureStitchEvent](#texturestitchevent)
 - [TextureStitchEvent.Post](#texturestitchevent.post)
-- [ToastAddEvent](#toastaddevent)
-- [ViewportEvent](#viewportevent)
-- [ViewportEvent.ComputeCameraAngles](#viewportevent.computecameraangles)
-- [ViewportEvent.ComputeFogColor](#viewportevent.computefogcolor)
-- [ViewportEvent.ComputeFov](#viewportevent.computefov)
-- [ViewportEvent.RenderFog](#viewportevent.renderfog)
-## Class RegisterGuiOverlaysEvent.Ordering
-
-*enum* `net.minecraftforge.client.event.Class RegisterGuiOverlaysEvent.Ordering`
-
-Enclosing class: RegisterGuiOverlaysEvent
-
-### Methods
-- `public static RegisterGuiOverlaysEvent.Ordering[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static RegisterGuiOverlaysEvent.Ordering valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
-  The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
-  not permitted.)
-  - param: name - the name of the enum constant to be returned.
-  - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-
-### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
-
-## Class RenderBlockScreenEffectEvent.OverlayType
-
-*enum* `net.minecraftforge.client.event.Class RenderBlockScreenEffectEvent.OverlayType`
-
-The type of the block overlay to be rendered.
-
-Enclosing class: RenderBlockScreenEffectEvent
-
-### Methods
-- `public static RenderBlockScreenEffectEvent.OverlayType[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static RenderBlockScreenEffectEvent.OverlayType valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
-  The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
-  not permitted.)
-  - param: name - the name of the enum constant to be returned.
-  - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-
-### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
-
+- [TextureStitchEvent.Pre](#texturestitchevent.pre)
 ## ClientChatEvent
 
 *class* `net.minecraftforge.client.event.ClientChatEvent`
 
-Fired when the client is about to send a chat message to the server.
+ClientChatEvent is fired whenever the client is about to send a chat message or command to the server.
 
- This event is cancellable, and does not have a result.
- If the event is cancelled, the chat message will not be sent to the server.
+ This event is fired via ForgeEventFactory.onClientSendMessage(String),
+ which is executed by GuiScreen.sendChatMessage(String, boolean)
 
- This event is fired on the main Forge event bus,
- only on the logical client.
+ message contains the message that will be sent to the server. This can be changed by mods.
 
-### Fields
-- `private String message`
-- `private final String originalMessage`
+ originalMessage contains the original message that was going to be sent to the server. This cannot be changed by mods.
+
+ This event is Cancelable.
+
+ If this event is canceled, the chat message or command is never sent to the server.
+
+ This event does not have a result. HasResult
+
+ This event is fired on the MinecraftForge.EVENT_BUS.
 
 ### Methods
-- `public String getMessage()`
-  Returns the message that will be sent to the server, if the event is not cancelled. This can be changed by mods.
-  - returns: the message that will be sent to the server, if the event is not cancelled. This can be changed by mods
-- `public void setMessage(String message)`
-  Sets the new message to be sent to the server, if the event is not cancelled.
-  - param: message - the new message to be sent
-- `public String getOriginalMessage()`
-  Returns the original message that was to be sent to the server. This cannot be changed by mods.
-  - returns: the original message that was to be sent to the server. This cannot be changed by mods
+- `public java.lang.String getMessage()`
+- `public void setMessage(java.lang.String message)`
+- `public java.lang.String getOriginalMessage()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## ClientChatReceivedEvent
 
 *class* `net.minecraftforge.client.event.ClientChatReceivedEvent`
 
-Fired when a chat message is received on the client.
- This can be used for filtering and detecting messages with specific words or phrases, and suppressing them.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the message is not displayed in the chat message window.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private Component message`
-- `private final ChatType.Bound boundChatType`
-- `private final UUID sender`
-
 ### Methods
-- `public Component getMessage()`
-  Returns the message that will be displayed in the chat message window, if the event is not cancelled.
-  - returns: the message that will be displayed in the chat message window, if the event is not cancelled
-- `public void setMessage(Component message)`
-  Sets the new message to be displayed in the chat message window, if the event is not cancelled.
-  - param: message - the new message to be displayed
-- `public ChatType.Bound getBoundChatType()`
-  Returns the bound chat type of the chat message..
-   This contains the chat type, display name of the sender, and nullable target name depending on the chat type.
-  - returns: the bound chat type of the chat message
-- `public UUID getSender()`
-  Returns the message sender..
-   This will be Util.NIL_UUID if the message is a system message.
-  - returns: the message sender
-- `public boolean isSystem()`
-  Returns true if the message was sent by the system, false otherwise.
-  - returns: true if the message was sent by the system, false otherwise
-
-## ClientChatReceivedEvent.Player
-
-*class* `net.minecraftforge.client.event.ClientChatReceivedEvent.Player`
-
-Fired when a player chat message is received on the client.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the message is not displayed in the chat message window.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ClientChatReceivedEvent
-
-### Fields
-- `private final PlayerChatMessage playerChatMessage`
-
-### Methods
-- `public PlayerChatMessage getPlayerChatMessage()`
-  Returns the full player chat message..
-   This contains the sender UUID, various signing data, and the optional unsigned contents.
-  - returns: the full player chat message
+- `public ITextComponent getMessage()`
+- `public void setMessage(ITextComponent message)`
+- `public ChatType getType()`
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.ClientChatReceivedEvent`: `getBoundChatType`, `getMessage`, `getSender`, `isSystem`, `setMessage`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## ClientChatReceivedEvent.System
+## ColorHandlerEvent
 
-*class* `net.minecraftforge.client.event.ClientChatReceivedEvent.System`
+*class* `net.minecraftforge.client.event.ColorHandlerEvent`
 
-Fired when a system chat message is received on the client.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the message is not displayed in the chat message window or in the overlay.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ClientChatReceivedEvent
-
-### Fields
-- `private final boolean overlay`
-
-### Methods
-- `public boolean isOverlay()`
-  Returns whether the message goes to the overlay.
-  - returns: whether the message goes to the overlay
+Use these events to register block/item
+ color handlers at the appropriate time.
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.ClientChatReceivedEvent`: `getBoundChatType`, `getMessage`, `getSender`, `isSystem`, `setMessage`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## ClientPlayerChangeGameTypeEvent
+## ColorHandlerEvent.Block
 
-*class* `net.minecraftforge.client.event.ClientPlayerChangeGameTypeEvent`
+*class* `net.minecraftforge.client.event.ColorHandlerEvent.Block`
 
-Fired when the client player is notified of a change of GameType from the server.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final PlayerInfo info`
-- `private final GameType currentGameType`
-- `private final GameType newGameType`
-
-### Methods
-- `public PlayerInfo getInfo()`
-  Returns the client player information.
-  - returns: the client player information
-- `public GameType getCurrentGameType()`
-  Returns the current game type of the player.
-  - returns: the current game type of the player
-- `public GameType getNewGameType()`
-  Returns the new game type of the player.
-  - returns: the new game type of the player
-
-## ClientPlayerNetworkEvent
-
-*class* `net.minecraftforge.client.event.ClientPlayerNetworkEvent`
-
-Fired for different client connectivity events.
- See the various subclasses to listen for specific events.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final MultiPlayerGameMode multiPlayerGameMode`
-- `private final LocalPlayer player`
-- `private final Connection connection`
-
-### Methods
-- `public MultiPlayerGameMode getMultiPlayerGameMode()`
-  Returns the multiplayer game mode controller for the player.
-  - returns: the multiplayer game mode controller for the player
-- `public LocalPlayer getPlayer()`
-  Returns the player instance.
-  - returns: the player instance
-- `public Connection getConnection()`
-  Returns the network connection for the player.
-  - returns: the network connection for the player
-
-## ClientPlayerNetworkEvent.Clone
-
-*class* `net.minecraftforge.client.event.ClientPlayerNetworkEvent.Clone`
-
-Fired when the client player respawns, creating a new player instance to replace the old player instance.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ClientPlayerNetworkEvent
-
-### Fields
-- `private final LocalPlayer oldPlayer`
-
-### Methods
-- `public LocalPlayer getOldPlayer()`
-  Returns the previous player instance.
-  - returns: the previous player instance
-- `public LocalPlayer getNewPlayer()`
-  Returns the newly created player instance.
-  - returns: the newly created player instance
-- `public LocalPlayer getPlayer()`
-  Returns the newly created player instance.
-  - returns: the newly created player instance
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ClientPlayerNetworkEvent`: `getConnection`, `getMultiPlayerGameMode`
-
-## ClientPlayerNetworkEvent.LoggingIn
-
-*class* `net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingIn`
-
-Fired when the client player logs in to the server. The player should be initialized.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ClientPlayerNetworkEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ClientPlayerNetworkEvent`: `getConnection`, `getMultiPlayerGameMode`, `getPlayer`
-
-## ClientPlayerNetworkEvent.LoggingOut
-
-*class* `net.minecraftforge.client.event.ClientPlayerNetworkEvent.LoggingOut`
-
-Fired when the client player logs out. This event may also fire when a new integrated server is being created.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ClientPlayerNetworkEvent
-
-### Methods
-- `@Nullable public @Nullable MultiPlayerGameMode getMultiPlayerGameMode()`
-  Returns the multiplayer game mode controller for the player, may be null.. This may be null
-   in certain situations such as the creating a new integrated server (singleplayer world) or connecting to
-   a multiplayer server.
-  - returns: the multiplayer game mode controller for the player, may be null
-- `@Nullable public @Nullable LocalPlayer getPlayer()`
-  Returns the player instance, may be null.. This may be null
-   in certain situations such as the creating a new integrated server (singleplayer world) or connecting to
-   a multiplayer server.
-  - returns: the player instance, may be null
-- `@Nullable public @Nullable Connection getConnection()`
-  Returns the network connection for the player, may be null.. This may be null
-   in certain situations such as the creating a new integrated server (singleplayer world) or connecting to
-   a multiplayer server.
-  - returns: the network connection for the player, may be null
-
-## ComputeFovModifierEvent
-
-*class* `net.minecraftforge.client.event.ComputeFovModifierEvent`
-
-Fired after the field of vision (FOV) modifier for the player is calculated to allow developers to adjust it further.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final Player player`
-- `private final float fovModifier`
-- `private float newFovModifier`
-
-### Methods
-- `public Player getPlayer()`
-  Returns the player affected by this event.
-  - returns: the player affected by this event
-- `public float getFovModifier()`
-  Returns the original field of vision (FOV) of the player, before any modifications or interpolation.
-  - returns: the original field of vision (FOV) of the player, before any modifications or interpolation
-- `public float getNewFovModifier()`
-  Returns the current field of vision (FOV) of the player.
-  - returns: the current field of vision (FOV) of the player
-- `public void setNewFovModifier(float newFovModifier)`
-  Sets the new field of vision (FOV) of the player.
-  - param: newFovModifier - the new field of vision (FOV)
-
-## ContainerScreenEvent
-
-*class* `net.minecraftforge.client.event.ContainerScreenEvent`
-
-Fired for hooking into AbstractContainerScreen events.
- See the subclasses to listen for specific events.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final AbstractContainerScreen<?> containerScreen`
-
-### Methods
-- `public AbstractContainerScreen<?> getContainerScreen()`
-  Returns the container screen.
-  - returns: the container screen
-
-## ContainerScreenEvent.Render
-
-*class* `net.minecraftforge.client.event.ContainerScreenEvent.Render`
-
-Fired every time an AbstractContainerScreen renders.
- See the two subclasses to listen for foreground or background rendering.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ContainerScreenEvent
-
-### Fields
-- `private final GuiGraphics guiGraphics`
-- `private final int mouseX`
-- `private final int mouseY`
-
-### Methods
-- `public GuiGraphics getGuiGraphics()`
-  Returns the gui graphics used for rendering.
-  - returns: the gui graphics used for rendering
-- `public int getMouseX()`
-  Returns the X coordinate of the mouse pointer.
-  - returns: the X coordinate of the mouse pointer
-- `public int getMouseY()`
-  Returns the Y coordinate of the mouse pointer.
-  - returns: the Y coordinate of the mouse pointer
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ContainerScreenEvent`: `getContainerScreen`
-
-## ContainerScreenEvent.Render.Background
-
-*class* `net.minecraftforge.client.event.ContainerScreenEvent.Render.Background`
-
-Fired after the container screen's background layer and elements are drawn.
- This can be used for rendering new background elements.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ContainerScreenEvent.Render
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ContainerScreenEvent.Render`: `getGuiGraphics`, `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ContainerScreenEvent`: `getContainerScreen`
-
-## ContainerScreenEvent.Render.Foreground
-
-*class* `net.minecraftforge.client.event.ContainerScreenEvent.Render.Foreground`
-
-Fired after the container screen's foreground layer and elements are drawn, but
- before rendering the tooltips and the item stack being dragged by the player.
-
- This can be used for rendering elements that must be above other screen elements, but
- below tooltips and the dragged stack, such as slot or item stack specific overlays.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ContainerScreenEvent.Render
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ContainerScreenEvent.Render`: `getGuiGraphics`, `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ContainerScreenEvent`: `getContainerScreen`
-
-## CustomizeGuiOverlayEvent
-
-*class* `net.minecraftforge.client.event.CustomizeGuiOverlayEvent`
-
-Fired when an overlay is about to be rendered to the screen to allow the user to modify it.
-
-### Fields
-- `private final Window window`
-- `private final GuiGraphics guiGraphics`
-- `private final float partialTick`
-
-### Methods
-- `public Window getWindow()`
-- `public GuiGraphics getGuiGraphics()`
-- `public float getPartialTick()`
-
-## CustomizeGuiOverlayEvent.BossEventProgress
-
-*class* `net.minecraftforge.client.event.CustomizeGuiOverlayEvent.BossEventProgress`
-
-Fired before a boss health bar is rendered to the screen.
-
- This event is cancellable, and does not have a result.
- Cancelling this event will prevent the given bar from rendering.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: CustomizeGuiOverlayEvent
-
-### Fields
-- `private final LerpingBossEvent bossEvent`
-- `private final int x`
-- `private final int y`
-- `private int increment`
-
-### Methods
-- `public LerpingBossEvent getBossEvent()`
-  - returns: the boss health bar currently being rendered
-- `public int getX()`
-  Returns the X position of the boss health bar.
-  - returns: the X position of the boss health bar
-- `public int getY()`
-  Returns the Y position of the boss health bar.
-  - returns: the Y position of the boss health bar
-- `public int getIncrement()`
-  Returns the Y position increment before rendering the next boss health bar.
-  - returns: the Y position increment before rendering the next boss health bar
-- `public void setIncrement(int increment)`
-  Sets the Y position increment before rendering the next boss health bar.
-  - param: increment - the new Y position increment
-
-### Inherited methods
-- from `net.minecraftforge.client.event.CustomizeGuiOverlayEvent`: `getGuiGraphics`, `getPartialTick`, `getWindow`
-
-## CustomizeGuiOverlayEvent.Chat
-
-*class* `net.minecraftforge.client.event.CustomizeGuiOverlayEvent.Chat`
-
-Fired before the chat messages overlay is rendered to the screen.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: CustomizeGuiOverlayEvent
-
-### Fields
-- `private int posX`
-- `private int posY`
-
-### Methods
-- `public int getPosX()`
-  - returns: the X position of the chat messages overlay
-- `public void setPosX(int posX)`
-  Sets the new X position for rendering the chat messages overlay
-  - param: posX - the new X position
-- `public int getPosY()`
-  - returns: the Y position of the chat messages overlay
-- `public void setPosY(int posY)`
-  Sets the new Y position for rendering the chat messages overlay
-  - param: posY - the new y position
-
-### Inherited methods
-- from `net.minecraftforge.client.event.CustomizeGuiOverlayEvent`: `getGuiGraphics`, `getPartialTick`, `getWindow`
-
-## CustomizeGuiOverlayEvent.DebugText
-
-*class* `net.minecraftforge.client.event.CustomizeGuiOverlayEvent.DebugText`
-
-Fired before textual information is rendered to the debug screen.
- This can be used to add or remove text information.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: CustomizeGuiOverlayEvent
-
-### Fields
-- `private final ArrayList<String> left`
-- `private final ArrayList<String> right`
-
-### Methods
-- `public ArrayList<String> getLeft()`
-  - returns: the modifiable list of text to render on the left side
-- `public ArrayList<String> getRight()`
-  - returns: the modifiable list of text to render on the right side
-
-### Inherited methods
-- from `net.minecraftforge.client.event.CustomizeGuiOverlayEvent`: `getGuiGraphics`, `getPartialTick`, `getWindow`
-
-## EntityRenderersEvent
-
-*class* `net.minecraftforge.client.event.EntityRenderersEvent`
-
-Fired for on different events/actions relating to entity renderers.
- See the various subclasses for listening to different events.
-
- These events are fired on the mod-specific event bus,
- only on the logical client.
-
-## EntityRenderersEvent.AddLayers
-
-*class* `net.minecraftforge.client.event.EntityRenderersEvent.AddLayers`
-
-Fired for registering entity renderer layers at the appropriate time, after the entity and player renderers maps
- have been created.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: EntityRenderersEvent
-
-### Fields
-- `private final Map<EntityType<?>,EntityRenderer<?>> renderers`
-- `private final Map<PlayerSkin.Model,EntityRenderer<? extends Player>> skinMap`
-- `private final EntityRendererProvider.Context context`
-
-### Methods
-- `public Set<PlayerSkin.Model> getSkins()`
-  Returns the set of player skin names which have a renderer.
-  
-   Minecraft provides two default skin names: default for the
-   regular player model and slim for the
-   slim player model.
-  - returns: the set of player skin names which have a renderer
-- `@Nullable public <R extends EntityRenderer<? extends Player>> R getPlayerSkin(PlayerSkin.Model skinName)`
-  Returns a player skin renderer for the given skin name.
-  - param: skinName - the name of the skin to get the renderer for
-  - returns: the skin renderer, or null if no renderer is registered for that skin name
-- `@Nullable @Deprecated(forRemoval=true,  since="1.20.2") public <R extends LivingEntityRenderer<? extends Player, ? extends EntityModel<? extends Player>>> R getSkin(PlayerSkin.Model skinName)` (deprecated)
-- `@Nullable public <T extends LivingEntity, R extends EntityRenderer<T>> R getEntityRenderer(EntityType<? extends T> entityType)`
-  Returns an entity renderer for the given entity type.
-  - param: entityType - the entity type to return a renderer for
-  - returns: the renderer, or null if no renderer is registered for that entity type
-- `@Nullable @Deprecated(forRemoval=true,  since="1.20.2") public <T extends LivingEntity, R extends LivingEntityRenderer<T, ? extends EntityModel<T>>> R getRenderer(EntityType<? extends T> entityType)` (deprecated)
-- `public EntityModelSet getEntityModels()`
-  Returns the set of entity models.
-  - returns: the set of entity models
-- `public EntityRendererProvider.Context getContext()`
-  Returns the context for the entity renderer provider.
-  - returns: the context for the entity renderer provider
-
-## EntityRenderersEvent.CreateSkullModels
-
-*class* `net.minecraftforge.client.event.EntityRenderersEvent.CreateSkullModels`
-
-Fired for registering additional skull models at the appropriate time.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: EntityRenderersEvent
-
-### Fields
-- `private final com.google.common.collect.ImmutableMap.Builder<SkullBlock.Type,SkullModelBase> builder`
-- `private final EntityModelSet entityModelSet`
-
-### Methods
-- `public EntityModelSet getEntityModelSet()`
-  Returns the set of entity models.
-  - returns: the set of entity models
-- `public void registerSkullModel(SkullBlock.Type type,  SkullModelBase model)`
-  Registers the constructor for a skull block with the given SkullBlock.Type.
-   These will be inserted into the maps used by the item, entity, and block model renderers at the appropriate
-   time.
-  - param: type - a unique skull type; an exception will be thrown later if multiple mods (including vanilla)
- register models for the same type
-  - param: model - the skull model instance. A typical implementation will simply bake a model using
- EntityModelSet.bakeLayer(ModelLayerLocation) and pass it to the constructor for
- SkullModel.
-
-## EntityRenderersEvent.RegisterLayerDefinitions
-
-*class* `net.minecraftforge.client.event.EntityRenderersEvent.RegisterLayerDefinitions`
-
-Fired for registering layer definitions at the appropriate time.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: EntityRenderersEvent
-
-### Methods
-- `public void registerLayerDefinition(ModelLayerLocation layerLocation,  Supplier<LayerDefinition> supplier)`
-  Registers a layer definition supplier with the given ModelLayerLocation.
-   These will be inserted into the main layer definition map for entity model layers at the appropriate time.
-  - param: layerLocation - the model layer location, which should be used in conjunction with
- EntityRendererProvider.Context.bakeLayer(ModelLayerLocation)
-  - param: supplier - a supplier to create a LayerDefinition, generally a static method reference in
- the entity model class
-
-## EntityRenderersEvent.RegisterRenderers
-
-*class* `net.minecraftforge.client.event.EntityRenderersEvent.RegisterRenderers`
-
-Fired for registering entity and block entity renderers at the appropriate time.
- For registering entity renderer layers to existing entity renderers (whether vanilla or registered through this
- event), listen for the EntityRenderersEvent.AddLayers event instead.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: EntityRenderersEvent
-
-### Methods
-- `public <T extends Entity> void registerEntityRenderer(EntityType<? extends T> entityType,  EntityRendererProvider<T> entityRendererProvider)`
-  Registers an entity renderer for the given entity type.
-  - param: entityType - the entity type to register a renderer for
-  - param: entityRendererProvider - the renderer provider
-- `public <T extends BlockEntity> void registerBlockEntityRenderer(BlockEntityType<? extends T> blockEntityType,  BlockEntityRendererProvider<T> blockEntityRendererProvider)`
-  Registers a block entity renderer for the given block entity type.
-  - param: blockEntityType - the block entity type to register a renderer for
-  - param: blockEntityRendererProvider - the renderer provider
-
-## ForgeEventFactoryClient
-
-*class* `net.minecraftforge.client.event.ForgeEventFactoryClient`
-
-### Methods
-- `private static boolean post(net.minecraftforge.eventbus.api.Event e)`
-- `private static <E extends net.minecraftforge.eventbus.api.Event> E fire(E e)`
-- `public static void gatherLayers(Map<EntityType<?>,EntityRenderer<?>> renderers,  Map<PlayerSkin.Model,EntityRenderer<? extends Player>> playerRenderers,  EntityRendererProvider.Context context)`
-- `public static boolean onScreenMouseReleasedPre(Screen guiScreen,  double mouseX,  double mouseY,  int button)`
-- `public static boolean onScreenMouseReleasedPost(Screen guiScreen,  double mouseX,  double mouseY,  int button,  boolean handled)`
-- `public static boolean onScreenMouseClickedPre(Screen guiScreen,  double mouseX,  double mouseY,  int button)`
-- `public static boolean onScreenMouseClickedPost(Screen guiScreen,  double mouseX,  double mouseY,  int button,  boolean handled)`
-- `public static boolean onMouseButtonPre(int button,  int action,  int mods)`
-- `public static void onMouseButtonPost(int button,  int action,  int mods)`
-- `public static boolean onScreenMouseScrollPre(Screen guiScreen,  double mouseX,  double mouseY,  double deltaX,  double deltaY)`
-- `public static void onScreenMouseScrollPost(Screen guiScreen,  double mouseX,  double mouseY,  double deltaX,  double deltaY)`
-- `public static boolean onMouseScroll(MouseHandler mouseHelper,  double deltaX,  double deltaY)`
-- `public static boolean onScreenMouseDragPre(Screen guiScreen,  double mouseX,  double mouseY,  int mouseButton,  double dragX,  double dragY)`
-- `public static void onScreenMouseDragPost(Screen guiScreen,  double mouseX,  double mouseY,  int mouseButton,  double dragX,  double dragY)`
-- `@Nullable public static @Nullable Screen onScreenOpening(Screen old,  Screen screen)`
-- `public static void onScreenClose(Screen screen)`
-
-## InputEvent
-
-*class* `net.minecraftforge.client.event.InputEvent`
-
-Fired when an input is detected from the user's input devices.
- See the various subclasses to listen for specific devices and inputs.
-
-## InputEvent.InteractionKeyMappingTriggered
-
-*class* `net.minecraftforge.client.event.InputEvent.InteractionKeyMappingTriggered`
-
-Fired when a keymapping that by default involves clicking the mouse buttons is triggered.
-
- The key bindings that trigger this event are:
-
- Use Item - defaults to left mouse click
- Pick Block - defaults to middle mouse click
- Attack - defaults to right mouse click
-
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the keymapping's action is not processed further, and the hand will be swung
- according to shouldSwingHand().
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent
-
-### Fields
-- `private final int button`
-- `private final KeyMapping keyMapping`
-- `private final InteractionHand hand`
-- `private boolean handSwing`
-
-### Methods
-- `public void setSwingHand(boolean value)`
-  Sets whether to swing the hand. This takes effect whether or not the event is cancelled.
-  - param: value - whether to swing the hand
-- `public boolean shouldSwingHand()`
-  Returns whether to swing the hand; always takes effect, regardless of cancellation.
-  - returns: whether to swing the hand; always takes effect, regardless of cancellation
-- `public InteractionHand getHand()`
-  Returns the hand that caused the input.
-  
-   The event will be called for both hands if this is a use item input regardless
-   of both event's cancellation.
-   Will always be InteractionHand.MAIN_HAND if this is an attack or pick block input.
-  - returns: the hand that caused the input
-- `public boolean isAttack()`
-  Returns true if the mouse button is the left mouse button.
-  - returns: true if the mouse button is the left mouse button
-- `public boolean isUseItem()`
-  Returns true if the mouse button is the right mouse button.
-  - returns: true if the mouse button is the right mouse button
-- `public boolean isPickBlock()`
-  Returns true if the mouse button is the middle mouse button.
-  - returns: true if the mouse button is the middle mouse button
-- `public KeyMapping getKeyMapping()`
-  Returns the key mapping which triggered this event.
-  - returns: the key mapping which triggered this event
-
-## InputEvent.Key
-
-*class* `net.minecraftforge.client.event.InputEvent.Key`
-
-Fired when a keyboard key input occurs, such as pressing, releasing, or repeating a key.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent
-
-### Fields
-- `private final int key`
-- `private final int scanCode`
-- `private final int action`
-- `private final int modifiers`
-
-### Methods
-- `public int getKey()`
-  Returns the GLFW (platform-agnostic) key code.
-  - returns: the GLFW (platform-agnostic) key code
-- `public int getScanCode()`
-  Returns the platform-specific scan code.
-  
-   The scan code is unique for every key, regardless of whether it has a key code.
-   Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
-   on the platform but they are safe to save to disk as custom key bindings.
-  - returns: the platform-specific scan code
-- `public int getAction()`
-  Returns the mouse button's action.
-  - returns: the mouse button's action
-- `public int getModifiers()`
-  Returns a bit field representing the active modifier keys.
-  - returns: a bit field representing the active modifier keys
-
-## InputEvent.MouseButton
-
-*class* `net.minecraftforge.client.event.InputEvent.MouseButton`
-
-Fired when a mouse button is pressed/released. Sub-events get fired before and after this happens.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent
-
-### Fields
-- `private final int button`
-- `private final int action`
-- `private final int modifiers`
-
-### Methods
-- `public int getButton()`
-  Returns the mouse button's input code.
-  - returns: the mouse button's input code
-- `public int getAction()`
-  Returns the mouse button's action.
-  - returns: the mouse button's action
-- `public int getModifiers()`
-  Returns a bit field representing the active modifier keys.
-  - returns: a bit field representing the active modifier keys
-
-## InputEvent.MouseButton.Post
-
-*class* `net.minecraftforge.client.event.InputEvent.MouseButton.Post`
-
-Fired when a mouse button is pressed/released, after processing.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent.MouseButton
-
-### Inherited methods
-- from `net.minecraftforge.client.event.InputEvent.MouseButton`: `getAction`, `getButton`, `getModifiers`
-
-## InputEvent.MouseButton.Pre
-
-*class* `net.minecraftforge.client.event.InputEvent.MouseButton.Pre`
-
-Fired when a mouse button is pressed/released, before being processed by vanilla.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, then the mouse event will not be processed by vanilla (e.g. keymappings and screens)
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent.MouseButton
-
-### Inherited methods
-- from `net.minecraftforge.client.event.InputEvent.MouseButton`: `getAction`, `getButton`, `getModifiers`
-
-## InputEvent.MouseScrollingEvent
-
-*class* `net.minecraftforge.client.event.InputEvent.MouseScrollingEvent`
-
-Fired when a mouse scroll wheel is used outside of a screen and a player is loaded, before being
- processed by vanilla.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, then the mouse scroll event will not be processed further.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: InputEvent
-
-### Fields
-- `private final double deltaX`
-- `private final double deltaY`
-- `private final double mouseX`
-- `private final double mouseY`
-- `private final boolean leftDown`
-- `private final boolean middleDown`
-- `private final boolean rightDown`
-
-### Methods
-- `public double getDeltaX()`
-  Returns the amount of change / delta of the mouse scroll in the vertical direction.
-  - returns: the amount of change / delta of the mouse scroll in the vertical direction
-- `public double getDeltaY()`
-  Returns the amount of change / delta of the mouse scroll in the horizontal direction.
-  - returns: the amount of change / delta of the mouse scroll in the horizontal direction
-- `public boolean isLeftDown()`
-  Returns true if the left mouse button is pressed.
-  - returns: true if the left mouse button is pressed
-- `public boolean isRightDown()`
-  Returns true if the right mouse button is pressed.
-  - returns: true if the right mouse button is pressed
-- `public boolean isMiddleDown()`
-  Returns true if the middle mouse button is pressed.
-  - returns: true if the middle mouse button is pressed
-- `public double getMouseX()`
-  Returns the X position of the mouse cursor.
-  - returns: the X position of the mouse cursor
-- `public double getMouseY()`
-  Returns the Y position of the mouse cursor.
-  - returns: the Y position of the mouse cursor
-
-## ModelEvent
-
-*class* `net.minecraftforge.client.event.ModelEvent`
-
-Houses events related to models.
-
-## ModelEvent.BakingCompleted
-
-*class* `net.minecraftforge.client.event.ModelEvent.BakingCompleted`
-
-Fired when the ModelManager is notified of the resource manager reloading.
- Called after the model registry is set up and cached in the BlockModelShaper.
-
- The model registry given by this event is unmodifiable. To modify the model registry, use
- ModelEvent.ModifyBakingResult instead.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: ModelEvent
-
-### Fields
-- `private final ModelManager modelManager`
-- `private final Map<ResourceLocation,BakedModel> models`
-- `private final ModelBakery modelBakery`
-
-### Methods
-- `public ModelManager getModelManager()`
-  - returns: the model manager
-- `public Map<ResourceLocation,BakedModel> getModels()`
-  - returns: an unmodifiable view of the registry map of models and their model names
-- `public ModelBakery getModelBakery()`
-  - returns: the model loader
-
-## ModelEvent.ModifyBakingResult
-
-*class* `net.minecraftforge.client.event.ModelEvent.ModifyBakingResult`
-
-Fired while the ModelManager is reloading models, after the model registry is set up, but before it's
- passed to the BlockModelShaper for caching.
-
- This event is fired from a worker thread and it is therefore not safe to access anything outside the
- model registry and ModelBakery provided in this event.
-
- The ModelManager firing this event is not fully set up with the latest data when this event fires and
- must therefore not be accessed in this event.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: ModelEvent
-
-### Fields
-- `private final Map<ResourceLocation,BakedModel> models`
-- `private final ModelBakery modelBakery`
-
-### Methods
-- `public Map<ResourceLocation,BakedModel> getModels()`
-  - returns: the modifiable registry map of models and their model names
-- `public ModelBakery getModelBakery()`
-  - returns: the model loader
-
-## ModelEvent.RegisterAdditional
-
-*class* `net.minecraftforge.client.event.ModelEvent.RegisterAdditional`
-
-Fired when the ModelBakery is notified of the resource manager reloading.
- Allows developers to register models to be loaded, along with their dependencies.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: ModelEvent
-
-### Fields
-- `private final Set<ResourceLocation> models`
-
-### Methods
-- `public void register(ResourceLocation model)`
-  Registers a model to be loaded, along with its dependencies.
-
-## ModelEvent.RegisterGeometryLoaders
-
-*class* `net.minecraftforge.client.event.ModelEvent.RegisterGeometryLoaders`
-
-Allows users to register their own geometry loaders for use in block/item models.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: ModelEvent
-
-### Fields
-- `private final Map<ResourceLocation,IGeometryLoader<?>> loaders`
-
-### Methods
-- `public void register(String name,  IGeometryLoader<?> loader)`
-  Registers a new geometry loader.
-
-## MovementInputUpdateEvent
-
-*class* `net.minecraftforge.client.event.MovementInputUpdateEvent`
-
-Fired after the player's movement inputs are updated.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final Input input`
-
-### Methods
-- `public Input getInput()`
-  Returns the player's movement inputs.
-  - returns: the player's movement inputs
-
-### Inherited methods
-- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntity`
-
-## RecipesUpdatedEvent
-
-*class* `net.minecraftforge.client.event.RecipesUpdatedEvent`
-
-Fired when the RecipeManager has received and synced the recipes from the server to the client.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final RecipeManager recipeManager`
-
-### Methods
-- `public RecipeManager getRecipeManager()`
-  Returns the recipe manager.
-  - returns: the recipe manager
-
-## RegisterClientCommandsEvent
-
-*class* `net.minecraftforge.client.event.RegisterClientCommandsEvent`
-
-Fired to allow mods to register client commands.
-
- Some command arguments behave differently for the client commands dispatcher:
-
- ResourceLocationArgument.getAdvancement(com.mojang.brigadier.context.CommandContext, String) only returns
- advancements that are shown on the advancements screen.
- ObjectiveArgument.getObjective(com.mojang.brigadier.context.CommandContext, String) only returns
- objectives that are displayed to the player.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final com.mojang.brigadier.CommandDispatcher<CommandSourceStack> dispatcher`
-- `private final CommandBuildContext context`
-
-### Methods
-- `public com.mojang.brigadier.CommandDispatcher<CommandSourceStack> getDispatcher()`
-  Returns the command dispatcher for registering commands to be executed on the client.
-  - returns: the command dispatcher for registering commands to be executed on the client
-- `public CommandBuildContext getBuildContext()`
-  Returns the context to build the commands for.
-  - returns: the context to build the commands for
-
-## RegisterClientReloadListenersEvent
-
-*class* `net.minecraftforge.client.event.RegisterClientReloadListenersEvent`
-
-Fired to allow mods to register their reload listeners on the client-side resource manager.
- This event is fired once during the construction of the Minecraft instance.
-
- For registering reload listeners on the server-side resource manager, see AddReloadListenerEvent.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final ReloadableResourceManager resourceManager`
-
-### Methods
-- `public void registerReloadListener(PreparableReloadListener reloadListener)`
-  Registers the given reload listener to the client-side resource manager.
-  - param: reloadListener - the reload listener
-
-## RegisterClientTooltipComponentFactoriesEvent
-
-*class* `net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent`
-
-Allows users to register custom ClientTooltipComponent
- factories for their TooltipComponent types.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<Class<? extends TooltipComponent>,Function<TooltipComponent,ClientTooltipComponent>> factories`
-
-### Methods
-- `public <T extends TooltipComponent> void register(Class<T> type,  Function<? super T,? extends ClientTooltipComponent> factory)`
-  Registers a ClientTooltipComponent factory for a TooltipComponent.
-
-## RegisterColorHandlersEvent
-
-*class* `net.minecraftforge.client.event.RegisterColorHandlersEvent`
-
-Fired for registering block and item color handlers at the appropriate time.
- See the two subclasses for registering block or item color handlers.
-
- These events are fired on the mod-specific event bus,
- only on the logical client.
-
-## RegisterColorHandlersEvent.Block
-
-*class* `net.minecraftforge.client.event.RegisterColorHandlersEvent.Block`
-
-Fired for registering block color handlers.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: RegisterColorHandlersEvent
-
-### Fields
-- `private final BlockColors blockColors`
+Enclosing class: ColorHandlerEvent
 
 ### Methods
 - `public BlockColors getBlockColors()`
-  Returns the block colors registry.
-  - returns: the block colors registry
-- `public void register(BlockColor blockColor,  Block... blocks)`
-  Registers a BlockColor instance for a set of blocks.
-  - param: blockColor - The color provider
-  - param: blocks - The blocks
 
-## RegisterColorHandlersEvent.ColorResolvers
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterColorHandlersEvent.ColorResolvers`
+## ColorHandlerEvent.Item
 
-Allows registration of custom ColorResolver implementations to be used with
- BlockAndTintGetter.getBlockTint(BlockPos, ColorResolver).
+*class* `net.minecraftforge.client.event.ColorHandlerEvent.Item`
 
-Enclosing class: RegisterColorHandlersEvent
-
-### Fields
-- `private final com.google.common.collect.ImmutableList.Builder<ColorResolver> builder`
-
-### Methods
-- `public void register(ColorResolver resolver)`
-
-## RegisterColorHandlersEvent.Item
-
-*class* `net.minecraftforge.client.event.RegisterColorHandlersEvent.Item`
-
-Fired for registering item color handlers.
-
- The block colors should only be used for referencing or delegating item colors to their respective block
- colors. Use RegisterColorHandlersEvent.Block for registering your block color handlers.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: RegisterColorHandlersEvent
-
-### Fields
-- `private final ItemColors itemColors`
-- `private final BlockColors blockColors`
+Enclosing class: ColorHandlerEvent
 
 ### Methods
 - `public ItemColors getItemColors()`
-  Returns the item colors registry.
-  - returns: the item colors registry
 - `public BlockColors getBlockColors()`
-  Returns the block colors registry.
-   This should only be used for referencing or delegating item colors to their respective block colors.
-  - returns: the block colors registry
-- `public void register(ItemColor itemColor,  ItemLike... items)`
-  Registers a ItemColor instance for a set of blocks.
-  - param: itemColor - The color provider
-  - param: items - The items
 
-## RegisterDimensionSpecialEffectsEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent`
+## DrawBlockHighlightEvent
 
-Allows users to register custom DimensionSpecialEffects for their dimensions.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<ResourceLocation,DimensionSpecialEffects> effects`
+*class* `net.minecraftforge.client.event.DrawBlockHighlightEvent`
 
 ### Methods
-- `public void register(ResourceLocation dimensionType,  DimensionSpecialEffects effects)`
-  Registers the effects for a given dimension type.
+- `public RenderGlobal getContext()`
+- `public EntityPlayer getPlayer()`
+- `public RayTraceResult getTarget()`
+- `public int getSubID()`
+- `public float getPartialTicks()`
 
-## RegisterEntitySpectatorShadersEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterEntitySpectatorShadersEvent`
+## EntityViewRenderEvent
 
-Allows users to register custom shaders to be used when the player spectates a certain kind of entity.
- Vanilla examples of this are the green effect for creepers and the invert effect for endermen.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent`
 
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<EntityType<?>,ResourceLocation> shaders`
+Event that hooks into EntityRenderer, allowing any feature to customize visual attributes
+ the player sees.
 
 ### Methods
-- `public void register(EntityType<?> entityType,  ResourceLocation shader)`
-  Registers a spectator shader for a given entity type.
+- `public EntityRenderer getRenderer()`
+- `public Entity getEntity()`
+- `public IBlockState getState()`
+- `public double getRenderPartialTicks()`
 
-## RegisterGuiOverlaysEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterGuiOverlaysEvent`
+## EntityViewRenderEvent.CameraSetup
 
-Allows users to register custom GUI overlays.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent.CameraSetup`
 
- This event is not cancellable, and does not have a result.
+Event that allows mods to alter the angles of the player's camera. Mainly useful for applying roll.
 
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<ResourceLocation,IGuiOverlay> overlays`
-- `private final List<ResourceLocation> orderedOverlays`
+Enclosing class: EntityViewRenderEvent
 
 ### Methods
-- `public void registerBelowAll(@NotNull  @NotNull String id,  @NotNull  @NotNull IGuiOverlay overlay)`
-  Registers an overlay that renders below all others.
-  - param: id - A unique resource id for this overlay
-  - param: overlay - The overlay
-- `public void registerBelow(@NotNull  @NotNull ResourceLocation other,  @NotNull  @NotNull String id,  @NotNull  @NotNull IGuiOverlay overlay)`
-  Registers an overlay that renders below another.
-  - param: other - The id of the overlay to render below. This must be an overlay you have already registered or a
- vanilla overlay. Do not use other mods' overlays.
-  - param: id - A unique resource id for this overlay
-  - param: overlay - The overlay
-- `public void registerAbove(@NotNull  @NotNull ResourceLocation other,  @NotNull  @NotNull String id,  @NotNull  @NotNull IGuiOverlay overlay)`
-  Registers an overlay that renders above another.
-  - param: other - The id of the overlay to render above. This must be an overlay you have already registered or a
- vanilla overlay. Do not use other mods' overlays.
-  - param: id - A unique resource id for this overlay
-  - param: overlay - The overlay
-- `public void registerAboveAll(@NotNull  @NotNull String id,  @NotNull  @NotNull IGuiOverlay overlay)`
-  Registers an overlay that renders above all others.
-  - param: id - A unique resource id for this overlay
-  - param: overlay - The overlay
-- `private void register(@NotNull  @NotNull RegisterGuiOverlaysEvent.Ordering ordering,  @Nullable  @Nullable ResourceLocation other,  @NotNull  @NotNull String id,  @NotNull  @NotNull IGuiOverlay overlay)`
+- `public float getYaw()`
+- `public void setYaw(float yaw)`
+- `public float getPitch()`
+- `public void setPitch(float pitch)`
+- `public float getRoll()`
+- `public void setRoll(float roll)`
 
-## RegisterItemDecorationsEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.EntityViewRenderEvent`: `getEntity`, `getRenderer`, `getRenderPartialTicks`, `getState`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterItemDecorationsEvent`
+## EntityViewRenderEvent.FogColors
 
-Allows users to register custom IItemDecorator to Items.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent.FogColors`
 
- This event is not cancelable, and does not have a result.
+Event that allows any feature to customize the color of fog the player sees.
+ NOTE: Any change made to one of the color variables will affect the result seen in-game.
 
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<Item,List<IItemDecorator>> decorators`
+Enclosing class: EntityViewRenderEvent
 
 ### Methods
-- `public void register(ItemLike itemLike,  IItemDecorator decorator)`
-  Register an ItemDecorator to an Item
+- `public float getRed()`
+- `public void setRed(float red)`
+- `public float getGreen()`
+- `public void setGreen(float green)`
+- `public float getBlue()`
+- `public void setBlue(float blue)`
 
-## RegisterKeyMappingsEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.EntityViewRenderEvent`: `getEntity`, `getRenderer`, `getRenderPartialTicks`, `getState`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterKeyMappingsEvent`
+## EntityViewRenderEvent.FogDensity
 
-Allows users to register custom key mappings.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent.FogDensity`
 
- This event is not cancellable, and does not have a result.
+Event that allows any feature to customize the fog density the player sees.
+ NOTE: In order to make this event have an effect, you must cancel the event
 
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Options options`
-
-### Methods
-- `public void register(KeyMapping key)`
-  Registers a new key mapping.
-
-## RegisterNamedRenderTypesEvent
-
-*class* `net.minecraftforge.client.event.RegisterNamedRenderTypesEvent`
-
-Allows users to register custom named render types.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<ResourceLocation,RenderTypeGroup> renderTypes`
+Enclosing class: EntityViewRenderEvent
 
 ### Methods
-- `public void register(String name,  RenderType blockRenderType,  RenderType entityRenderType)`
-  Registers a named RenderTypeGroup.
-  - param: name - The name
-  - param: blockRenderType - One of the values returned by RenderType.chunkBufferLayers()
-  - param: entityRenderType - A RenderType using DefaultVertexFormat.NEW_ENTITY
-- `public void register(String name,  RenderType blockRenderType,  RenderType entityRenderType,  RenderType fabulousEntityRenderType)`
-  Registers a named RenderTypeGroup.
-  - param: name - The name
-  - param: blockRenderType - One of the values returned by RenderType.chunkBufferLayers()
-  - param: entityRenderType - A RenderType using DefaultVertexFormat.NEW_ENTITY
-  - param: fabulousEntityRenderType - A RenderType using DefaultVertexFormat.NEW_ENTITY for use when
- "fabulous" rendering is enabled
+- `public float getDensity()`
+- `public void setDensity(float density)`
 
-## RegisterParticleProvidersEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.EntityViewRenderEvent`: `getEntity`, `getRenderer`, `getRenderPartialTicks`, `getState`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterParticleProvidersEvent`
+## EntityViewRenderEvent.FOVModifier
 
-Fired for registering particle providers at the appropriate time.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent.FOVModifier`
 
- ParticleTypes must be registered during RegisterEvent as usual;
- this event is only for the ParticleProviders.
+Event that allows mods to alter the raw FOV itself.
+ This directly affects to the FOV without being modified.
 
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final ParticleEngine particleEngine`
+Enclosing class: EntityViewRenderEvent
 
 ### Methods
-- `public <T extends ParticleOptions> void registerSpecial(ParticleType<T> type,  ParticleProvider<T> provider)`
-  Registers a ParticleProvider for a non-json-based ParticleType.
-   These particles do not receive a list of texture sprites to use for rendering themselves.
-  
-   There must be no particle json with an ID matching the ParticleType,
-   or a redundant texture list error will occur when particle jsons load.
-  - param: type - ParticleType to register a ParticleProvider for.
-  - param: provider - ParticleProvider function responsible for providing that ParticleType's particles.
-- `public <T extends ParticleOptions> void registerSprite(ParticleType<T> type,  ParticleProvider.Sprite<T> sprite)`
-  Registers a ParticleProvider for a json-based ParticleType with a single texture;
-   the resulting TextureSheetParticles will use that texture when created.
-  
-   A particle json with an ID matching the ParticleType must exist in the particles asset folder,
-   or a missing texture list error will occur when particle jsons load.
-  - param: type - ParticleType to register a ParticleProvider for.
-  - param: sprite - Sprite function responsible for providing that ParticleType's particles.
-- `public <T extends ParticleOptions> void registerSpriteSet(ParticleType<T> type,  ParticleEngine.SpriteParticleRegistration<T> registration)`
-  Registers a ParticleProvider for a json-based ParticleType.
-   Particle jsons define a list of texture sprites which the particle can use to render itself.
-  
-   A particle json with an ID matching the ParticleType must exist in the particles asset folder,
-   or a missing texture list error will occur when particle jsons load.
-  - param: type - ParticleType to register a particle provider for.
-  - param: registration - SpriteParticleRegistration function responsible for providing that ParticleType's particles.
+- `public float getFOV()`
+- `public void setFOV(float fov)`
 
-## RegisterPresetEditorsEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.EntityViewRenderEvent`: `getEntity`, `getRenderer`, `getRenderPartialTicks`, `getState`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterPresetEditorsEvent`
+## EntityViewRenderEvent.RenderFogEvent
 
-Event for registering PresetEditor screen factories for world presets.
+*class* `net.minecraftforge.client.event.EntityViewRenderEvent.RenderFogEvent`
 
- This event is not cancellable, and does not have a result.
+Event that allows any feature to customize the rendering of fog.
 
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private static final org.apache.logging.log4j.Logger LOGGER`
-- `private final Map<ResourceKey<WorldPreset>,PresetEditor> editors`
+Enclosing class: EntityViewRenderEvent
 
 ### Methods
-- `public void register(ResourceKey<WorldPreset> key,  PresetEditor editor)`
-  Registers a PresetEditor for a given world preset key.
+- `public int getFogMode()`
+- `public float getFarPlaneDistance()`
 
-## RegisterRecipeBookCategoriesEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.EntityViewRenderEvent`: `getEntity`, `getRenderer`, `getRenderPartialTicks`, `getState`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterRecipeBookCategoriesEvent`
+## FOVUpdateEvent
 
-Allows users to register custom categories for the vanilla recipe book, making it usable in modded GUIs.
+*class* `net.minecraftforge.client.event.FOVUpdateEvent`
 
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<RecipeBookCategories,com.google.common.collect.ImmutableList<RecipeBookCategories>> aggregateCategories`
-- `private final Map<RecipeBookType,com.google.common.collect.ImmutableList<RecipeBookCategories>> typeCategories`
-- `private final Map<RecipeType<?>,Function<Recipe<?>,RecipeBookCategories>> recipeCategoryLookups`
+Author: MachineMuse (Claire Semple)
+ Created: 6:07 PM, 9/5/13
 
 ### Methods
-- `public void registerAggregateCategory(RecipeBookCategories category,  List<RecipeBookCategories> others)`
-  Registers the list of categories that compose an aggregate category.
-- `public void registerBookCategories(RecipeBookType type,  List<RecipeBookCategories> categories)`
-  Registers the list of categories that compose a recipe book.
-- `public void registerRecipeCategoryFinder(RecipeType<?> type,  Function<Recipe<?>,RecipeBookCategories> lookup)`
-  Registers a category lookup for a certain recipe type.
+- `public EntityPlayer getEntity()`
+- `public float getFov()`
+- `public float getNewfov()`
+- `public void setNewfov(float newfov)`
 
-## RegisterShadersEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterShadersEvent`
+## GuiContainerEvent
 
-Fired to allow mods to register custom shaders.
- This event is fired after the default Minecraft shaders have been registered.
+*class* `net.minecraftforge.client.event.GuiContainerEvent`
 
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final ResourceProvider resourceProvider`
-- `private final List<com.mojang.datafixers.util.Pair<ShaderInstance,Consumer<ShaderInstance>>> shaderList`
+Event class for handling GuiContainer specific events.
 
 ### Methods
-- `public ResourceProvider getResourceProvider()`
-  Returns the client-side resource provider.
-  - returns: the client-side resource provider
-- `public void registerShader(ShaderInstance shaderInstance,  Consumer<ShaderInstance> onLoaded)`
-  Registers a shader, and a callback for when the shader is loaded.
-  
-   When creating a ShaderInstance, pass in the client-side resource provider as the resource provider.
-  
-   Mods should not store the shader instance passed into this method. Instead, mods should store the shader
-   passed into the registered load callback.
-  - param: shaderInstance - a shader
-  - param: onLoaded - a callback for when the shader is loaded
+- `public GuiContainer getGuiContainer()`
 
-## RegisterTextureAtlasSpriteLoadersEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RegisterTextureAtlasSpriteLoadersEvent`
+## GuiContainerEvent.DrawForeground
 
-Allows users to register custom texture atlas sprite loaders.
+*class* `net.minecraftforge.client.event.GuiContainerEvent.DrawForeground`
 
- This event is not cancellable, and does not have a result.
+This event is fired directly after the GuiContainer has draw any foreground elements,
+ But before the "dragged" stack, and before any tooltips.
+ This is useful for any slot / item specific overlays.
+ Things that need to be on top of All GUI elements but bellow tooltips and dragged stacks.
 
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-### Fields
-- `private final Map<ResourceLocation,ITextureAtlasSpriteLoader> loaders`
+Enclosing class: GuiContainerEvent
 
 ### Methods
-- `public void register(String name,  ITextureAtlasSpriteLoader loader)`
-  Registers a custom sprite loader.
+- `public int getMouseX()`
+- `public int getMouseY()`
 
-## RenderArmEvent
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiContainerEvent`: `getGuiContainer`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RenderArmEvent`
+## GuiOpenEvent
 
-Fired before the player's arm is rendered in first person. This is a more targeted version of RenderHandEvent,
- and can be used to replace the rendering of the player's arm, such as for rendering armor on the arm or outright
- replacing the arm with armor.
+*class* `net.minecraftforge.client.event.GuiOpenEvent`
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the arm will not be rendered.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
-- `private final AbstractClientPlayer player`
-- `private final HumanoidArm arm`
+This event is called before any Gui will open.
+ If you don't want this to happen, cancel the event.
+ If you want to override this Gui, simply set the gui variable to your own Gui.
 
 ### Methods
-- `public HumanoidArm getArm()`
-  Returns the arm being rendered.
-  - returns: the arm being rendered
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
-- `public AbstractClientPlayer getPlayer()`
-  Returns the client player that is having their arm rendered. In general, this will be the same as
-   Minecraft.player.
-  - returns: the client player that is having their arm rendered
+- `public GuiScreen getGui()`
+- `public void setGui(GuiScreen gui)`
 
-## RenderBlockScreenEffectEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RenderBlockScreenEffectEvent`
+## GuiScreenEvent
 
-Fired before a block texture will be overlaid on the player's view.
+*class* `net.minecraftforge.client.event.GuiScreenEvent`
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the overlay will not be rendered.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final Player player`
-- `private final PoseStack poseStack`
-- `private final RenderBlockScreenEffectEvent.OverlayType overlayType`
-- `private final BlockState blockState`
-- `private final BlockPos blockPos`
+Event classes for GuiScreen events.
 
 ### Methods
-- `public Player getPlayer()`
-  Returns the player which the overlay will apply to.
-  - returns: the player which the overlay will apply to
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public RenderBlockScreenEffectEvent.OverlayType getOverlayType()`
-  Returns the type of the overlay.
-  - returns: the type of the overlay
-- `public BlockState getBlockState()`
-  Returns the block which the overlay is gotten from.
-  - returns: the block which the overlay is gotten from
+- `public GuiScreen getGui()`
+  The GuiScreen object generating this event.
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.ActionPerformedEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent`
+
+Enclosing class: GuiScreenEvent
+
+### Methods
+- `public GuiButton getButton()`
+  The button that was clicked.
+- `public void setButton(GuiButton button)`
+- `public java.util.List<GuiButton> getButtonList()`
+  A COPY of the buttonList field from the GuiScreen referenced by GuiScreenEvent.gui.
+- `public void setButtonList(java.util.List<GuiButton> buttonList)`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.ActionPerformedEvent.Post
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Post`
+
+This event fires after GuiScreen.actionPerformed(GuiButton) provided that the active
+ screen has not been changed as a result of GuiScreen.actionPerformed(GuiButton).
+
+Enclosing class: GuiScreenEvent.ActionPerformedEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent`: `getButton`, `getButtonList`, `setButton`, `setButtonList`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.ActionPerformedEvent.Pre
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent.Pre`
+
+This event fires once it has been determined that a GuiButton object has been clicked.
+ Cancel this event to bypass GuiScreen.actionPerformed(GuiButton).
+ Replace button with a different button from buttonList to have that button's action executed.
+
+Enclosing class: GuiScreenEvent.ActionPerformedEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.ActionPerformedEvent`: `getButton`, `getButtonList`, `setButton`, `setButtonList`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.BackgroundDrawnEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent`
+
+This event fires at the end of GuiScreen.drawDefaultBackground() and before the rest of the Gui draws.
+ This allows drawing next to Guis, above the background but below any tooltips.
+
+Enclosing class: GuiScreenEvent
+
+### Methods
+- `public int getMouseX()`
+  The x coordinate of the mouse pointer on the screen.
+- `public int getMouseY()`
+  The y coordinate of the mouse pointer on the screen.
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.DrawScreenEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent`
+
+Enclosing class: GuiScreenEvent
+
+### Methods
+- `public int getMouseX()`
+  The x coordinate of the mouse pointer on the screen.
+- `public int getMouseY()`
+  The y coordinate of the mouse pointer on the screen.
+- `public float getRenderPartialTicks()`
+  Partial render ticks elapsed.
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.DrawScreenEvent.Post
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent.Post`
+
+This event fires just after GuiScreen.drawScreen(int, int, float) is called.
+
+Enclosing class: GuiScreenEvent.DrawScreenEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent`: `getMouseX`, `getMouseY`, `getRenderPartialTicks`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.DrawScreenEvent.Pre
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent.Pre`
+
+This event fires just before GuiScreen.drawScreen(int, int, float) is called.
+ Cancel this event to skip GuiScreen.drawScreen(int, int, float).
+
+Enclosing class: GuiScreenEvent.DrawScreenEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent`: `getMouseX`, `getMouseY`, `getRenderPartialTicks`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.InitGuiEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent`
+
+Enclosing class: GuiScreenEvent
+
+### Methods
+- `public java.util.List<GuiButton> getButtonList()`
+  The buttonList field from the GuiScreen object referenced by GuiScreenEvent.gui.
+- `public void setButtonList(java.util.List<GuiButton> buttonList)`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.InitGuiEvent.Post
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post`
+
+This event fires right after GuiScreen.initGui().
+ This is a good place to alter a GuiScreen's component layout if desired.
+
+Enclosing class: GuiScreenEvent.InitGuiEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent`: `getButtonList`, `setButtonList`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.InitGuiEvent.Pre
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Pre`
+
+This event fires just after initializing GuiScreen.mc, GuiScreen.fontRenderer,
+ GuiScreen.width, and GuiScreen.height.
+
+ If canceled the following lines are skipped in GuiScreen.setWorldAndResolution(Minecraft, int, int):
+
+ this.buttonList.clear();
+
+ this.initGui();
+
+Enclosing class: GuiScreenEvent.InitGuiEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent`: `getButtonList`, `setButtonList`
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.KeyboardInputEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent`
+
+Enclosing class: GuiScreenEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.KeyboardInputEvent.Post
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Post`
+
+This event fires after GuiScreen.handleKeyboardInput() provided that the active
+ screen has not been changed as a result of GuiScreen.handleKeyboardInput() and
+ the GuiScreen.keyHandled flag has not been set.
+ Cancel this event when you successfully use the keyboard input to prevent other handlers from using the same input.
+
+Enclosing class: GuiScreenEvent.KeyboardInputEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.KeyboardInputEvent.Pre
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.KeyboardInputEvent.Pre`
+
+This event fires when keyboard input is detected by a GuiScreen.
+ Cancel this event to bypass GuiScreen.handleKeyboardInput().
+
+Enclosing class: GuiScreenEvent.KeyboardInputEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.MouseInputEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent`
+
+Enclosing class: GuiScreenEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.MouseInputEvent.Post
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Post`
+
+This event fires after GuiScreen.handleMouseInput() provided that the active
+ screen has not been changed as a result of GuiScreen.handleMouseInput() and
+ the GuiScreen.mouseHandled flag has not been set.
+ Cancel this event when you successfully use the mouse input to prevent other handlers from using the same input.
+
+Enclosing class: GuiScreenEvent.MouseInputEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.MouseInputEvent.Pre
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.MouseInputEvent.Pre`
+
+This event fires when mouse input is detected by a GuiScreen.
+ Cancel this event to bypass GuiScreen.handleMouseInput().
+
+Enclosing class: GuiScreenEvent.MouseInputEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## GuiScreenEvent.PotionShiftEvent
+
+*class* `net.minecraftforge.client.event.GuiScreenEvent.PotionShiftEvent`
+
+This event fires in InventoryEffectRenderer.updateActivePotionEffects()
+ when potion effects are active and the gui wants to move over.
+ Cancel this event to prevent the Gui from being moved.
+
+Enclosing class: GuiScreenEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.GuiScreenEvent`: `getGui`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## InputUpdateEvent
+
+*class* `net.minecraftforge.client.event.InputUpdateEvent`
+
+This event is fired after player movement inputs are updated.
+
+ Handlers can freely manipulate MovementInput to cancel movement.
+
+### Methods
+- `public MovementInput getMovementInput()`
+
+### Inherited methods
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## ModelBakeEvent
+
+*class* `net.minecraftforge.client.event.ModelBakeEvent`
+
+Fired when the ModelManager is notified of the resource manager reloading.
+ Called after model registry is setup, but before it's passed to BlockModelShapes.
+
+### Methods
+- `public ModelManager getModelManager()`
+- `public IRegistry<ModelResourceLocation,IBakedModel> getModelRegistry()`
+- `public ModelLoader getModelLoader()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## ModelRegistryEvent
+
+*class* `net.minecraftforge.client.event.ModelRegistryEvent`
+
+Fired when the ModelLoader is ready to receive registrations
+
+All Implemented Interfaces: IContextSetter
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+- from `net.minecraftforge.fml.common.eventhandler.IContextSetter`: `setModContainer`
+
+## MouseEvent
+
+*class* `net.minecraftforge.client.event.MouseEvent`
+
+Author: MachineMuse (Claire Semple)
+ Created: 2:46 PM, 9/4/13
+
+### Methods
+- `public int getX()`
+- `public int getY()`
+- `public int getDx()`
+- `public int getDy()`
+- `public int getDwheel()`
+- `public int getButton()`
+- `public boolean isButtonstate()`
+- `public long getNanoseconds()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## PlayerSPPushOutOfBlocksEvent
+
+*class* `net.minecraftforge.client.event.PlayerSPPushOutOfBlocksEvent`
+
+This event is called before the pushOutOfBlocks calls in EntityPlayerSP.
+
+ Cancelling the event will prevent pushOutOfBlocks from being called.
+
+### Methods
+- `public AxisAlignedBB getEntityBoundingBox()`
+- `public void setEntityBoundingBox(AxisAlignedBB entityBoundingBox)`
+
+### Inherited methods
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderBlockOverlayEvent
+
+*class* `net.minecraftforge.client.event.RenderBlockOverlayEvent`
+
+Called when a block's texture is going to be overlaid on the player's HUD. Cancel this event to prevent the overlay.
+
+### Methods
+- `public EntityPlayer getPlayer()`
+  The player which the overlay will apply to
+- `public float getRenderPartialTicks()`
+- `public RenderBlockOverlayEvent.OverlayType getOverlayType()`
+  The type of overlay to occur
+- `public IBlockState getBlockForOverlay()`
+  If the overlay type is BLOCK, then this is the block which the overlay is getting it's icon from
 - `public BlockPos getBlockPos()`
-  Returns the position of the block which the overlay is gotten from.
-  - returns: the position of the block which the overlay is gotten from
 
-## RenderGuiEvent
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-*class* `net.minecraftforge.client.event.RenderGuiEvent`
+## RenderBlockOverlayEvent.OverlayType
 
-Fired when the HUD is rendered to the screen.
- See the two subclasses for listening to the two possible phases.
+*enum* `net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<RenderBlockOverlayEvent.OverlayType>
+
+Enclosing class: RenderBlockOverlayEvent
 
 ### Fields
-- `private final Window window`
-- `private final GuiGraphics guiGraphics`
-- `private final float partialTick`
+- `public static final RenderBlockOverlayEvent.OverlayType FIRE`
+- `public static final RenderBlockOverlayEvent.OverlayType BLOCK`
+- `public static final RenderBlockOverlayEvent.OverlayType WATER`
 
 ### Methods
-- `public Window getWindow()`
-- `public GuiGraphics getGuiGraphics()`
-- `public float getPartialTick()`
-
-## RenderGuiEvent.Post
-
-*class* `net.minecraftforge.client.event.RenderGuiEvent.Post`
-
-Fired after the HUD is rendered to the screen, if the corresponding RenderGuiEvent.Pre is not cancelled.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderGuiEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.RenderGuiEvent`: `getGuiGraphics`, `getPartialTick`, `getWindow`
-
-## RenderGuiEvent.Pre
-
-*class* `net.minecraftforge.client.event.RenderGuiEvent.Pre`
-
-Fired before the HUD is rendered to the screen.
-
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the overlay will not be rendered, and the corresponding RenderGuiEvent.Post event will
- not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderGuiEvent
+- `public static RenderBlockOverlayEvent.OverlayType[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (RenderBlockOverlayEvent.OverlayType c : RenderBlockOverlayEvent.OverlayType.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static RenderBlockOverlayEvent.OverlayType valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderGuiEvent`: `getGuiGraphics`, `getPartialTick`, `getWindow`
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
 
-## RenderGuiOverlayEvent
+## RenderGameOverlayEvent
 
-*class* `net.minecraftforge.client.event.RenderGuiOverlayEvent`
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent`
 
-Fired when an overlay is rendered to the screen.
- See the two subclasses for listening to the two possible phases.
+### Methods
+- `public float getPartialTicks()`
+- `public ScaledResolution getResolution()`
+- `public RenderGameOverlayEvent.ElementType getType()`
 
- An overlay that is not normally active cannot be forced to render. In such cases, this event will not fire.
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderGameOverlayEvent.BossInfo
+
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent.BossInfo`
+
+Enclosing class: RenderGameOverlayEvent
+
+### Methods
+- `public BossInfoClient getBossInfo()`
+  - returns: The BossInfoClient currently being rendered
+- `public int getX()`
+  - returns: The current x position we are rendering at
+- `public int getY()`
+  - returns: The current y position we are rendering at
+- `public int getIncrement()`
+  - returns: How much to move down before rendering the next bar
+- `public void setIncrement(int increment)`
+  Sets the amount to move down before rendering the next bar
+  - param: increment - The increment to set
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderGameOverlayEvent`: `getPartialTicks`, `getResolution`, `getType`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderGameOverlayEvent.Chat
+
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent.Chat`
+
+Enclosing class: RenderGameOverlayEvent
+
+### Methods
+- `public int getPosX()`
+- `public void setPosX(int posX)`
+- `public int getPosY()`
+- `public void setPosY(int posY)`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderGameOverlayEvent`: `getPartialTicks`, `getResolution`, `getType`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderGameOverlayEvent.ElementType
+
+*enum* `net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType`
+
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<RenderGameOverlayEvent.ElementType>
+
+Enclosing class: RenderGameOverlayEvent
 
 ### Fields
-- `private final Window window`
-- `private final GuiGraphics guiGraphics`
-- `private final float partialTick`
-- `private final NamedGuiOverlay overlay`
+- `public static final RenderGameOverlayEvent.ElementType ALL`
+- `public static final RenderGameOverlayEvent.ElementType HELMET`
+- `public static final RenderGameOverlayEvent.ElementType PORTAL`
+- `public static final RenderGameOverlayEvent.ElementType CROSSHAIRS`
+- `public static final RenderGameOverlayEvent.ElementType BOSSHEALTH`
+- `public static final RenderGameOverlayEvent.ElementType BOSSINFO`
+- `public static final RenderGameOverlayEvent.ElementType ARMOR`
+- `public static final RenderGameOverlayEvent.ElementType HEALTH`
+- `public static final RenderGameOverlayEvent.ElementType FOOD`
+- `public static final RenderGameOverlayEvent.ElementType AIR`
+- `public static final RenderGameOverlayEvent.ElementType HOTBAR`
+- `public static final RenderGameOverlayEvent.ElementType EXPERIENCE`
+- `public static final RenderGameOverlayEvent.ElementType TEXT`
+- `public static final RenderGameOverlayEvent.ElementType HEALTHMOUNT`
+- `public static final RenderGameOverlayEvent.ElementType JUMPBAR`
+- `public static final RenderGameOverlayEvent.ElementType CHAT`
+- `public static final RenderGameOverlayEvent.ElementType PLAYER_LIST`
+- `public static final RenderGameOverlayEvent.ElementType DEBUG`
+- `public static final RenderGameOverlayEvent.ElementType POTION_ICONS`
+- `public static final RenderGameOverlayEvent.ElementType SUBTITLES`
+- `public static final RenderGameOverlayEvent.ElementType FPS_GRAPH`
+- `public static final RenderGameOverlayEvent.ElementType VIGNETTE`
 
 ### Methods
-- `public Window getWindow()`
-- `public GuiGraphics getGuiGraphics()`
-- `public float getPartialTick()`
-- `public NamedGuiOverlay getOverlay()`
-
-## RenderGuiOverlayEvent.Post
-
-*class* `net.minecraftforge.client.event.RenderGuiOverlayEvent.Post`
-
-Fired after an GUI overlay is rendered to the screen, if the corresponding RenderGuiOverlayEvent.Pre is not cancelled.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderGuiOverlayEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.RenderGuiOverlayEvent`: `getGuiGraphics`, `getOverlay`, `getPartialTick`, `getWindow`
-
-## RenderGuiOverlayEvent.Pre
-
-*class* `net.minecraftforge.client.event.RenderGuiOverlayEvent.Pre`
-
-Fired before a GUI overlay is rendered to the screen.
-
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the overlay will not be rendered, and the corresponding RenderGuiOverlayEvent.Post event will
- not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderGuiOverlayEvent
+- `public static RenderGameOverlayEvent.ElementType[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (RenderGameOverlayEvent.ElementType c : RenderGameOverlayEvent.ElementType.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static RenderGameOverlayEvent.ElementType valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderGuiOverlayEvent`: `getGuiGraphics`, `getOverlay`, `getPartialTick`, `getWindow`
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+
+## RenderGameOverlayEvent.Post
+
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent.Post`
+
+Enclosing class: RenderGameOverlayEvent
+
+### Methods
+- `public boolean isCancelable()`
+  Description copied from class: Event
+  Determine if this function is cancelable at all.
+  - returns: If access to setCanceled should be allowed
+
+ Note:
+ Events with the Cancelable annotation will have this method automatically added to return true.
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderGameOverlayEvent`: `getPartialTicks`, `getResolution`, `getType`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderGameOverlayEvent.Pre
+
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent.Pre`
+
+Enclosing class: RenderGameOverlayEvent
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderGameOverlayEvent`: `getPartialTicks`, `getResolution`, `getType`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderGameOverlayEvent.Text
+
+*class* `net.minecraftforge.client.event.RenderGameOverlayEvent.Text`
+
+Enclosing class: RenderGameOverlayEvent
+
+### Methods
+- `public java.util.ArrayList<java.lang.String> getLeft()`
+- `public java.util.ArrayList<java.lang.String> getRight()`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderGameOverlayEvent`: `getPartialTicks`, `getResolution`, `getType`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderHandEvent
 
 *class* `net.minecraftforge.client.event.RenderHandEvent`
 
-Fired before a hand is rendered in the first person view.
-
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the hand will not be rendered.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final InteractionHand hand`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
-- `private final float partialTick`
-- `private final float interpolatedPitch`
-- `private final float swingProgress`
-- `private final float equipProgress`
-- `private final ItemStack stack`
+This event is fired on MinecraftForge.EVENT_BUS
+ before both hands are rendered.
+ Canceling this event prevents either hand from being rendered,
+ and prevents RenderSpecificHandEvent from firing.
+ TODO This may get merged in 11 with RenderSpecificHandEvent to make a generic hand rendering
 
 ### Methods
-- `public InteractionHand getHand()`
-  Returns the hand being rendered.
-  - returns: the hand being rendered
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-- `public float getInterpolatedPitch()`
-  Returns the interpolated pitch of the player entity.
-  - returns: the interpolated pitch of the player entity
-- `public float getSwingProgress()`
-  Returns the swing progress of the hand being rendered.
-  - returns: the swing progress of the hand being rendered
-- `public float getEquipProgress()`
-  Returns the progress of the equip animation, from 0.0 to 1.0.
-  - returns: the progress of the equip animation, from 0.0 to 1.0
-- `public ItemStack getItemStack()`
-  Returns the item stack to be rendered.
-  - returns: the item stack to be rendered
-
-## RenderHighlightEvent
-
-*class* `net.minecraftforge.client.event.RenderHighlightEvent`
-
-Fired before a selection highlight is rendered.
- See the two subclasses to listen for blocks or entities.
-
-### Fields
-- `private final LevelRenderer levelRenderer`
-- `private final Camera camera`
-- `private final HitResult target`
-- `private final float partialTick`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-
-### Methods
-- `public LevelRenderer getLevelRenderer()`
-  Returns the level renderer.
-  - returns: the level renderer
-- `public Camera getCamera()`
-  Returns the camera information.
-  - returns: the camera information
-- `public HitResult getTarget()`
-  Returns the hit result which triggered the selection highlight.
-  - returns: the hit result which triggered the selection highlight
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-
-## RenderHighlightEvent.Block
-
-*class* `net.minecraftforge.client.event.RenderHighlightEvent.Block`
-
-Fired before a block's selection highlight is rendered.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, then the selection highlight will not be rendered.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderHighlightEvent
-
-### Methods
-- `public BlockHitResult getTarget()`
-  Returns the block hit result.
-  - returns: the block hit result
+- `public RenderGlobal getContext()`
+- `public float getPartialTicks()`
+- `public int getRenderPass()`
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderHighlightEvent`: `getCamera`, `getLevelRenderer`, `getMultiBufferSource`, `getPartialTick`, `getPoseStack`
-
-## RenderHighlightEvent.Entity
-
-*class* `net.minecraftforge.client.event.RenderHighlightEvent.Entity`
-
-Fired before an entity's selection highlight is rendered.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderHighlightEvent
-
-### Methods
-- `public EntityHitResult getTarget()`
-  Returns the entity hit result.
-  - returns: the entity hit result
-
-### Inherited methods
-- from `net.minecraftforge.client.event.RenderHighlightEvent`: `getCamera`, `getLevelRenderer`, `getMultiBufferSource`, `getPartialTick`, `getPoseStack`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderItemInFrameEvent
 
 *class* `net.minecraftforge.client.event.RenderItemInFrameEvent`
 
-Fired before an item stack is rendered in an item frame.
- This can be used to prevent normal rendering or add custom rendering.
+This event is called when an item is rendered in an item frame.
 
- This event is cancellable, and does not have a result.
- If the event is cancelled, then the item stack will not be rendered
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final ItemStack itemStack`
-- `private final ItemFrame itemFrameEntity`
-- `private final ItemFrameRenderer<?> renderer`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
+ You can set canceled to do no further vanilla processing.
 
 ### Methods
-- `public ItemStack getItemStack()`
-  Returns the item stack being rendered.
-  - returns: the item stack being rendered
-- `public ItemFrame getItemFrameEntity()`
-  Returns the item frame entity.
-  - returns: the item frame entity
-- `public ItemFrameRenderer<?> getRenderer()`
-  Returns the renderer for the item frame entity.
-  - returns: the renderer for the item frame entity
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
-
-## RenderLevelStageEvent
-
-*class* `net.minecraftforge.client.event.RenderLevelStageEvent`
-
-Fires at various times during LevelRenderer.renderLevel.
- Check getStage() to render during the appropriate time for your use case.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final RenderLevelStageEvent.Stage stage`
-- `private final LevelRenderer levelRenderer`
-- `private final PoseStack poseStack`
-- `private final org.joml.Matrix4f projectionMatrix`
-- `private final int renderTick`
-- `private final float partialTick`
-- `private final Camera camera`
-- `private final Frustum frustum`
-
-### Methods
-- `public RenderLevelStageEvent.Stage getStage()`
-  Returns the current stage that is being rendered. Check this before doing rendering to ensure
-   that rendering happens at the appropriate time..
-  - returns: the current stage that is being rendered. Check this before doing rendering to ensure
- that rendering happens at the appropriate time.
-- `public LevelRenderer getLevelRenderer()`
-  Returns the level renderer.
-  - returns: the level renderer
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public org.joml.Matrix4f getProjectionMatrix()`
-  Returns the projection matrix.
-  - returns: the projection matrix
-- `public int getRenderTick()`
-  Returns the current "ticks" value in the level renderer.
-  - returns: the current "ticks" value in the level renderer
-- `public float getPartialTick()`
-  Returns the current partialTick value used for rendering.
-  - returns: the current partialTick value used for rendering
-- `public Camera getCamera()`
-  Returns the camera.
-  - returns: the camera
-- `public Frustum getFrustum()`
-  Returns the frustum.
-  - returns: the frustum
-
-## RenderLevelStageEvent.RegisterStageEvent
-
-*class* `net.minecraftforge.client.event.RenderLevelStageEvent.RegisterStageEvent`
-
-Use to create a custom stages.
- Fired after the LevelRenderer has been created.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the mod-specific event bus,
- only on the logical client.
-
-Enclosing class: RenderLevelStageEvent
-
-### Methods
-- `public RenderLevelStageEvent.Stage register(ResourceLocation name,  @Nullable  RenderType renderType)  throws IllegalArgumentException`
-  - param: name - The name of your Stage.
-  - param: renderType - If not null, called automatically by LevelRenderer.renderChunkLayer if the RenderType passed into it matches this one.
- If null, needs to be called manually by whoever implements it.
-  - throws: IllegalArgumentException - if the RenderType passed is already mapped to a Stage.
-
-## RenderLevelStageEvent.Stage
-
-*class* `net.minecraftforge.client.event.RenderLevelStageEvent.Stage`
-
-A time during level rendering for you to render custom things into the world.
-
-Enclosing class: RenderLevelStageEvent
-
-### Fields
-- `private static final Map<RenderType,RenderLevelStageEvent.Stage> RENDER_TYPE_STAGES`
-- `public static final RenderLevelStageEvent.Stage AFTER_SKY`
-  Use this to render custom objects into the skybox.
-   Called regardless of if they sky actually renders or not.
-- `public static final RenderLevelStageEvent.Stage AFTER_SOLID_BLOCKS`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_CUTOUT_MIPPED_BLOCKS_BLOCKS`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_CUTOUT_BLOCKS`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_ENTITIES`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_BLOCK_ENTITIES`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_TRANSLUCENT_BLOCKS`
-  Use this to render custom block-like geometry into the world.
-   Due to how transparency sorting works, this stage may not work properly with translucency. If you intend to render translucency,
-   try using AFTER_TRIPWIRE_BLOCKS or AFTER_PARTICLES.
-   Although this is called within a fabulous graphics target, it does not function properly in many cases.
-- `public static final RenderLevelStageEvent.Stage AFTER_TRIPWIRE_BLOCKS`
-  Use this to render custom block-like geometry into the world.
-- `public static final RenderLevelStageEvent.Stage AFTER_PARTICLES`
-  Use this to render custom effects into the world, such as custom entity-like objects or special rendering effects.
-   Called within a fabulous graphics target.
-   Happens after entities render.
-- `public static final RenderLevelStageEvent.Stage AFTER_WEATHER`
-  Use this to render custom weather effects into the world.
-   Called within a fabulous graphics target.
-- `public static final RenderLevelStageEvent.Stage AFTER_LEVEL`
-  Use this to render after everything in the level has been rendered.
-   Called after LevelRenderer.renderLevel(PoseStack, float, long, boolean, Camera, GameRenderer, LightTexture, Matrix4f) finishes.
-- `private final String name`
-
-### Methods
-- `private static RenderLevelStageEvent.Stage register(ResourceLocation name,  @Nullable  RenderType renderType)  throws IllegalArgumentException`
-  - throws: IllegalArgumentException
-- `private static RenderLevelStageEvent.Stage register(String name,  @Nullable  RenderType renderType)  throws IllegalArgumentException`
-  - throws: IllegalArgumentException
-- `public String toString()`
-- `@Nullable public static RenderLevelStageEvent.Stage fromRenderType(RenderType renderType)`
-  Returns the stage bound to the render type, or null if no value is present.
-  - returns: the stage bound to the render type, or null if no value is present
-- `@Internal public void dispatch(LevelRenderer levelRenderer,  PoseStack poseStack,  org.joml.Matrix4f projectionMatrix,  int renderTick,  Camera camera,  Frustum frustum)`
-  Internal just to make our patch smaller, it just fires the event. If you have good reason for this to be external, ask.
-
-## RenderLivingEvent.Post>
-
-*class* `net.minecraftforge.client.event.RenderLivingEvent.Post>`
-
-Fired after an entity is rendered, if the corresponding RenderLivingEvent.Post is not cancelled.
-
- This event is not cancelable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>>
+- `public ItemStack getItem()`
+- `public EntityItemFrame getEntityItemFrame()`
+- `public RenderItemFrame getRenderer()`
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getMultiBufferSource`, `getPackedLight`, `getPartialTick`, `getPoseStack`, `getRenderer`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## RenderLivingEvent.Pre>
+## RenderLivingEvent
 
-*class* `net.minecraftforge.client.event.RenderLivingEvent.Pre>`
-
-Fired before an entity is rendered.
- This can be used to render additional effects or suppress rendering.
-
- This event is cancelable, and does not have a result.
- If this event is cancelled, then the entity will not be rendered and the corresponding
- RenderLivingEvent.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: RenderLivingEvent<T extends LivingEntity, M extends EntityModel<T>>
-
-### Inherited methods
-- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getMultiBufferSource`, `getPackedLight`, `getPartialTick`, `getPoseStack`, `getRenderer`
-
-## RenderLivingEvent>
-
-*class* `net.minecraftforge.client.event.RenderLivingEvent>`
-
-Fired when a LivingEntity is rendered.
- See the two subclasses to listen for before and after rendering.
-
- Despite this event's use of generic type parameters, this is not a GenericEvent,
- and should not be treated as such (such as using generic-specific listeners, which may cause a ClassCastException).
-
-### Fields
-- `private final LivingEntity entity`
-- `private final LivingEntityRenderer<T extends LivingEntity,M extends EntityModel<T>> renderer`
-- `private final float partialTick`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
+*class* `net.minecraftforge.client.event.RenderLivingEvent`
 
 ### Methods
-- `public LivingEntity getEntity()`
-  - returns: the living entity being rendered
-- `public LivingEntityRenderer<T,M> getRenderer()`
-  - returns: the renderer for the living entity
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
-
-## RenderNameTagEvent
-
-*class* `net.minecraftforge.client.event.RenderNameTagEvent`
-
-Fired before an entity renderer renders the nameplate of an entity.
-
- This event is not cancellable, and has a result.
-
- Event.Result.ALLOW - the nameplate will be forcibly rendered.
- Event.Result.DEFAULT - the vanilla logic will be used.
- Event.Result.DENY - the nameplate will not be rendered.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private Component nameplateContent`
-- `private final Component originalContent`
-- `private final EntityRenderer<?> entityRenderer`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
-- `private final float partialTick`
-
-### Methods
-- `public void setContent(Component contents)`
-  Sets the new text on the nameplate.
-  - param: contents - the new text
-- `public Component getContent()`
-  Returns the text on the nameplate that will be rendered, if the event is not DENIED.
-  - returns: the text on the nameplate that will be rendered, if the event is not DENIED
-- `public Component getOriginalContent()`
-  Returns the original text on the nameplate.
-  - returns: the original text on the nameplate
-- `public EntityRenderer<?> getEntityRenderer()`
-  Returns the entity renderer rendering the nameplate.
-  - returns: the entity renderer rendering the nameplate
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
+- `public EntityLivingBase getEntity()`
+- `public RenderLivingBase<T> getRenderer()`
+- `public float getPartialRenderTick()`
+- `public double getX()`
+- `public double getY()`
+- `public double getZ()`
 
 ### Inherited methods
-- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderLivingEvent.Post
+
+*class* `net.minecraftforge.client.event.RenderLivingEvent.Post`
+
+Enclosing class: RenderLivingEvent<T extends EntityLivingBase>
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderLivingEvent.Pre
+
+*class* `net.minecraftforge.client.event.RenderLivingEvent.Pre`
+
+Enclosing class: RenderLivingEvent<T extends EntityLivingBase>
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderLivingEvent.Specials
+
+*class* `net.minecraftforge.client.event.RenderLivingEvent.Specials`
+
+Enclosing class: RenderLivingEvent<T extends EntityLivingBase>
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderLivingEvent.Specials.Post
+
+*class* `net.minecraftforge.client.event.RenderLivingEvent.Specials.Post`
+
+Enclosing class: RenderLivingEvent.Specials<T extends EntityLivingBase>
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderLivingEvent.Specials.Pre
+
+*class* `net.minecraftforge.client.event.RenderLivingEvent.Specials.Pre`
+
+Enclosing class: RenderLivingEvent.Specials<T extends EntityLivingBase>
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderLivingEvent`: `getEntity`, `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderPlayerEvent
 
 *class* `net.minecraftforge.client.event.RenderPlayerEvent`
 
-Fired when a player is being rendered.
- See the two subclasses for listening for before and after rendering.
-
-### Fields
-- `private final PlayerRenderer renderer`
-- `private final float partialTick`
-- `private final PoseStack poseStack`
-- `private final MultiBufferSource multiBufferSource`
-- `private final int packedLight`
-
 ### Methods
-- `public PlayerRenderer getRenderer()`
-  Returns the player entity renderer.
-  - returns: the player entity renderer
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-- `public PoseStack getPoseStack()`
-  Returns the pose stack used for rendering.
-  - returns: the pose stack used for rendering
-- `public MultiBufferSource getMultiBufferSource()`
-  Returns the source of rendering buffers.
-  - returns: the source of rendering buffers
-- `public int getPackedLight()`
-  Returns the amount of packed (sky and block) light for rendering.
-  - returns: the amount of packed (sky and block) light for rendering
+- `public RenderPlayer getRenderer()`
+- `public float getPartialRenderTick()`
+- `public double getX()`
+- `public double getY()`
+- `public double getZ()`
 
 ### Inherited methods
-- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntity`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderPlayerEvent.Post
 
 *class* `net.minecraftforge.client.event.RenderPlayerEvent.Post`
 
-Fired after the player is rendered, if the corresponding RenderPlayerEvent.Pre is not cancelled.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
 Enclosing class: RenderPlayerEvent
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getMultiBufferSource`, `getPackedLight`, `getPartialTick`, `getPoseStack`, `getRenderer`
-- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntity`
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderPlayerEvent.Pre
 
 *class* `net.minecraftforge.client.event.RenderPlayerEvent.Pre`
 
-Fired before the player is rendered.
- This can be used for rendering additional effects or suppressing rendering.
+Enclosing class: RenderPlayerEvent
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the player will not be rendered and the corresponding
- RenderPlayerEvent.Post will not be fired.
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
- This event is fired on the main Forge event bus,
- only on the logical client.
+## RenderPlayerEvent.SetArmorModel
+
+*class* `net.minecraftforge.client.event.RenderPlayerEvent.SetArmorModel`
+
+Deprecated.
+
+Enclosing class: RenderPlayerEvent
+
+### Methods
+- `public int getResultValue()` (deprecated)
+  Deprecated.
+  Setting this to any value besides -1 will result in the function being
+   Immediately exited with the return value specified.
+- `public void setResult(int result)` (deprecated)
+  Deprecated.
+- `public int getSlot()` (deprecated)
+  Deprecated.
+- `public ItemStack getStack()` (deprecated)
+  Deprecated.
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderPlayerEvent.Specials
+
+*class* `net.minecraftforge.client.event.RenderPlayerEvent.Specials`
+
+Deprecated.
 
 Enclosing class: RenderPlayerEvent
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getMultiBufferSource`, `getPackedLight`, `getPartialTick`, `getPoseStack`, `getRenderer`
-- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntity`
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderPlayerEvent.Specials.Post
+
+*class* `net.minecraftforge.client.event.RenderPlayerEvent.Specials.Post`
+
+Enclosing class: RenderPlayerEvent.Specials
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderPlayerEvent.Specials.Pre
+
+*class* `net.minecraftforge.client.event.RenderPlayerEvent.Specials.Pre`
+
+Enclosing class: RenderPlayerEvent.Specials
+
+### Methods
+- `public boolean shouldRenderHelmet()`
+- `public void setRenderHelmet(boolean renderHelmet)`
+- `public boolean shouldRenderCape()`
+- `public void setRenderCape(boolean renderCape)`
+- `public boolean shouldRenderItem()`
+- `public void setRenderItem(boolean renderItem)`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderPlayerEvent`: `getPartialRenderTick`, `getRenderer`, `getX`, `getY`, `getZ`
+- from `net.minecraftforge.event.entity.player.PlayerEvent`: `getEntityPlayer`
+- from `net.minecraftforge.event.entity.living.LivingEvent`: `getEntityLiving`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderSpecificHandEvent
+
+*class* `net.minecraftforge.client.event.RenderSpecificHandEvent`
+
+This event is fired on the MinecraftForge.EVENT_BUS
+ whenever a hand is rendered in first person.
+ Canceling the event causes the hand to not render.
+ TODO This may get merged in 11 with RenderHandEvent to make a generic hand rendering
+
+### Methods
+- `public EnumHand getHand()`
+- `public float getPartialTicks()`
+- `public float getInterpolatedPitch()`
+  - returns: The interpolated pitch of the player entity
+- `public float getSwingProgress()`
+  - returns: The swing progress of the hand being rendered
+- `public float getEquipProgress()`
+  - returns: The progress of the equip animation. 1.0 is fully equipped.
+- `public ItemStack getItemStack()`
+  - returns: The ItemStack to be rendered, or null.
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderTooltipEvent
 
 *class* `net.minecraftforge.client.event.RenderTooltipEvent`
 
-Fired during tooltip rendering.
- See the various subclasses for listening to specific events.
+A set of events which are fired at various points during tooltip rendering.
+
+ Can be used to change the rendering parameters, draw something extra, etc.
+
+ Do not use this event directly, use one of the subclasses:
+
+ RenderTooltipEvent.Pre
+ RenderTooltipEvent.PostBackground
+ RenderTooltipEvent.PostText
 
 ### Fields
-- `@NotNull protected final @NotNull ItemStack itemStack`
-- `protected final GuiGraphics graphics`
+- `protected final ItemStack stack`
+- `protected final java.util.List<java.lang.String> lines`
 - `protected int x`
 - `protected int y`
-- `protected Font font`
-- `protected final List<ClientTooltipComponent> components`
+- `protected FontRenderer fr`
 
 ### Methods
-- `@NotNull public @NotNull ItemStack getItemStack()`
-  Returns the item stack which the tooltip is being rendered for, or an empty
-   item stack if there is no associated item stack.
-  - returns: the item stack which the tooltip is being rendered for, or an empty
- item stack if there is no associated item stack
-- `public GuiGraphics getGraphics()`
-  Returns the graphics helper for the gui.
-  - returns: the graphics helper for the gui
-- `@NotNull public @NotNull List<ClientTooltipComponent> getComponents()`
-  Returns the unmodifiable list of tooltip components.
-  
-   Use ItemTooltipEvent or RenderTooltipEvent.GatherComponents to modify tooltip contents or components.
-  - returns: the unmodifiable list of tooltip components
+- `public ItemStack getStack()`
+  - returns: The stack which the tooltip is being rendered for. As tooltips can be drawn without itemstacks, this stack may be empty.
+- `public java.util.List<java.lang.String> getLines()`
+  The lines to be drawn. May change between RenderTooltipEvent.Pre and RenderTooltipEvent.Post.
+  - returns: An unmodifiable list of strings. Use ItemTooltipEvent to modify tooltip text.
 - `public int getX()`
-  Returns the X position of the tooltip box. By default, this is the mouse X position.
-  - returns: the X position of the tooltip box
+  - returns: The X position of the tooltip box. By default, the mouse X position.
 - `public int getY()`
-  Returns the Y position of the tooltip box. By default, this is the mouse Y position.
-  - returns: the Y position of the tooltip box
-- `@NotNull public @NotNull Font getFont()`
-  Returns The font used to render the text.
-  - returns: The font used to render the text
+  - returns: The Y position of the tooltip box. By default, the mouse Y position.
+- `public FontRenderer getFontRenderer()`
+  - returns: The FontRenderer instance the current render is using.
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderTooltipEvent.Color
 
 *class* `net.minecraftforge.client.event.RenderTooltipEvent.Color`
 
-Fired when the colours for the tooltip background are determined.
- This can be used to modify the background color and the border's gradient colors.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
+This event is fired when the colours for the tooltip background are determined.
 
 Enclosing class: RenderTooltipEvent
-
-### Fields
-- `private final int originalBackground`
-- `private final int originalBorderStart`
-- `private final int originalBorderEnd`
-- `private int backgroundStart`
-- `private int backgroundEnd`
-- `private int borderStart`
-- `private int borderEnd`
 
 ### Inherited fields
-- from `net.minecraftforge.client.event.RenderTooltipEvent`: `components`, `font`, `graphics`, `itemStack`, `x`, `y`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `fr`, `lines`, `stack`, `x`, `y`
 
 ### Methods
-- `public int getBackgroundStart()`
-  Returns the gradient start color for the tooltip background (top edge).
-  - returns: the gradient start color for the tooltip background (top edge)
-- `public int getBackgroundEnd()`
-  Returns the gradient end color for the tooltip background (bottom edge).
-  - returns: the gradient end color for the tooltip background (bottom edge)
+- `public int getBackground()`
 - `public void setBackground(int background)`
-  Sets the new color for the tooltip background. This sets both the gradient start and end color for the
-   background to this color.
-  - param: background - the new color for the tooltip background
-- `public void setBackgroundStart(int backgroundStart)`
-  Sets the new start color for the gradient of the tooltip background (top edge).
-  - param: backgroundStart - the new start color for the tooltip background
-- `public void setBackgroundEnd(int backgroundEnd)`
-  Sets the new end color for the gradient of the tooltip background (bottom edge).
-  - param: backgroundEnd - the new end color for the tooltip background
 - `public int getBorderStart()`
-  Returns the gradient start color for the tooltip border (top edge).
-  - returns: the gradient start color for the tooltip border (top edge)
 - `public void setBorderStart(int borderStart)`
-  Sets the new start color for the gradient of the tooltip border (top edge).
-  - param: borderStart - the new start color for the tooltip border
 - `public int getBorderEnd()`
-  Returns the gradient end color for the tooltip border (bottom edge).
-  - returns: the gradient end color for the tooltip border (bottom edge)
 - `public void setBorderEnd(int borderEnd)`
-  Sets the new end color for the gradient of the tooltip border (bottom edge).
-  - param: borderEnd - the new end color for the tooltip border
-- `public int getOriginalBackgroundStart()`
-  Returns the original tooltip background's gradient start color (top edge).
-  - returns: the original tooltip background's gradient start color (top edge)
-- `public int getOriginalBackgroundEnd()`
-  Returns the original tooltip background's gradient end color (bottom edge).
-  - returns: the original tooltip background's gradient end color (bottom edge)
+- `public int getOriginalBackground()`
 - `public int getOriginalBorderStart()`
-  Returns the original tooltip border's gradient start color (top edge).
-  - returns: the original tooltip border's gradient start color (top edge)
 - `public int getOriginalBorderEnd()`
-  Returns the original tooltip border's gradient end color (bottom edge).
-  - returns: the original tooltip border's gradient end color (bottom edge)
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getComponents`, `getFont`, `getGraphics`, `getItemStack`, `getX`, `getY`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getFontRenderer`, `getLines`, `getStack`, `getX`, `getY`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## RenderTooltipEvent.GatherComponents
+## RenderTooltipEvent.Post
 
-*class* `net.minecraftforge.client.event.RenderTooltipEvent.GatherComponents`
+*class* `net.minecraftforge.client.event.RenderTooltipEvent.Post`
 
-Fired when a tooltip gathers the TooltipComponents to be rendered, before any text wrapping or processing.
- The list of components and the maximum width of the tooltip can be modified through this event.
+Events inheriting from this class are fired at different stages during the tooltip rendering.
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the list of components will be empty, causing the tooltip to not be rendered and
- the corresponding RenderTooltipEvent.Pre and RenderTooltipEvent.Color to not be fired.
+ Do not use this event directly, use one of its subclasses:
 
- This event is fired on the main Forge event bus,
- only on the logical client.
+ RenderTooltipEvent.PostBackground
+ RenderTooltipEvent.PostText
 
 Enclosing class: RenderTooltipEvent
 
-### Fields
-- `private final ItemStack itemStack`
-- `private final int screenWidth`
-- `private final int screenHeight`
-- `private final List<com.mojang.datafixers.util.Either<FormattedText,TooltipComponent>> tooltipElements`
-- `private int maxWidth`
+### Inherited fields
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `fr`, `lines`, `stack`, `x`, `y`
 
 ### Methods
-- `public ItemStack getItemStack()`
-  Returns the item stack which the tooltip is being rendered for, or an empty
-   item stack if there is no associated item stack.
-  - returns: the item stack which the tooltip is being rendered for, or an empty
- item stack if there is no associated item stack
-- `public int getScreenWidth()`
-  Returns the width of the screen..
-   The lines of text within the tooltip are wrapped to be within the screen width, and the tooltip box itself
-   is moved to be within the screen width.
-  - returns: the width of the screen
-- `public int getScreenHeight()`
-  Returns the height of the screen.
-   The tooltip box is moved to be within the screen height.
-  - returns: the height of the screen
-- `public List<com.mojang.datafixers.util.Either<FormattedText,TooltipComponent>> getTooltipElements()`
-  Returns the modifiable list of elements to be rendered on the tooltip. These elements can be either
-   formatted text or custom tooltip components.
-  - returns: the modifiable list of elements to be rendered on the tooltip
-- `public int getMaxWidth()`
-  Returns the maximum width of the tooltip when being rendered.
-  
-   A value of -1 means an unlimited maximum width. However, an unlimited maximum width will still
-   be wrapped to be within the screen bounds.
-  - returns: the maximum width of the tooltip when being rendered
-- `public void setMaxWidth(int maxWidth)`
-  Sets the maximum width of the tooltip. Use -1 for unlimited maximum width.
-  - param: maxWidth - the new maximum width
+- `public int getWidth()`
+  - returns: The width of the tooltip box. This is the width of the inner box, not including the border.
+- `public int getHeight()`
+  - returns: The height of the tooltip box. This is the height of the inner box, not including the border.
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getFontRenderer`, `getLines`, `getStack`, `getX`, `getY`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderTooltipEvent.PostBackground
+
+*class* `net.minecraftforge.client.event.RenderTooltipEvent.PostBackground`
+
+This event is fired directly after the tooltip background is drawn, but before any text is drawn.
+
+Enclosing class: RenderTooltipEvent
+
+### Inherited fields
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `fr`, `lines`, `stack`, `x`, `y`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderTooltipEvent.Post`: `getHeight`, `getWidth`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getFontRenderer`, `getLines`, `getStack`, `getX`, `getY`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
+
+## RenderTooltipEvent.PostText
+
+*class* `net.minecraftforge.client.event.RenderTooltipEvent.PostText`
+
+This event is fired directly after the tooltip text is drawn, but before the GL state is reset.
+
+Enclosing class: RenderTooltipEvent
+
+### Inherited fields
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `fr`, `lines`, `stack`, `x`, `y`
+
+### Inherited methods
+- from `net.minecraftforge.client.event.RenderTooltipEvent.Post`: `getHeight`, `getWidth`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getFontRenderer`, `getLines`, `getStack`, `getX`, `getY`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## RenderTooltipEvent.Pre
 
 *class* `net.minecraftforge.client.event.RenderTooltipEvent.Pre`
 
-Fired before the tooltip is rendered.
- This can be used to modify the positioning and font of the tooltip.
+This event is fired before any tooltip calculations are done. It provides setters for all aspects of the tooltip, so the final render can be modified.
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the tooltip will not be rendered and the corresponding
- RenderTooltipEvent.Color will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
+ This event is Cancelable.
 
 Enclosing class: RenderTooltipEvent
 
-### Fields
-- `private final int screenWidth`
-- `private final int screenHeight`
-- `private final ClientTooltipPositioner positioner`
-
 ### Inherited fields
-- from `net.minecraftforge.client.event.RenderTooltipEvent`: `components`, `font`, `graphics`, `itemStack`, `x`, `y`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `fr`, `lines`, `stack`, `x`, `y`
 
 ### Methods
 - `public int getScreenWidth()`
-  Returns the width of the screen..
-   The lines of text within the tooltip are wrapped to be within the screen width, and the tooltip box itself
-   is moved to be within the screen width.
-  - returns: the width of the screen
+- `public void setScreenWidth(int screenWidth)`
 - `public int getScreenHeight()`
-  Returns the height of the screen.
-   The tooltip box is moved to be within the screen height.
-  - returns: the height of the screen
-- `public ClientTooltipPositioner getTooltipPositioner()`
-- `public void setFont(@NotNull  @NotNull Font fr)`
-  Sets the font to be used to render text.
-  - param: fr - the new font
+- `public void setScreenHeight(int screenHeight)`
+- `public int getMaxWidth()`
+  - returns: The max width the tooltip can be. Defaults to -1 (unlimited).
+- `public void setMaxWidth(int maxWidth)`
+  Sets the max width of the tooltip. Use -1 for unlimited.
+- `public void setFontRenderer(FontRenderer fr)`
+  Sets the FontRenderer to be used to render text.
 - `public void setX(int x)`
-  Sets the X origin of the tooltip.
-  - param: x - the new X origin
+  Set the X origin of the tooltip.
 - `public void setY(int y)`
-  Sets the Y origin of the tooltip.
-  - param: y - the new Y origin
+  Set the Y origin of the tooltip.
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getComponents`, `getFont`, `getGraphics`, `getItemStack`, `getX`, `getY`
+- from `net.minecraftforge.client.event.RenderTooltipEvent`: `getFontRenderer`, `getLines`, `getStack`, `getX`, `getY`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## ScreenEvent
+## RenderWorldLastEvent
 
-*class* `net.minecraftforge.client.event.ScreenEvent`
-
-Fired on different events/actions when a Screen is active and visible.
- See the various subclasses for listening to different events.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final Screen screen`
+*class* `net.minecraftforge.client.event.RenderWorldLastEvent`
 
 ### Methods
-- `public Screen getScreen()`
-  Returns the screen that caused this event.
-  - returns: the screen that caused this event
-
-## ScreenEvent.BackgroundRendered
-
-*class* `net.minecraftforge.client.event.ScreenEvent.BackgroundRendered`
-
-Fired directly after the background of the screen is drawn.
- Can be used for drawing above the background but below the tooltips.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final GuiGraphics guiGraphics`
-
-### Methods
-- `public GuiGraphics getGuiGraphics()`
-  Returns the gui graphics used for rendering.
-  - returns: the gui graphics used for rendering
+- `public RenderGlobal getContext()`
+- `public float getPartialTicks()`
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.CharacterTyped
-
-*class* `net.minecraftforge.client.event.ScreenEvent.CharacterTyped`
-
-Fired when a keyboard key corresponding to a character is typed.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final char codePoint`
-- `private final int modifiers`
-
-### Methods
-- `public char getCodePoint()`
-  Returns the character code point.
-  - returns: the character code point
-- `public int getModifiers()`
-  Returns a bit field representing the active modifier keys.
-  - returns: a bit field representing the active modifier keys
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.CharacterTyped.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.CharacterTyped.Post`
-
-Fired after the character input is handled, if not handled by the screen
- and the corresponding ScreenEvent.CharacterTyped.Pre is not cancelled.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the character input will be set as handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.CharacterTyped
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.CharacterTyped`: `getCodePoint`, `getModifiers`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.CharacterTyped.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.CharacterTyped.Pre`
-
-Fired before the character input is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's character input handler will be bypassed
- and the corresponding ScreenEvent.CharacterTyped.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.CharacterTyped
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.CharacterTyped`: `getCodePoint`, `getModifiers`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Closing
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Closing`
-
-Fired before a Screen is closed.
- All screen layers on the screen are closed before this event is fired.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Init
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Init`
-
-Fired when a screen is being initialized.
- See the two subclasses for listening before and after the initialization.
-
- Listeners added through this event may also be marked as renderable or narratable, if they inherit from
- Renderable and NarratableEntry
- respectively.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final Consumer<GuiEventListener> add`
-- `private final Consumer<GuiEventListener> remove`
-- `private final List<GuiEventListener> listenerList`
-
-### Methods
-- `public List<GuiEventListener> getListenersList()`
-  Returns unmodifiable view of list of event listeners on the screen.
-  - returns: unmodifiable view of list of event listeners on the screen
-- `public void addListener(GuiEventListener listener)`
-  Adds the given GuiEventListener to the screen.
-  - param: listener - the listener to add
-- `public void removeListener(GuiEventListener listener)`
-  Removes the given GuiEventListener from the screen.
-  - param: listener - the listener to remove
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Init.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Init.Post`
-
-Fired after the screen's overridable initialization method is called.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.Init
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.Init`: `addListener`, `getListenersList`, `removeListener`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Init.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Init.Pre`
-
-Fired before the screen's overridable initialization method is fired.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the initialization method will not be called, and the widgets and children lists
- will not be cleared.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.Init
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.Init`: `addListener`, `getListenersList`, `removeListener`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyInput
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyInput`
-
-Fired whenever a keyboard key is pressed or released.
- See the various subclasses to listen for key pressing or releasing.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final int keyCode`
-- `private final int scanCode`
-- `private final int modifiers`
-
-### Methods
-- `public int getKeyCode()`
-  Returns the GLFW (platform-agnostic) key code.
-  - returns: the GLFW (platform-agnostic) key code
-- `public int getScanCode()`
-  Returns the platform-specific scan code.
-  
-   The scan code is unique for every key, regardless of whether it has a key code.
-   Scan codes are platform-specific but consistent over time, so keys will have different scan codes depending
-   on the platform but they are safe to save to disk as custom key bindings.
-  - returns: the platform-specific scan code
-- `public int getModifiers()`
-  Returns a bit field representing the active modifier keys.
-  - returns: a bit field representing the active modifier keys
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyPressed
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyPressed`
-
-Fired when a keyboard key is pressed.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyPressed.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyPressed.Post`
-
-Fired after the key press is handled, if not handled by the screen
- and the corresponding ScreenEvent.KeyPressed.Pre is not cancelled.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the key press will be set as handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.KeyPressed
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyPressed.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyPressed.Pre`
-
-Fired before the key press is handled by the screen.
-
- This event is cancellable and does not have a result.
- If the event is cancelled, the screen's key press handler will be bypassed
- and the corresponding ScreenEvent.KeyPressed.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.KeyPressed
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyReleased
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyReleased`
-
-Fired when a keyboard key is released.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyReleased.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyReleased.Post`
-
-Fired after the key release is handled, if not handled by the screen
- and the corresponding ScreenEvent.KeyReleased.Pre is not cancelled.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the key release will be set as handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.KeyReleased
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.KeyReleased.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.KeyReleased.Pre`
-
-Fired before the key release is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's key release handler will be bypassed
- and the corresponding ScreenEvent.KeyReleased.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.KeyReleased
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.KeyInput`: `getKeyCode`, `getModifiers`, `getScanCode`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonPressed
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed`
-
-Fired when a mouse button is pressed.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final int button`
-
-### Methods
-- `public int getButton()`
-  Returns the mouse button's input code.
-  - returns: the mouse button's input code
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonPressed.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Post`
-
-Fired after the mouse click is handled, if the corresponding ScreenEvent.MouseButtonPressed.Pre was not
- cancelled.
-
- This event is not cancellable, has a result.
-
- Event.Result.ALLOW - forcibly sets the mouse click as handled
- Event.Result.DEFAULT - defaults to the return value of
- ContainerEventHandler.mouseClicked(double, double, int) from the screen (see wasHandled().
- Event.Result.DENY - forcibly sets the mouse click as not handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseButtonPressed
-
-### Fields
-- `private final boolean handled`
-
-### Methods
-- `public boolean wasHandled()`
-  Returns true if the mouse click was already handled by its screen.
-  - returns: true if the mouse click was already handled by its screen
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed`: `getButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonPressed.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed.Pre`
-
-Fired before the mouse click is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's mouse click handler will be bypassed
- and the corresponding ScreenEvent.MouseButtonPressed.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseButtonPressed
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseButtonPressed`: `getButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonReleased
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased`
-
-Fired when a mouse button is released.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final int button`
-
-### Methods
-- `public int getButton()`
-  Returns the mouse button's input code.
-  - returns: the mouse button's input code
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonReleased.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Post`
-
-Fired after the mouse release is handled, if the corresponding ScreenEvent.MouseButtonReleased.Pre was
- not cancelled.
-
- This event is not cancellable, has a result.
-
- Event.Result.ALLOW - forcibly sets the mouse release as handled
- Event.Result.DEFAULT - defaults to the return value of
- ContainerEventHandler.mouseReleased(double, double, int) from the screen (see wasHandled().
- Event.Result.DENY - forcibly sets the mouse release as not handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseButtonReleased
-
-### Fields
-- `private final boolean handled`
-
-### Methods
-- `public boolean wasHandled()`
-  - returns: true if the mouse release was already handled by its screen
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased`: `getButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseButtonReleased.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased.Pre`
-
-Fired before the mouse release is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's mouse release handler will be bypassed
- and the corresponding ScreenEvent.MouseButtonReleased.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseButtonReleased
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseButtonReleased`: `getButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseDragged
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseDragged`
-
-Fired when the mouse was dragged while a button is being held down.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final int mouseButton`
-- `private final double dragX`
-- `private final double dragY`
-
-### Methods
-- `public int getMouseButton()`
-  Returns the mouse button's input code.
-  - returns: the mouse button's input code
-- `public double getDragX()`
-  Returns amount of mouse drag along the X axis.
-  - returns: amount of mouse drag along the X axis
-- `public double getDragY()`
-  Returns amount of mouse drag along the Y axis.
-  - returns: amount of mouse drag along the Y axis
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseDragged.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseDragged.Post`
-
-Fired after the mouse drag is handled, if not handled by the screen
- and the corresponding ScreenEvent.MouseDragged.Pre is not cancelled.
-
- This event is not cancellable, and does not have a result.
- If the event is cancelled, the mouse drag will be set as handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseDragged
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseDragged`: `getDragX`, `getDragY`, `getMouseButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseDragged.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseDragged.Pre`
-
-Fired before the mouse drag is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's mouse drag handler will be bypassed
- and the corresponding ScreenEvent.MouseDragged.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseDragged
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseDragged`: `getDragX`, `getDragY`, `getMouseButton`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseInput
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseInput`
-
-Fired whenever an action is performed by the mouse.
- See the various subclasses to listen for different actions.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final double mouseX`
-- `private final double mouseY`
-
-### Methods
-- `public double getMouseX()`
-  Returns the X position of the mouse cursor, relative to the screen.
-  - returns: the X position of the mouse cursor, relative to the screen
-- `public double getMouseY()`
-  Returns the Y position of the mouse cursor, relative to the screen.
-  - returns: the Y position of the mouse cursor, relative to the screen
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseScrolled
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseScrolled`
-
-Fired when the mouse was dragged while a button is being held down.
- See the two subclasses for listening before and after the normal handling.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final double deltaX`
-- `private final double deltaY`
-
-### Methods
-- `public double getDeltaX()`
-  Returns the amount of change / delta of the mouse scroll in the vertical direction.
-  - returns: the amount of change / delta of the mouse scroll in the vertical direction
-- `public double getDeltaY()`
-  Returns the amount of change / delta of the mouse scroll in the horizontal direction.
-  - returns: the amount of change / delta of the mouse scroll in the horizontal direction
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseScrolled.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseScrolled.Post`
-
-Fired after the mouse scroll is handled, if not handled by the screen
- and the corresponding ScreenEvent.MouseScrolled.Pre is not cancelled.
-
- This event is not cancellable, and does not have a result.
- If the event is cancelled, the mouse scroll will be set as handled.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseScrolled
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseScrolled`: `getDeltaX`, `getDeltaY`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.MouseScrolled.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.MouseScrolled.Pre`
-
-Fired before the mouse scroll is handled by the screen.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen's mouse scroll handler will be bypassed
- and the corresponding ScreenEvent.MouseScrolled.Post will not be fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.MouseScrolled
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.MouseScrolled`: `getDeltaX`, `getDeltaY`
-- from `net.minecraftforge.client.event.ScreenEvent.MouseInput`: `getMouseX`, `getMouseY`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Opening
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Opening`
-
-Fired before any Screen is opened, to allow changing it or preventing it from being opened.
- All screen layers on the screen are closed before this event is fired.
-
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the Screen shall be prevented from opening and any previous screen
- will remain open. However, cancelling this event will not prevent the closing of screen layers which happened before
- this event fired.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `@Nullable private final @Nullable Screen currentScreen`
-- `private Screen newScreen`
-
-### Methods
-- `@Nullable public @Nullable Screen getCurrentScreen()`
-  Gets the currently open screen at the time of the event being fired.
-  
-   May be null if no screen was open.
-- `@Nullable public @Nullable Screen getNewScreen()`
-  - returns: The screen that will be opened if the event is not cancelled. May be null.
-- `public void setNewScreen(Screen newScreen)`
-  Sets the new screen to be opened if the event is not cancelled. May be null.
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Render
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Render`
-
-Fired when a screen is being drawn.
- See the two subclasses for listening before and after drawing.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final GuiGraphics guiGraphics`
-- `private final int mouseX`
-- `private final int mouseY`
-- `private final float partialTick`
-
-### Methods
-- `public GuiGraphics getGuiGraphics()`
-  Returns the gui graphics used for rendering.
-  - returns: the gui graphics used for rendering
-- `public int getMouseX()`
-  Returns the X coordinate of the mouse pointer.
-  - returns: the X coordinate of the mouse pointer
-- `public int getMouseY()`
-  Returns the Y coordinate of the mouse pointer.
-  - returns: the Y coordinate of the mouse pointer
-- `public float getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Render.Post
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Render.Post`
-
-Fired after the screen is drawn.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.Render
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.Render`: `getGuiGraphics`, `getMouseX`, `getMouseY`, `getPartialTick`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.Render.Pre
-
-*class* `net.minecraftforge.client.event.ScreenEvent.Render.Pre`
-
-Fired before the screen is drawn.
-
- This event is cancellable, and does not have a result.
- If the event is cancelled, the screen will not be drawn.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent.Render
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent.Render`: `getGuiGraphics`, `getMouseX`, `getMouseY`, `getPartialTick`
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
-
-## ScreenEvent.RenderInventoryMobEffects
-
-*class* `net.minecraftforge.client.event.ScreenEvent.RenderInventoryMobEffects`
-
-Fired ahead of rendering any active mob effects in the inventory screen.
- Can be used to select the size of the effects display (full or compact) or even hide or replace vanilla's rendering entirely.
- This event can also be used to modify the horizontal position of the stack of effects being rendered.
-
- This event is cancellable and does not have a result.
- Cancelling this event will prevent vanilla rendering.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ScreenEvent
-
-### Fields
-- `private final int availableSpace`
-- `private boolean compact`
-- `private int horizontalOffset`
-
-### Methods
-- `public int getAvailableSpace()`
-  The available space to the right of the inventory.
-- `public boolean isCompact()`
-  Whether the effects should be rendered in compact mode (only icons, no text), or the default full size.
-- `public int getHorizontalOffset()`
-  The distance from the left side of the screen that the effect stack is rendered. Positive values shift this more to the right.
-- `public void setHorizontalOffset(int offset)`
-  Replaces the horizontal offset of the effect stack
-- `public void addHorizontalOffset(int offset)`
-  Adds to the horizontal offset of the effect stack. Negative values are acceptable.
-- `public void setCompact(boolean compact)`
-  Sets whether the effects should be rendered in compact mode (only icons, no text), or the default full size.
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ScreenEvent`: `getScreen`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## ScreenshotEvent
 
 *class* `net.minecraftforge.client.event.ScreenshotEvent`
 
-Fired when a screenshot is taken, but before it is written to disk.
+This event is fired before and after a screenshot is taken
+ This event is fired on the MinecraftForge.EVENT_BUS
+ This event is Cancelable
 
- This event is cancellable, and does not have a result.
- If this event is cancelled, then the screenshot is not written to disk, and the message in the event will be posted
- to the player's chat.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
+ screenshotFile contains the file the screenshot will be/was saved to
+ image contains the BufferedImage that will be saved
+ resultMessage contains the ITextComponent to be returned. If null, the default vanilla message will be used instead
 
 ### Fields
-- `public static final Component DEFAULT_CANCEL_REASON`
-- `private final NativeImage image`
-- `private File screenshotFile`
-- `private Component resultMessage`
+- `public static final ITextComponent DEFAULT_CANCEL_REASON`
 
 ### Methods
-- `public NativeImage getImage()`
-  Returns the in-memory image of the screenshot.
-  - returns: the in-memory image of the screenshot
-- `public File getScreenshotFile()`
-  - returns: the file where the screenshot will be saved to
-- `public void setScreenshotFile(File screenshotFile)`
-  Sets the new file where the screenshot will be saved to.
-  - param: screenshotFile - the new filepath
-- `public Component getResultMessage()`
-  Returns the custom cancellation message, or null if no custom message is set.
-  - returns: the custom cancellation message, or null if no custom message is set
-- `public void setResultMessage(Component resultMessage)`
-  Sets the new custom cancellation message used to inform the player.
-   It may be null, in which case the default cancel reason will be used.
-  - param: resultMessage - the new result message
-- `public Component getCancelMessage()`
-  Returns the cancellation message to be used in informing the player.
-  
-   If there is no custom message given (getResultMessage() returns null), then
-   the message will be the default cancel reason message.
-  - returns: the cancel message for the player
+- `public java.awt.image.BufferedImage getImage()`
+- `public java.io.File getScreenshotFile()`
+- `public void setScreenshotFile(java.io.File screenshotFile)`
+- `public ITextComponent getResultMessage()`
+- `public void setResultMessage(ITextComponent resultMessage)`
+- `public ITextComponent getCancelMessage()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## TextureStitchEvent
 
 *class* `net.minecraftforge.client.event.TextureStitchEvent`
 
-Fired after a texture atlas is stitched together.
-
-### Fields
-- `private final TextureAtlas atlas`
-
 ### Methods
-- `public TextureAtlas getAtlas()`
-  Returns the texture atlas.
-  - returns: the texture atlas
+- `public TextureMap getMap()`
+
+### Inherited methods
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## TextureStitchEvent.Post
 
 *class* `net.minecraftforge.client.event.TextureStitchEvent.Post`
 
-Fired after a texture atlas is stitched together and all textures therein has been loaded.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the FMLJavaModLoadingContext.getModEventBus() mod-specific event bus},
- only on the logical client.
+This event is fired once the texture map has loaded all textures and
+ stitched them together. All Icons should have there locations defined
+ by the time this is fired.
 
 Enclosing class: TextureStitchEvent
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.TextureStitchEvent`: `getAtlas`
+- from `net.minecraftforge.client.event.TextureStitchEvent`: `getMap`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
-## ToastAddEvent
+## TextureStitchEvent.Pre
 
-*class* `net.minecraftforge.client.event.ToastAddEvent`
+*class* `net.minecraftforge.client.event.TextureStitchEvent.Pre`
 
-Fired when the client queues a Toast message to be shown onscreen.
- Toasts are small popups that appear on the top right of the screen, for certain actions such as unlocking Advancements and Recipes.
+Fired when the TextureMap is told to refresh it's stitched texture.
+ Called after the Stitched list is cleared, but before any blocks or items
+ add themselves to the list.
 
- This event is cancellable, and does not have a result.
- Cancelling the event stops the toast from being queued, which means it never renders.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final Toast toast`
-
-### Methods
-- `public Toast getToast()`
-
-## ViewportEvent
-
-*class* `net.minecraftforge.client.event.ViewportEvent`
-
-Fired for hooking into the entity view rendering in GameRenderer.
- These can be used for customizing the visual features visible to the player.
- See the various subclasses for listening to different features.
-
- These events are fired on the main Forge event bus,
- only on the logical client.
-
-### Fields
-- `private final GameRenderer renderer`
-- `private final Camera camera`
-- `private final double partialTick`
-
-### Methods
-- `public GameRenderer getRenderer()`
-  Returns the game renderer.
-  - returns: the game renderer
-- `public Camera getCamera()`
-  Returns the camera information.
-  - returns: the camera information
-- `public double getPartialTick()`
-  Returns the partial tick.
-  - returns: the partial tick
-
-## ViewportEvent.ComputeCameraAngles
-
-*class* `net.minecraftforge.client.event.ViewportEvent.ComputeCameraAngles`
-
-Fired to allow altering the angles of the player's camera.
- This can be used to alter the player's view for different effects, such as applying roll.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ViewportEvent
-
-### Fields
-- `private float yaw`
-- `private float pitch`
-- `private float roll`
-
-### Methods
-- `public float getYaw()`
-  Returns the yaw of the player's camera.
-  - returns: the yaw of the player's camera
-- `public void setYaw(float yaw)`
-  Sets the yaw of the player's camera.
-  - param: yaw - the new yaw
-- `public float getPitch()`
-  Returns the pitch of the player's camera.
-  - returns: the pitch of the player's camera
-- `public void setPitch(float pitch)`
-  Sets the pitch of the player's camera.
-  - param: pitch - the new pitch
-- `public float getRoll()`
-  Returns the roll of the player's camera.
-  - returns: the roll of the player's camera
-- `public void setRoll(float roll)`
-  Sets the roll of the player's camera.
-  - param: roll - the new roll
+Enclosing class: TextureStitchEvent
 
 ### Inherited methods
-- from `net.minecraftforge.client.event.ViewportEvent`: `getCamera`, `getPartialTick`, `getRenderer`
-
-## ViewportEvent.ComputeFogColor
-
-*class* `net.minecraftforge.client.event.ViewportEvent.ComputeFogColor`
-
-Fired for customizing the color of the fog visible to the player.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ViewportEvent
-
-### Fields
-- `private float red`
-- `private float green`
-- `private float blue`
-
-### Methods
-- `public float getRed()`
-  Returns the red color value of the fog.
-  - returns: the red color value of the fog
-- `public void setRed(float red)`
-  Sets the new red color value of the fog.
-  - param: red - the new red color value
-- `public float getGreen()`
-  Returns the green color value of the fog.
-  - returns: the green color value of the fog
-- `public void setGreen(float green)`
-  Sets the new green color value of the fog.
-  - param: green - the new blue color value
-- `public float getBlue()`
-  Returns the blue color value of the fog.
-  - returns: the blue color value of the fog
-- `public void setBlue(float blue)`
-  Sets the new blue color value of the fog.
-  - param: blue - the new blue color value
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ViewportEvent`: `getCamera`, `getPartialTick`, `getRenderer`
-
-## ViewportEvent.ComputeFov
-
-*class* `net.minecraftforge.client.event.ViewportEvent.ComputeFov`
-
-Fired for altering the raw field of view (FOV).
- This is after the FOV settings are applied, and before modifiers such as the Nausea effect.
-
- This event is not cancellable, and does not have a result.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ViewportEvent
-
-### Fields
-- `private final boolean usedConfiguredFov`
-- `private double fov`
-
-### Methods
-- `public double getFOV()`
-  Returns the raw field of view value.
-  - returns: the raw field of view value
-- `public void setFOV(double fov)`
-  Sets the field of view value.
-  - param: fov - the new FOV value
-- `public boolean usedConfiguredFov()`
-  Returns whether the base fov value started with a constant or was sourced from the fov set in the options.
-  - returns: whether the base fov value started with a constant or was sourced from the fov set in the options
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ViewportEvent`: `getCamera`, `getPartialTick`, `getRenderer`
-
-## ViewportEvent.RenderFog
-
-*class* `net.minecraftforge.client.event.ViewportEvent.RenderFog`
-
-Fired for rendering custom fog. The plane distances are based on the player's render distance.
-
- This event is cancellable, and has a result.
-
- The event must be cancelled for any changes to the plane distances to take effect.
-
- This event is fired on the main Forge event bus,
- only on the logical client.
-
-Enclosing class: ViewportEvent
-
-### Fields
-- `private final FogRenderer.FogMode mode`
-- `private final FogType type`
-- `private float farPlaneDistance`
-- `private float nearPlaneDistance`
-- `private FogShape fogShape`
-
-### Methods
-- `public FogRenderer.FogMode getMode()`
-  Returns the mode of fog being rendered.
-  - returns: the mode of fog being rendered
-- `public FogType getType()`
-  Returns the type of fog being rendered.
-  - returns: the type of fog being rendered
-- `public float getFarPlaneDistance()`
-  Returns the distance to the far plane where the fog ends.
-  - returns: the distance to the far plane where the fog ends
-- `public float getNearPlaneDistance()`
-  Returns the distance to the near plane where the fog starts.
-  - returns: the distance to the near plane where the fog starts
-- `public FogShape getFogShape()`
-  Returns the shape of the fog being rendered.
-  - returns: the shape of the fog being rendered
-- `public void setFarPlaneDistance(float distance)`
-  Sets the distance to the far plane of the fog.
-  - param: distance - the new distance to the far place
-- `public void setNearPlaneDistance(float distance)`
-  Sets the distance to the near plane of the fog.
-  - param: distance - the new distance to the near plane
-- `public void setFogShape(FogShape shape)`
-  Sets the new shape of the fog being rendered. The new shape will only take effect if the event is cancelled.
-  - param: shape - the new shape of the fog
-- `public void scaleFarPlaneDistance(float factor)`
-  Scales the distance to the far plane of the fog by a given factor.
-  - param: factor - the factor to scale the far plane distance by
-- `public void scaleNearPlaneDistance(float factor)`
-  Scales the distance to the near plane of the fog by a given factor.
-  - param: factor - the factor to scale the near plane distance by
-
-### Inherited methods
-- from `net.minecraftforge.client.event.ViewportEvent`: `getCamera`, `getPartialTick`, `getRenderer`
+- from `net.minecraftforge.client.event.TextureStitchEvent`: `getMap`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`

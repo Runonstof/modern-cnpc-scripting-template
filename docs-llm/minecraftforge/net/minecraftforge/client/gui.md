@@ -1,444 +1,324 @@
 # net.minecraftforge.client.gui
 
-- [Class ModListScreen.SortType](#class-modlistscreen.sorttype)
-- [ClientTooltipComponentManager](#clienttooltipcomponentmanager)
-- [CreativeTabsScreenPage](#creativetabsscreenpage)
-- [LoadingErrorScreen](#loadingerrorscreen)
-- [LoadingErrorScreen.LoadingEntryList](#loadingerrorscreen.loadingentrylist)
-- [LoadingErrorScreen.LoadingEntryList.LoadingMessageEntry](#loadingerrorscreen.loadingentrylist.loadingmessageentry)
-- [ModListScreen](#modlistscreen)
-- [ModListScreen.InfoPanel](#modlistscreen.infopanel)
-- [ModMismatchDisconnectedScreen](#modmismatchdisconnectedscreen)
-- [ModMismatchDisconnectedScreen.MismatchInfoPanel](#modmismatchdisconnectedscreen.mismatchinfopanel)
-- [ScreenUtils](#screenutils)
-- [TitleScreenModUpdateIndicator](#titlescreenmodupdateindicator)
-## Class ModListScreen.SortType
+- [ForgeGuiFactory](#forgeguifactory)
+- [ForgeGuiFactory.ForgeConfigGui](#forgeguifactory.forgeconfiggui)
+- [ForgeGuiFactory.ForgeConfigGui.AddModOverrideEntry](#forgeguifactory.forgeconfiggui.addmodoverrideentry)
+- [ForgeGuiFactory.ForgeConfigGui.ChunkLoaderEntry](#forgeguifactory.forgeconfiggui.chunkloaderentry)
+- [ForgeGuiFactory.ForgeConfigGui.ClientEntry](#forgeguifactory.forgeconfiggui.cliententry)
+- [ForgeGuiFactory.ForgeConfigGui.GeneralEntry](#forgeguifactory.forgeconfiggui.generalentry)
+- [ForgeGuiFactory.ForgeConfigGui.ModIDEntry](#forgeguifactory.forgeconfiggui.modidentry)
+- [ForgeGuiFactory.ForgeConfigGui.ModOverridesEntry](#forgeguifactory.forgeconfiggui.modoverridesentry)
+- [ForgeGuiFactory.ForgeConfigGui.VersionCheckEntry](#forgeguifactory.forgeconfiggui.versioncheckentry)
+- [NotificationModUpdateScreen](#notificationmodupdatescreen)
+## ForgeGuiFactory
 
-*enum* `net.minecraftforge.client.gui.Class ModListScreen.SortType`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory`
 
-Enclosing class: ModListScreen
+This is the base GuiConfig screen class that all the other Forge-specific config screens will be called from.
+ Since Forge has multiple config files I thought I would use that opportunity to show some of the ways
+ that the config GUI system can be extended to create custom config GUIs that have additional features
+ over the base functionality of just displaying Properties and ConfigCategories.
 
-### Fields
-- `Button button`
+ The concepts implemented here are:
+ - using custom IConfigEntry objects to define child-screens that have specific Properties listed
+ - using custom IConfigEntry objects to define a dummy property that can be used to generate new ConfigCategory objects
+ - defining the configID string for a GuiConfig object so that the config changed events will be posted when that GuiConfig screen is closed
+ (the configID string is optional; if it is not defined the config changed events will be posted when the top-most GuiConfig screen
+ is closed, eg when the parent is null or is not an instance of GuiConfig)
+ - overriding the IConfigEntry.enabled() method to control the enabled state of one list entry based on the value of another entry
+ - overriding the IConfigEntry.onGuiClosed() method to perform custom actions when the screen that owns the entry is closed (in this
+ case a new ConfigCategory is added to the Configuration object)
 
-### Methods
-- `public static ModListScreen.SortType[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static ModListScreen.SortType valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
-  The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
-  not permitted.)
-  - param: name - the name of the enum constant to be returned.
-  - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-- `protected int compare(String name1,  String name2)`
-- `public int compare(net.minecraftforge.forgespi.language.IModInfo o1,  net.minecraftforge.forgespi.language.IModInfo o2)`
-- `Component getButtonText()`
+ The config file structure looks like this:
+ forge.cfg (general settings all in one category)
+ forgeChunkLoading.cfg
+ - Forge (category)
+ - defaults (category)
+ - [optional mod override categories]...
 
-### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
-- from `java.util.Comparator`: `equals`, `reversed`, `thenComparing`, `thenComparing`, `thenComparing`, `thenComparingDouble`, `thenComparingInt`, `thenComparingLong`
+ The GUI structure is this:
+ Base Screen
+ - General Settings (from forge.cfg)
+ - Chunk Loader Settings (from forgeChunkLoading.cfg)
+ - Defaults (these elements are listed directly on this screen)
+ - Mod Overrides
+ - Add New Mod Override
+ - Mod1
+ - Mod2
+ - etc.
 
-## ClientTooltipComponentManager
+ Other things to check out:
+ ForgeModContainer.syncConfig()
+ ForgeModContainer.onConfigChanged()
+ ForgeChunkManager.syncConfigDefaults()
+ ForgeChunkManager.loadConfiguration()
 
-*class* `net.minecraftforge.client.gui.ClientTooltipComponentManager`
-
-Manager for ClientTooltipComponent factories.
-
- Provides a lookup.
-
-### Fields
-- `private static com.google.common.collect.ImmutableMap<Class<? extends TooltipComponent>,Function<TooltipComponent,ClientTooltipComponent>> FACTORIES`
-
-### Methods
-- `@Nullable public static @Nullable ClientTooltipComponent createClientTooltipComponent(TooltipComponent component)`
-  Creates a client component for the given argument, or null if unsupported.
-- `@Internal public static void init()`
-
-## CreativeTabsScreenPage
-
-*class* `net.minecraftforge.client.gui.CreativeTabsScreenPage`
-
-### Fields
-- `private final List<CreativeModeTab> tabs`
-- `private final List<CreativeModeTab> topTabs`
-- `private final List<CreativeModeTab> bottomTabs`
-- `private final List<CreativeModeTab> visibleTabs`
+All Implemented Interfaces: IModGuiFactory
 
 ### Methods
-- `public List<CreativeModeTab> getVisibleTabs()`
-- `public boolean isTop(CreativeModeTab tab)`
-- `public int getColumn(CreativeModeTab tab)`
-- `public CreativeModeTab getDefaultTab()`
+- `public void initialize(Minecraft minecraftInstance)`
+  Description copied from interface: IModGuiFactory
+  Called when instantiated to initialize with the active minecraft instance.
+  - param: minecraftInstance - the instance
+- `public boolean hasConfigGui()`
+  Description copied from interface: IModGuiFactory
+  If this method returns false, the config button in the mod list will be disabled
+  - returns: true if this object provides a config gui screen, false otherwise
+- `public GuiScreen createConfigGui(GuiScreen parent)`
+  Description copied from interface: IModGuiFactory
+  Return an initialized GuiScreen. This screen will be displayed
+   when the "config" button is pressed in the mod list. It will
+   have a single argument constructor - the "parent" screen, the same as all
+   Minecraft GUIs. The expected behaviour is that this screen will replace the
+   "mod list" screen completely, and will return to the mod list screen through
+   the parent link, once the appropriate action is taken from the config screen.
+  
+   This config GUI is anticipated to provide configuration to the mod in a friendly
+   visual way. It should not be abused to set internals such as IDs (they're gonna
+   keep disappearing anyway), but rather, interesting behaviours. This config GUI
+   is never run when a server game is running, and should be used to configure
+   desired behaviours that affect server state. Costs, mod game modes, stuff like that
+   can be changed here.
+  - param: parent - The screen to which must be returned when closing the
+ returned screen.
+  - returns: A class that will be instantiated on clicks on the config button
+ or null if no GUI is desired.
+- `public java.util.Set<IModGuiFactory.RuntimeOptionCategoryElement> runtimeGuiCategories()`
+  Description copied from interface: IModGuiFactory
+  Return a list of the "runtime" categories this mod wishes to populate with
+   GUI elements.
+  
+   Runtime categories are created on demand and organized in a 'lite' tree format.
+   The parent represents the parent node in the tree. There is one special parent
+   'Help' that will always list first, and is generally meant to provide Help type
+   content for mods. The remaining parents will sort alphabetically, though
+   this may change if there is a lot of alphabetic abuse. "AAA" is probably never a valid
+   category parent.
+  
+   Runtime configuration itself falls into two flavours: in-game help, which is
+   generally non interactive except for the text it wishes to show, and client-only
+   affecting behaviours. This would include things like toggling minimaps, or cheat modes
+   or anything NOT affecting the behaviour of the server. Please don't abuse this to
+   change the state of the server in any way, this is intended to behave identically
+   when the server is local or remote.
+  - returns: the set of options this mod wishes to have available, or empty if none
 
-## LoadingErrorScreen
+## ForgeGuiFactory.ForgeConfigGui
 
-*class* `net.minecraftforge.client.gui.LoadingErrorScreen`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui`
 
-### Fields
-- `private static final org.apache.logging.log4j.Logger LOGGER`
-- `private final Path modsDir`
-- `private final Path logFile`
-- `private final List<ModLoadingException> modLoadErrors`
-- `private final List<ModLoadingWarning> modLoadWarnings`
-- `private final Path dumpedLocation`
-- `private LoadingErrorScreen.LoadingEntryList entryList`
-- `private Component errorHeader`
-- `private Component warningHeader`
+All Implemented Interfaces: GuiYesNoCallback
+
+Enclosing class: ForgeGuiFactory
 
 ### Inherited fields
-- from `net.minecraft.client.gui.screens.Screen`: `BACKGROUND_LOCATION`, `font`, `height`, `minecraft`, `renderables`, `screenExecutor`, `title`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
-
-### Methods
-- `public void init()`
-- `public void render(GuiGraphics guiGraphics,  int mouseX,  int mouseY,  float partialTick)`
-- `private void drawMultiLineCenteredString(GuiGraphics guiGraphics,  Font fr,  Component str,  int x,  int y)`
+- from `net.minecraftforge.fml.client.config.GuiConfig`: `allRequireMcRestart`, `allRequireWorldRestart`, `btnDefaultAll`, `btnUndoAll`, `checkBoxHoverChecker`, `chkApplyGlobally`, `configElements`, `configID`, `entryList`, `initEntries`, `isWorldRunning`, `modID`, `needsRefresh`, `parentScreen`, `resetHoverChecker`, `title`, `titleLine2`, `undoHoverChecker`
+- from `net.minecraft.client.gui.GuiScreen`: `allowUserInput`, `buttonList`, `fontRenderer`, `height`, `itemRender`, `keyHandled`, `labelList`, `mc`, `mouseHandled`, `selectedButton`, `width`
+- from `net.minecraft.client.gui.Gui`: `ICONS`, `OPTIONS_BACKGROUND`, `STAT_ICONS`, `zLevel`
 
 ### Inherited methods
-- from `net.minecraft.client.gui.screens.ErrorScreen`: `renderBackground`, `shouldCloseOnEsc`
-- from `net.minecraft.client.gui.screens.Screen`: `added`, `addRenderableOnly`, `addRenderableWidget`, `addWidget`, `afterKeyboardAction`, `afterMouseAction`, `afterMouseMove`, `changeFocus`, `children`, `clearWidgets`, `findNarratableWidget`, `getBackgroundMusic`, `getMinecraft`, `getNarrationMessage`, `getRectangle`, `getTitle`, `getTooltipFromItem`, `getUsageNarration`, `handleComponentClicked`, `handleDelayedNarration`, `hasAltDown`, `hasControlDown`, `hasShiftDown`, `hideWidgets`, `init`, `insertText`, `isCopy`, `isCut`, `isMouseOver`, `isPaste`, `isPauseScreen`, `isSelectAll`, `isValidCharacterForName`, `keyPressed`, `narrationEnabled`, `onClose`, `onFilesDrop`, `rebuildWidgets`, `removed`, `removeWidget`, `renderDirtBackground`, `renderTransparentBackground`, `renderWithTooltip`, `repositionElements`, `resize`, `setInitialFocus`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `shouldNarrateNavigation`, `tick`, `triggerImmediateNarration`, `updateNarratedWidget`, `updateNarrationState`, `wrapScreenError`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyReleased`, `magicalSpecialHackyFocus`, `mouseClicked`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `mouseMoved`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfig`: `actionPerformed`, `drawScreen`, `drawToolTip`, `getAbridgedConfigPath`, `handleMouseInput`, `initGui`, `keyTyped`, `mouseClicked`, `mouseReleased`, `onGuiClosed`, `updateScreen`
+- from `net.minecraft.client.gui.GuiScreen`: `addButton`, `confirmClicked`, `doesGuiPauseGame`, `drawBackground`, `drawDefaultBackground`, `drawHoveringText`, `drawHoveringText`, `drawHoveringText`, `drawWorldBackground`, `getClipboardString`, `getItemToolTip`, `handleComponentClick`, `handleComponentHover`, `handleInput`, `handleKeyboardInput`, `isAltKeyDown`, `isCtrlKeyDown`, `isFocused`, `isKeyComboCtrlA`, `isKeyComboCtrlC`, `isKeyComboCtrlV`, `isKeyComboCtrlX`, `isShiftKeyDown`, `mouseClickMove`, `onResize`, `renderToolTip`, `sendChatMessage`, `sendChatMessage`, `setClipboardString`, `setFocused`, `setGuiSize`, `setText`, `setWorldAndResolution`
+- from `net.minecraft.client.gui.Gui`: `drawCenteredString`, `drawGradientRect`, `drawHorizontalLine`, `drawModalRectWithCustomSizedTexture`, `drawRect`, `drawScaledCustomSizeModalRect`, `drawString`, `drawTexturedModalRect`, `drawTexturedModalRect`, `drawTexturedModalRect`, `drawVerticalLine`
 
-## LoadingErrorScreen.LoadingEntryList
+## ForgeGuiFactory.ForgeConfigGui.AddModOverrideEntry
 
-*class* `net.minecraftforge.client.gui.LoadingErrorScreen.LoadingEntryList`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.AddModOverrideEntry`
 
-Enclosing class: LoadingErrorScreen
+This custom list entry provides a button that will open to a screen that will allow a user to define a new mod override.
+
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraft.client.gui.components.AbstractSelectionList`: `centerListVertically`, `headerHeight`, `height`, `itemHeight`, `minecraft`, `SCROLLBAR_WIDTH`, `width`, `x0`, `x1`, `y0`, `y1`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `protected int getScrollbarPosition()`
-- `public int getRowWidth()`
+- `protected GuiScreen buildChildScreen()`
+  Description copied from class: GuiConfigEntries.CategoryEntry
+  This method is called in the constructor and is used to set the childScreen field.
+- `public boolean isChanged()`
+  Description copied from interface: GuiConfigEntries.IConfigEntry
+  Has the value of this entry changed?
+  - returns: true if changes have been made to this entry's value, false otherwise.
 
 ### Inherited methods
-- from `net.minecraft.client.gui.components.ObjectSelectionList`: `nextFocusPath`, `updateNarration`
-- from `net.minecraft.client.gui.components.AbstractSelectionList`: `addEntry`, `addEntryToTop`, `centerScrollOn`, `children`, `clearEntries`, `clickedHeader`, `enableScissor`, `ensureVisible`, `getBottom`, `getEntry`, `getEntryAtPosition`, `getFirstElement`, `getFocused`, `getHeight`, `getHovered`, `getItemCount`, `getLeft`, `getMaxPosition`, `getMaxScroll`, `getRectangle`, `getRight`, `getRowBottom`, `getRowLeft`, `getRowRight`, `getRowTop`, `getScrollAmount`, `getScrollBottom`, `getSelected`, `getTop`, `getWidth`, `isMouseOver`, `isSelectedItem`, `isValidMouseClick`, `mouseClicked`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `narrateListElementPosition`, `narrationPriority`, `nextEntry`, `nextEntry`, `nextEntry`, `remove`, `removeEntry`, `removeEntryFromTop`, `render`, `renderDecorations`, `renderHeader`, `renderItem`, `renderList`, `renderSelection`, `replaceEntries`, `setFocused`, `setLeftPos`, `setRenderBackground`, `setRenderHeader`, `setScrollAmount`, `setSelected`, `updateScrollingState`, `updateSize`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `isDragging`, `setDragging`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyPressed`, `keyReleased`, `magicalSpecialHackyFocus`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `mouseMoved`
-- from `net.minecraft.client.gui.narration.NarratableEntry`: `isActive`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `enabled`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `undoChanges`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
 
-## LoadingErrorScreen.LoadingEntryList.LoadingMessageEntry
+## ForgeGuiFactory.ForgeConfigGui.ChunkLoaderEntry
 
-*class* `net.minecraftforge.client.gui.LoadingErrorScreen.LoadingEntryList.LoadingMessageEntry`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.ChunkLoaderEntry`
 
-Enclosing class: LoadingErrorScreen.LoadingEntryList
+This custom list entry provides the Forge Chunk Manager Config entry on the Minecraft Forge Configuration screen.
+ It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
 
-### Fields
-- `private final Component message`
-- `private final boolean center`
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraft.client.gui.components.AbstractSelectionList.Entry`: `list`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `public Component getNarration()`
-- `public void render(GuiGraphics guiGraphics,  int entryIdx,  int top,  int left,  int entryWidth,  int entryHeight,  int mouseX,  int mouseY,  boolean p_194999_5_,  float partialTick)`
+- `protected GuiScreen buildChildScreen()`
+  Description copied from class: GuiConfigEntries.CategoryEntry
+  This method is called in the constructor and is used to set the childScreen field.
 
 ### Inherited methods
-- from `net.minecraft.client.gui.components.ObjectSelectionList.Entry`: `updateNarration`
-- from `net.minecraft.client.gui.components.AbstractSelectionList.Entry`: `isFocused`, `isMouseOver`, `renderBack`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `charTyped`, `getCurrentFocusPath`, `getRectangle`, `keyPressed`, `keyReleased`, `mouseClicked`, `mouseDragged`, `mouseMoved`, `mouseReleased`, `mouseScrolled`, `nextFocusPath`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `enabled`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isChanged`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `undoChanges`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
 
-## ModListScreen
+## ForgeGuiFactory.ForgeConfigGui.ClientEntry
 
-*class* `net.minecraftforge.client.gui.ModListScreen`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.ClientEntry`
 
-### Fields
-- `private static final org.apache.logging.log4j.Logger LOGGER`
-- `private static final int PADDING` (= 6)
-- `private Screen parentScreen`
-- `private ModListWidget modList`
-- `private ModListScreen.InfoPanel modInfo`
-- `private ModListWidget.ModEntry selected`
-- `private int listWidth`
-- `private List<net.minecraftforge.forgespi.language.IModInfo> mods`
-- `private final List<net.minecraftforge.forgespi.language.IModInfo> unsortedMods`
-- `private Button configButton`
-- `private Button openModsFolderButton`
-- `private Button doneButton`
-- `private int buttonMargin`
-- `private int numButtons`
-- `private String lastFilterText`
-- `private EditBox search`
-- `private boolean sorted`
-- `private ModListScreen.SortType sortType`
+This custom list entry provides the Client only Settings entry on the Minecraft Forge Configuration screen.
+ It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
+
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraft.client.gui.screens.Screen`: `BACKGROUND_LOCATION`, `font`, `height`, `minecraft`, `renderables`, `screenExecutor`, `title`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `private static String stripControlCodes(String value)`
-- `public void init()`
-- `private void displayModConfig()`
-- `public void tick()`
-- `public <T extends ObjectSelectionList.Entry<T>> void buildModList(Consumer<T> modListViewConsumer,  Function<net.minecraftforge.forgespi.language.IModInfo,T> newEntry)`
-- `private void reloadMods()`
-- `private void resortMods(ModListScreen.SortType newSort)`
-- `public void render(GuiGraphics guiGraphics,  int mouseX,  int mouseY,  float partialTick)`
-- `public Minecraft getMinecraftInstance()`
-- `public Font getFontRenderer()`
-- `public void setSelected(ModListWidget.ModEntry entry)`
-- `private void updateCache()`
-- `public void resize(Minecraft mc,  int width,  int height)`
-- `public void onClose()`
+- `protected GuiScreen buildChildScreen()`
+  Description copied from class: GuiConfigEntries.CategoryEntry
+  This method is called in the constructor and is used to set the childScreen field.
 
 ### Inherited methods
-- from `net.minecraft.client.gui.screens.Screen`: `added`, `addRenderableOnly`, `addRenderableWidget`, `addWidget`, `afterKeyboardAction`, `afterMouseAction`, `afterMouseMove`, `changeFocus`, `children`, `clearWidgets`, `findNarratableWidget`, `getBackgroundMusic`, `getMinecraft`, `getNarrationMessage`, `getRectangle`, `getTitle`, `getTooltipFromItem`, `getUsageNarration`, `handleComponentClicked`, `handleDelayedNarration`, `hasAltDown`, `hasControlDown`, `hasShiftDown`, `hideWidgets`, `init`, `insertText`, `isCopy`, `isCut`, `isMouseOver`, `isPaste`, `isPauseScreen`, `isSelectAll`, `isValidCharacterForName`, `keyPressed`, `narrationEnabled`, `onFilesDrop`, `rebuildWidgets`, `removed`, `removeWidget`, `renderBackground`, `renderDirtBackground`, `renderTransparentBackground`, `renderWithTooltip`, `repositionElements`, `setInitialFocus`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `shouldCloseOnEsc`, `shouldNarrateNavigation`, `triggerImmediateNarration`, `updateNarratedWidget`, `updateNarrationState`, `wrapScreenError`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyReleased`, `magicalSpecialHackyFocus`, `mouseClicked`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `mouseMoved`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `enabled`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isChanged`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `undoChanges`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
 
-## ModListScreen.InfoPanel
+## ForgeGuiFactory.ForgeConfigGui.GeneralEntry
 
-*class* `net.minecraftforge.client.gui.ModListScreen.InfoPanel`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.GeneralEntry`
 
-Enclosing class: ModListScreen
+This custom list entry provides the General Settings entry on the Minecraft Forge Configuration screen.
+ It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
 
-### Fields
-- `private ResourceLocation logoPath`
-- `private Size2i logoDims`
-- `private List<FormattedCharSequence> lines`
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraftforge.client.gui.widget.ScrollPanel`: `border`, `bottom`, `captureMouse`, `height`, `left`, `right`, `scrollDistance`, `top`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `void setInfo(List<String> lines,  ResourceLocation logoPath,  Size2i logoDims)`
-- `void clearInfo()`
-- `private List<FormattedCharSequence> resizeContent(List<String> lines)`
-- `public int getContentHeight()`
-- `protected int getScrollAmount()`
-- `protected void drawPanel(GuiGraphics guiGraphics,  int entryRight,  int relativeY,  Tesselator tess,  int mouseX,  int mouseY)`
-  Description copied from class: ScrollPanel
-  Draw anything special on the screen. Scissor (RenderSystem.enableScissor) is enabled
-   for anything that is rendered outside the view box. Do not mess with Scissor unless you support this.
-- `private Style findTextLine(int mouseX,  int mouseY)`
-- `public boolean mouseClicked(double mouseX,  double mouseY,  int button)`
-- `public NarratableEntry.NarrationPriority narrationPriority()`
-- `public void updateNarration(NarrationElementOutput p_169152_)`
+- `protected GuiScreen buildChildScreen()`
+  Description copied from class: GuiConfigEntries.CategoryEntry
+  This method is called in the constructor and is used to set the childScreen field.
 
 ### Inherited methods
-- from `net.minecraftforge.client.gui.widget.ScrollPanel`: `children`, `clickPanel`, `drawBackground`, `drawGradientRect`, `isMouseOver`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `render`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyPressed`, `keyReleased`, `magicalSpecialHackyFocus`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `getRectangle`, `mouseMoved`
-- from `net.minecraft.client.gui.narration.NarratableEntry`: `isActive`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `enabled`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isChanged`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `undoChanges`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
 
-## ModMismatchDisconnectedScreen
+## ForgeGuiFactory.ForgeConfigGui.ModIDEntry
 
-*class* `net.minecraftforge.client.gui.ModMismatchDisconnectedScreen`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.ModIDEntry`
 
-### Fields
-- `private final Component reason`
-- `private MultiLineLabel message`
-- `private final Screen parent`
-- `private int textHeight`
-- `private final Path modsDir`
-- `private final Path logFile`
-- `private final int listHeight`
-- `private final NetworkContext.NetworkMismatchData data`
-- `private final boolean hasMismatches`
-- `private final List<String> allModIds`
-- `private final Map<String,String> presentModUrls`
+This custom list entry provides a Mod ID selector. The control is a button that opens a list of values to select from.
+ This entry also overrides onGuiClosed() to run code to save the data to a new ConfigCategory when the user is done.
+
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraft.client.gui.screens.Screen`: `BACKGROUND_LOCATION`, `font`, `height`, `minecraft`, `renderables`, `screenExecutor`, `title`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry`: `beforeValue`, `currentValue`, `selectableValues`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ButtonEntry`: `btnValue`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `protected void init()`
-- `public void render(GuiGraphics guiGraphics,  int mouseX,  int mouseY,  float partialTicks)`
+- `public void onGuiClosed()`
+  By overriding onGuiClosed() for this entry we can perform additional actions when the user is done such as saving
+   a new ConfigCategory object to the Configuration object.
 
 ### Inherited methods
-- from `net.minecraft.client.gui.screens.Screen`: `added`, `addRenderableOnly`, `addRenderableWidget`, `addWidget`, `afterKeyboardAction`, `afterMouseAction`, `afterMouseMove`, `changeFocus`, `children`, `clearWidgets`, `findNarratableWidget`, `getBackgroundMusic`, `getMinecraft`, `getNarrationMessage`, `getRectangle`, `getTitle`, `getTooltipFromItem`, `getUsageNarration`, `handleComponentClicked`, `handleDelayedNarration`, `hasAltDown`, `hasControlDown`, `hasShiftDown`, `hideWidgets`, `init`, `insertText`, `isCopy`, `isCut`, `isMouseOver`, `isPaste`, `isPauseScreen`, `isSelectAll`, `isValidCharacterForName`, `keyPressed`, `narrationEnabled`, `onClose`, `onFilesDrop`, `rebuildWidgets`, `removed`, `removeWidget`, `renderBackground`, `renderDirtBackground`, `renderTransparentBackground`, `renderWithTooltip`, `repositionElements`, `resize`, `setInitialFocus`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `shouldCloseOnEsc`, `shouldNarrateNavigation`, `tick`, `triggerImmediateNarration`, `updateNarratedWidget`, `updateNarrationState`, `wrapScreenError`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyReleased`, `magicalSpecialHackyFocus`, `mouseClicked`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `mouseMoved`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.SelectValueEntry`: `getCurrentValue`, `getCurrentValues`, `isChanged`, `isDefault`, `saveConfigElement`, `setToDefault`, `setValueFromChildScreen`, `undoChanges`, `updateValueButtonText`, `valueButtonPressed`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ButtonEntry`: `drawEntry`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `drawToolTip`, `enabled`, `getConfigElement`, `getEntryRightBound`, `getLabelWidth`, `getName`, `updatePosition`
 
-## ModMismatchDisconnectedScreen.MismatchInfoPanel
+## ForgeGuiFactory.ForgeConfigGui.ModOverridesEntry
 
-*class* `net.minecraftforge.client.gui.ModMismatchDisconnectedScreen.MismatchInfoPanel`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.ModOverridesEntry`
 
-Enclosing class: ModMismatchDisconnectedScreen
+This custom list entry provides the Mod Overrides entry on the Forge Chunk Loading config screen.
+ It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
+ In this case it adds the custom entry for adding a new mod override and lists the existing mod overrides.
 
-### Fields
-- `private final List<org.apache.commons.lang3.tuple.Pair<FormattedCharSequence,org.apache.commons.lang3.tuple.Pair<FormattedCharSequence,FormattedCharSequence>>> lineTable`
-- `private final int contentSize`
-- `private final int nameIndent` (= 10)
-- `private final int tableWidth`
-- `private final int nameWidth`
-- `private final int versionWidth`
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
+
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraftforge.client.gui.widget.ScrollPanel`: `border`, `bottom`, `captureMouse`, `height`, `left`, `right`, `scrollDistance`, `top`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `private List<org.apache.commons.lang3.tuple.Pair<FormattedCharSequence,org.apache.commons.lang3.tuple.Pair<FormattedCharSequence,FormattedCharSequence>>> splitLineToWidth(MutableComponent name,  org.apache.commons.lang3.tuple.Pair<String,String> versions)`
-  Splits the raw name and version strings, making them use multiple lines if needed, to fit within the table dimensions.
-   The style assigned to the name element is then applied to the entire content row.
-  - param: name - The first element of the content row, usually representing a table section header or the name of a mod entry
-  - param: versions - The last two elements of the content row, usually representing the mod versions. If either one or both of them are not given, the first element may take up more space within the table.
-  - returns: A list of table rows consisting of 3 elements each which consist of the same content as was given by the parameters, but split up to fit within the table dimensions.
-- `private MutableComponent toModNameComponent(ResourceLocation id,  String modName,  int color)`
-  Adds a style information to the given mod name string. The style assigned to the returned component contains the color of the mod name,
-   a hover event containing the given id, and an optional click event, which opens the homepage of mod, if present.
-  - param: id - An id that gets displayed in the hover event. Depending on the origin it may only consist of a namespace (the mod id) or a namespace + path (a channel id associated with the mod).
-  - param: modName - The name of the mod. It will be rendered as the main text component.
-  - param: color - Defines the color of the returned style information. An odd number will result in a yellow, an even one in a gold color. This color variation makes it easier for users to distinguish different mod entries.
-  - returns: A component with the mod name as the main text component, and an assigned style which will be used for the whole content row.
-- `protected int getContentHeight()`
-- `protected void drawPanel(GuiGraphics guiGraphics,  int entryRight,  int relativeY,  Tesselator tess,  int mouseX,  int mouseY)`
-  Description copied from class: ScrollPanel
-  Draw anything special on the screen. Scissor (RenderSystem.enableScissor) is enabled
-   for anything that is rendered outside the view box. Do not mess with Scissor unless you support this.
-- `public void render(GuiGraphics guiGraphics,  int mouseX,  int mouseY,  float partialTicks)`
-- `public Style getComponentStyleAt(double x,  double y)`
-- `public boolean mouseClicked(double mouseX,  double mouseY,  int button)`
-- `public NarratableEntry.NarrationPriority narrationPriority()`
-- `public void updateNarration(NarrationElementOutput output)`
+- `protected GuiScreen buildChildScreen()`
+  This method is called in the constructor and is used to set the childScreen field.
+- `public boolean enabled()`
+  By overriding the enabled() method and checking the value of the "enabled" entry this entry is enabled/disabled based on the value of
+   the other entry.
+  - returns: true if this entry's controls should be enabled, false otherwise.
+- `public boolean isChanged()`
+  Check to see if the child screen's entry list has changed.
+  - returns: true if changes have been made to this entry's value, false otherwise.
+- `public void undoChanges()`
+  Since adding a new entry to the child screen is what constitutes a change here, reset the child
+   screen listEntries to the saved list.
 
 ### Inherited methods
-- from `net.minecraftforge.client.gui.widget.ScrollPanel`: `children`, `clickPanel`, `drawBackground`, `drawGradientRect`, `getScrollAmount`, `isMouseOver`, `mouseDragged`, `mouseReleased`, `mouseScrolled`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyPressed`, `keyReleased`, `magicalSpecialHackyFocus`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `getRectangle`, `mouseMoved`
-- from `net.minecraft.client.gui.narration.NarratableEntry`: `isActive`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
 
-## ScreenUtils
+## ForgeGuiFactory.ForgeConfigGui.VersionCheckEntry
 
-*class* `net.minecraftforge.client.gui.ScreenUtils`
+*class* `net.minecraftforge.client.gui.ForgeGuiFactory.ForgeConfigGui.VersionCheckEntry`
 
-This class provides several methods and constants used by the Config GUI classes.
+This custom list entry provides the Forge Version Checking Config entry on the Minecraft Forge Configuration screen.
+ It extends the base Category entry class and defines the IConfigElement objects that will be used to build the child screen.
 
-### Fields
-- `public static final int DEFAULT_BACKGROUND_COLOR` (= -267386864, deprecated)
-- `public static final int DEFAULT_BORDER_COLOR_START` (= 1347420415, deprecated)
-- `public static final int DEFAULT_BORDER_COLOR_END` (= 1344798847, deprecated)
-- `public static final String UNDO_CHAR` (= "\u21b6", deprecated)
-- `public static final String RESET_CHAR` (= "\u2604", deprecated)
-- `public static final String VALID` (= "\u2714", deprecated)
-- `public static final String INVALID` (= "\u2715", deprecated)
-- `public static int[] TEXT_COLOR_CODES` (deprecated)
+All Implemented Interfaces: GuiListExtended.IGuiListEntry, GuiConfigEntries.IConfigEntry
 
-### Methods
-- `public static int getColorFromFormattingCharacter(char c,  boolean isLighter)` (deprecated)
-- `public static void blitWithBorder(GuiGraphics guiGraphics,  int x,  int y,  int u,  int v,  int width,  int height,  int textureWidth,  int textureHeight,  int borderSize,  float zLevel)` (deprecated)
-  Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
-   and filler. It is assumed that the desired texture ResourceLocation object has been bound using
-   Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
-  - param: guiGraphics - the gui graphics
-  - param: x - x axis offset
-  - param: y - y axis offset
-  - param: u - bound resource location image x offset
-  - param: v - bound resource location image y offset
-  - param: width - the desired box width
-  - param: height - the desired box height
-  - param: textureWidth - the width of the box texture in the resource location image
-  - param: textureHeight - the height of the box texture in the resource location image
-  - param: borderSize - the size of the box's borders
-  - param: zLevel - the zLevel to draw at
-- `public static void blitWithBorder(GuiGraphics guiGraphics,  ResourceLocation res,  int x,  int y,  int u,  int v,  int width,  int height,  int textureWidth,  int textureHeight,  int borderSize,  float zLevel)` (deprecated)
-  Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
-   and filler. The provided ResourceLocation object will be bound using
-   Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
-  - param: guiGraphics - the gui graphics
-  - param: res - the ResourceLocation object that contains the desired image
-  - param: x - x axis offset
-  - param: y - y axis offset
-  - param: u - bound resource location image x offset
-  - param: v - bound resource location image y offset
-  - param: width - the desired box width
-  - param: height - the desired box height
-  - param: textureWidth - the width of the box texture in the resource location image
-  - param: textureHeight - the height of the box texture in the resource location image
-  - param: borderSize - the size of the box's borders
-  - param: zLevel - the zLevel to draw at
-- `public static void blitWithBorder(GuiGraphics guiGraphics,  ResourceLocation res,  int x,  int y,  int u,  int v,  int width,  int height,  int textureWidth,  int textureHeight,  int topBorder,  int bottomBorder,  int leftBorder,  int rightBorder,  float zLevel)` (deprecated)
-  Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
-   and filler. The provided ResourceLocation object will be bound using
-   Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
-  - param: guiGraphics - the gui graphics
-  - param: res - the ResourceLocation object that contains the desired image
-  - param: x - x axis offset
-  - param: y - y axis offset
-  - param: u - bound resource location image x offset
-  - param: v - bound resource location image y offset
-  - param: width - the desired box width
-  - param: height - the desired box height
-  - param: textureWidth - the width of the box texture in the resource location image
-  - param: textureHeight - the height of the box texture in the resource location image
-  - param: topBorder - the size of the box's top border
-  - param: bottomBorder - the size of the box's bottom border
-  - param: leftBorder - the size of the box's left border
-  - param: rightBorder - the size of the box's right border
-  - param: zLevel - the zLevel to draw at
-- `public static void blitWithBorder(GuiGraphics guiGraphics,  int x,  int y,  int u,  int v,  int width,  int height,  int textureWidth,  int textureHeight,  int topBorder,  int bottomBorder,  int leftBorder,  int rightBorder,  float zLevel)` (deprecated)
-  Draws a textured box of any size (smallest size is borderSize * 2 square) based on a fixed size textured box with continuous borders
-   and filler. It is assumed that the desired texture ResourceLocation object has been bound using
-   Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation).
-  - param: guiGraphics - the gui graphics
-  - param: x - x axis offset
-  - param: y - y axis offset
-  - param: u - bound resource location image x offset
-  - param: v - bound resource location image y offset
-  - param: width - the desired box width
-  - param: height - the desired box height
-  - param: textureWidth - the width of the box texture in the resource location image
-  - param: textureHeight - the height of the box texture in the resource location image
-  - param: topBorder - the size of the box's top border
-  - param: bottomBorder - the size of the box's bottom border
-  - param: leftBorder - the size of the box's left border
-  - param: rightBorder - the size of the box's right border
-  - param: zLevel - the zLevel to draw at
-- `@Deprecated(forRemoval=true) public static void drawTexturedModalRect(GuiGraphics guiGraphics,  int x,  int y,  int u,  int v,  int width,  int height,  float zLevel)` (deprecated)
-- `@Deprecated(forRemoval=true) public static void drawGradientRect(org.joml.Matrix4f mat,  int zLevel,  int left,  int top,  int right,  int bottom,  int startColor,  int endColor)` (deprecated)
-- `public static void blitInscribed(GuiGraphics guiGraphics,  ResourceLocation texture,  int x,  int y,  int boundsWidth,  int boundsHeight,  int rectWidth,  int rectHeight)` (deprecated)
-- `public static void blitInscribed(GuiGraphics guiGraphics,  ResourceLocation texture,  int x,  int y,  int boundsWidth,  int boundsHeight,  int rectWidth,  int rectHeight,  boolean centerX,  boolean centerY)` (deprecated)
-
-## TitleScreenModUpdateIndicator
-
-*class* `net.minecraftforge.client.gui.TitleScreenModUpdateIndicator`
-
-### Fields
-- `private static final ResourceLocation VERSION_CHECK_ICONS`
-- `private final Button modButton`
-- `private VersionChecker.Status showNotification`
-- `private boolean hasCheckedForUpdates`
+Enclosing class: ForgeGuiFactory.ForgeConfigGui
 
 ### Inherited fields
-- from `net.minecraft.client.gui.screens.Screen`: `BACKGROUND_LOCATION`, `font`, `height`, `minecraft`, `renderables`, `screenExecutor`, `title`, `width`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `DOUBLE_CLICK_THRESHOLD_MS`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `btnSelectCategory`, `childScreen`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `btnDefault`, `btnUndoChanges`, `configElement`, `defaultHoverChecker`, `defaultToolTip`, `drawLabel`, `isValidValue`, `mc`, `name`, `owningEntryList`, `owningScreen`, `toolTip`, `tooltipHoverChecker`, `undoHoverChecker`, `undoToolTip`
 
 ### Methods
-- `public void init()`
-- `public void render(GuiGraphics guiGraphics,  int mouseX,  int mouseY,  float partialTick)`
-- `public static TitleScreenModUpdateIndicator init(TitleScreen guiMainMenu,  Button modButton)`
+- `protected GuiScreen buildChildScreen()`
+  Description copied from class: GuiConfigEntries.CategoryEntry
+  This method is called in the constructor and is used to set the childScreen field.
 
 ### Inherited methods
-- from `net.minecraft.client.gui.screens.Screen`: `added`, `addRenderableOnly`, `addRenderableWidget`, `addWidget`, `afterKeyboardAction`, `afterMouseAction`, `afterMouseMove`, `changeFocus`, `children`, `clearWidgets`, `findNarratableWidget`, `getBackgroundMusic`, `getMinecraft`, `getNarrationMessage`, `getRectangle`, `getTitle`, `getTooltipFromItem`, `getUsageNarration`, `handleComponentClicked`, `handleDelayedNarration`, `hasAltDown`, `hasControlDown`, `hasShiftDown`, `hideWidgets`, `init`, `insertText`, `isCopy`, `isCut`, `isMouseOver`, `isPaste`, `isPauseScreen`, `isSelectAll`, `isValidCharacterForName`, `keyPressed`, `narrationEnabled`, `onClose`, `onFilesDrop`, `rebuildWidgets`, `removed`, `removeWidget`, `renderBackground`, `renderDirtBackground`, `renderTransparentBackground`, `renderWithTooltip`, `repositionElements`, `resize`, `setInitialFocus`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `setTooltipForNextRenderPass`, `shouldCloseOnEsc`, `shouldNarrateNavigation`, `tick`, `triggerImmediateNarration`, `updateNarratedWidget`, `updateNarrationState`, `wrapScreenError`
-- from `net.minecraft.client.gui.components.events.AbstractContainerEventHandler`: `getFocused`, `isDragging`, `setDragging`, `setFocused`
-- from `net.minecraft.client.gui.components.events.ContainerEventHandler`: `charTyped`, `getChildAt`, `getCurrentFocusPath`, `isFocused`, `keyReleased`, `magicalSpecialHackyFocus`, `mouseClicked`, `mouseDragged`, `mouseReleased`, `mouseScrolled`, `nextFocusPath`, `setFocused`
-- from `net.minecraft.client.gui.components.events.GuiEventListener`: `mouseMoved`
-- from `net.minecraft.client.gui.components.TabOrderedElement`: `getTabOrderGroup`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.CategoryEntry`: `drawEntry`, `drawToolTip`, `enabled`, `getCurrentValue`, `getCurrentValues`, `getEntryRightBound`, `getLabelWidth`, `isChanged`, `isDefault`, `keyTyped`, `mouseClicked`, `mousePressed`, `mouseReleased`, `saveConfigElement`, `setToDefault`, `undoChanges`, `updateCursorCounter`
+- from `net.minecraftforge.fml.client.config.GuiConfigEntries.ListEntryBase`: `getConfigElement`, `getName`, `onGuiClosed`, `updatePosition`
+
+## NotificationModUpdateScreen
+
+*class* `net.minecraftforge.client.gui.NotificationModUpdateScreen`
+
+All Implemented Interfaces: GuiYesNoCallback
+
+### Inherited fields
+- from `net.minecraft.client.gui.GuiScreen`: `allowUserInput`, `buttonList`, `fontRenderer`, `height`, `itemRender`, `keyHandled`, `labelList`, `mc`, `mouseHandled`, `selectedButton`, `width`
+- from `net.minecraft.client.gui.Gui`: `ICONS`, `OPTIONS_BACKGROUND`, `STAT_ICONS`, `zLevel`
+
+### Methods
+- `public void initGui()`
+- `public void drawScreen(int mouseX,  int mouseY,  float partialTicks)`
+- `public static NotificationModUpdateScreen init(GuiMainMenu guiMainMenu,  GuiButton modButton)`
+
+### Inherited methods
+- from `net.minecraft.client.gui.GuiScreen`: `actionPerformed`, `addButton`, `confirmClicked`, `doesGuiPauseGame`, `drawBackground`, `drawDefaultBackground`, `drawHoveringText`, `drawHoveringText`, `drawHoveringText`, `drawWorldBackground`, `getClipboardString`, `getItemToolTip`, `handleComponentClick`, `handleComponentHover`, `handleInput`, `handleKeyboardInput`, `handleMouseInput`, `isAltKeyDown`, `isCtrlKeyDown`, `isFocused`, `isKeyComboCtrlA`, `isKeyComboCtrlC`, `isKeyComboCtrlV`, `isKeyComboCtrlX`, `isShiftKeyDown`, `keyTyped`, `mouseClicked`, `mouseClickMove`, `mouseReleased`, `onGuiClosed`, `onResize`, `renderToolTip`, `sendChatMessage`, `sendChatMessage`, `setClipboardString`, `setFocused`, `setGuiSize`, `setText`, `setWorldAndResolution`, `updateScreen`
+- from `net.minecraft.client.gui.Gui`: `drawCenteredString`, `drawGradientRect`, `drawHorizontalLine`, `drawModalRectWithCustomSizedTexture`, `drawRect`, `drawScaledCustomSizeModalRect`, `drawString`, `drawTexturedModalRect`, `drawTexturedModalRect`, `drawTexturedModalRect`, `drawVerticalLine`

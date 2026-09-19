@@ -1,50 +1,29 @@
 # net.minecraftforge.server
 
-- [LanguageHook](#languagehook)
-- [ServerLifecycleHooks](#serverlifecyclehooks)
-## LanguageHook
+- [ForgeTimeTracker](#forgetimetracker)
+## ForgeTimeTracker
 
-*class* `net.minecraftforge.server.LanguageHook`
+*class* `net.minecraftforge.server.ForgeTimeTracker`
 
-### Fields
-- `private static final org.apache.logging.log4j.Logger LOGGER`
-- `private static final com.google.gson.Gson GSON`
-- `private static final Pattern PATTERN`
-- `private static List<Map<String,String>> capturedTables`
-- `private static Map<String,String> modTable`
-
-### Methods
-- `public static void captureLanguageMap(Map<String,String> table)`
-  Loads lang files on the server
-- `private static void loadLocaleData(List<Resource> allResources)`
-- `private static void loadLocaleData(InputStream inputstream)`
-- `private static void loadLanguage(String langName,  MinecraftServer server)`
-- `public static void loadForgeAndMCLangs()`
-- `static void loadLanguagesOnServer(MinecraftServer server)`
-
-## ServerLifecycleHooks
-
-*class* `net.minecraftforge.server.ServerLifecycleHooks`
+Deprecated.
+To be removed in 1.13 - Implementation has been moved
 
 ### Fields
-- `private static final org.apache.logging.log4j.Logger LOGGER`
-- `private static final org.apache.logging.log4j.Marker SERVERHOOKS`
-- `private static final LevelResource SERVERCONFIG`
-- `private static final AtomicBoolean allowLogins`
-- `private static volatile CountDownLatch exitLatch`
-- `private static MinecraftServer currentServer`
+- `@Deprecated public static boolean tileEntityTracking` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static int tileEntityTrackingDuration` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static long tileEntityTrackingTime` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
 
 ### Methods
-- `private static Path getServerConfigPath(MinecraftServer server)`
-- `public static boolean handleServerAboutToStart(MinecraftServer server)`
-- `public static boolean handleServerStarting(MinecraftServer server)`
-- `public static void expectServerStopped()`
-- `public static void handleServerStopped(MinecraftServer server)`
-- `public static MinecraftServer getCurrentServer()`
-- `@Internal public static RepositorySource buildPackFinder(Map<net.minecraftforge.forgespi.locating.IModFile,? extends PathPackResources> modResourcePacks)`
-- `private static void serverPackFinder(Map<net.minecraftforge.forgespi.locating.IModFile,? extends PathPackResources> modResourcePacks,  Consumer<Pack> packAcceptor)`
-- `private static void runModifiers(MinecraftServer server)`
-- `public static void handleServerStarted(MinecraftServer server)`
-- `public static void handleServerStopping(MinecraftServer server)`
-- `public static boolean handleServerLogin(ClientIntentionPacket packet,  Connection connection)`
-- `private static boolean rejectConnection(Connection connection,  ConnectionType type,  String message)`
+- `@Deprecated public static <any> getTileTimings()` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static void trackStart(TileEntity tileEntity)` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static void trackEnd(TileEntity tileEntity)` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static void trackStart(Entity par1Entity)` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved
+- `@Deprecated public static void trackEnd(Entity par1Entity)` (deprecated)
+  Deprecated. To be removed in 1.13 - Implementation has been moved

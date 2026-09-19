@@ -17,6 +17,7 @@
  *
  * No CLI flags. Every immediate subdirectory of docs/ is treated as one source.
  * docs-llm/ is wiped and rewritten each run.
+ * Parses both Java 8 Javadoc HTML (Forge 1.12) and Java 9+ HTML (CustomNPCs).
  *
  * Coding agents should read docs-llm/ only; they do not need this script.
  */
@@ -60,16 +61,23 @@ function packageFromMeta($) {
 
 function parseKindAndName(title) {
   const text = cleanText(title).replace(/<[^>]+>/g, "");
-  const match = text.match(/^(Class|Interface|Enum|Record Class|Annotation Interface)\s+(.+)$/);
+  const match = text.match(
+    /^(Class|Interface|Enum|Record Class|Annotation Interface|Annotation Type)\s+(.+)$/
+  );
   if (match) {
-    return { kind: match[1].toLowerCase().replace("record class", "record"), name: match[2] };
+    const kind = match[1]
+      .toLowerCase()
+      .replace("record class", "record")
+      .replace("annotation interface", "annotation")
+      .replace("annotation type", "annotation");
+    return { kind, name: match[2] };
   }
   return { kind: "type", name: text };
 }
 
 function parseNotes($, $section) {
   const notes = { params: [], returns: "", throws: [] };
-  $section.find("dl.notes").each((_, dl) => {
+  $section.find("dl").each((_, dl) => {
     let current = "";
     $(dl)
       .children()
@@ -88,6 +96,10 @@ function parseNotes($, $section) {
   return notes;
 }
 
+function isDeprecated($el) {
+  return $el.find(".deprecated-label, .deprecatedLabel, .deprecated").length > 0;
+}
+
 function parseMembers($, selector) {
   const members = [];
   $(selector)
@@ -98,7 +110,7 @@ function parseMembers($, selector) {
       const name = cleanText($section.find("h3").first().text());
       if (!signature && !name) return;
 
-      const deprecated = $section.find(".deprecated-label, .deprecated").length > 0;
+      const deprecated = isDeprecated($section);
       const blocks = [];
       $section.find(".block").each((__, block) => {
         const $block = $(block);
@@ -152,20 +164,16 @@ function stripLeadingHook(description, hook) {
   return cleanText(lines.join("\n"));
 }
 
-function parseClassPage(filePath, html, docsRoot) {
-  const $ = cheerio.load(html);
-  if (!$("body.class-declaration-page").length) return null;
-
-  const pkg = packageFromMeta($);
-  const { kind, name } = parseKindAndName($("main h1.title").first().text());
-  const signature = htmlToText($, $("main .type-signature").first());
-  const description = htmlToText($, $("main .class-description .type-signature").first().nextAll(".block").first())
-    || htmlToText($, $("main .class-description > .block").first());
-
+function collectSupers($, $root) {
   const supers = [];
-  $("main .class-description dt").each((_, dt) => {
+  $root.find("dt").each((_, dt) => {
     const label = cleanText($(dt).text()).toLowerCase();
-    if (label.includes("superinterface") || label.includes("superclass") || label.includes("enclosing")) {
+    if (
+      label.includes("superinterface")
+      || label.includes("superclass")
+      || label.includes("enclosing")
+      || label.includes("implemented interface")
+    ) {
       const values = htmlToText($, $(dt).next("dd"))
         .split(",")
         .map((part) => cleanText(part))
@@ -173,11 +181,11 @@ function parseClassPage(filePath, html, docsRoot) {
       supers.push({ label: cleanText($(dt).text()), values });
     }
   });
+  return supers;
+}
 
-  const fields = parseMembers($, "#field-detail");
-  const methods = parseMembers($, "#method-detail");
+function typeRecord(filePath, docsRoot, pkg, kind, name, signature, description, supers, fields, methods, inheritedFields, inheritedMethods) {
   const hook = pkg.endsWith(".event") ? extractHook(description) : "";
-
   return {
     file: path.relative(docsRoot, filePath).replace(/\\/g, "/"),
     package: pkg,
@@ -190,9 +198,125 @@ function parseClassPage(filePath, html, docsRoot) {
     supers,
     fields,
     methods,
-    inheritedFields: parseInherited($, "fields inherited"),
-    inheritedMethods: parseInherited($, "methods inherited"),
+    inheritedFields,
+    inheritedMethods,
   };
+}
+
+function parseClassPageModern($, filePath, docsRoot) {
+  const pkg = packageFromMeta($);
+  const { kind, name } = parseKindAndName($("main h1.title").first().text());
+  const $desc = $("main .class-description, main section.description").first();
+  const signature = htmlToText($, $desc.find(".type-signature, pre").first());
+  const description = htmlToText($, $desc.find(".type-signature").first().nextAll(".block").first())
+    || htmlToText($, $desc.children(".block").first())
+    || htmlToText($, $desc.find(".block").first());
+
+  const fields = parseMembers($, '[id="field.detail"], #field-detail, section.field-details')
+    .concat(parseMembers($, '[id="enum.constant.detail"], #enum-constant-detail, section.enum-constant-details'));
+  const methods = parseMembers($, '[id="method.detail"], #method-detail, section.method-details');
+  return typeRecord(
+    filePath,
+    docsRoot,
+    pkg,
+    kind,
+    name,
+    signature,
+    description,
+    collectSupers($, $desc),
+    fields,
+    methods,
+    parseInherited($, "fields inherited"),
+    parseInherited($, "methods inherited")
+  );
+}
+
+function parseMembersJava8($, anchorName) {
+  const members = [];
+  const $anchor = $('a[name="' + anchorName + '"]');
+  if (!$anchor.length) return members;
+  const $section = $anchor.closest("li.blockList");
+  $section.children("ul.blockList, ul.blockListLast").each((_, ul) => {
+    const $li = $(ul).children("li.blockList").first();
+    const signature = htmlToText($, $li.find("pre").first(), { inline: true });
+    const name = cleanText($li.find("h4").first().text());
+    if (!signature && !name) return;
+
+    const blocks = [];
+    $li.children("div.block").each((__, block) => {
+      const text = htmlToText($, $(block));
+      if (text) blocks.push(text);
+    });
+    const notes = parseNotes($, $li);
+    members.push({
+      name,
+      signature,
+      deprecated: isDeprecated($li),
+      description: blocks.join("\n"),
+      params: notes.params,
+      returns: notes.returns,
+      throws: notes.throws,
+    });
+  });
+  return members;
+}
+
+function parseInheritedJava8($, headingPrefix) {
+  const inherited = [];
+  $("h3").each((_, h3) => {
+    const $h3 = $(h3);
+    const heading = cleanText($h3.text());
+    if (!heading.toLowerCase().startsWith(headingPrefix)) return;
+    const fromMatch = heading.match(/from (?:class|interface)\s+(.+)$/i);
+    const from = fromMatch ? fromMatch[1] : heading;
+    if (SKIP_INHERITED_FROM.some((skip) => from.startsWith(skip))) return;
+    const names = htmlToText($, $h3.nextAll("code").first())
+      .split(",")
+      .map((part) => cleanText(part))
+      .filter(Boolean);
+    if (names.length) inherited.push({ from, names });
+  });
+  return inherited;
+}
+
+function parseClassPageJava8($, filePath, docsRoot) {
+  const title = $("div.header h2.title").first().text();
+  const { kind, name } = parseKindAndName(title);
+  if (kind === "type") return null;
+
+  const pkg = cleanText($("div.header .subTitle").first().text());
+  const $desc = $("div.description").first();
+  const signature = htmlToText($, $desc.find("pre").first());
+  const description = htmlToText($, $desc.find("div.block").first());
+
+  const fields = parseMembersJava8($, "field.detail").concat(parseMembersJava8($, "enum.constant.detail"));
+  const methods = parseMembersJava8($, "method.detail");
+  return typeRecord(
+    filePath,
+    docsRoot,
+    pkg,
+    kind,
+    name,
+    signature,
+    description,
+    collectSupers($, $desc),
+    fields,
+    methods,
+    parseInheritedJava8($, "fields inherited"),
+    parseInheritedJava8($, "methods inherited")
+  );
+}
+
+function parseClassPage(filePath, html, docsRoot) {
+  const $ = cheerio.load(html);
+  if ($("body.class-declaration-page").length) {
+    return parseClassPageModern($, filePath, docsRoot);
+  }
+  const java8Title = cleanText($("div.header h2.title").first().text());
+  if (/^(Class|Interface|Enum|Annotation Type)\s+/.test(java8Title)) {
+    return parseClassPageJava8($, filePath, docsRoot);
+  }
+  return null;
 }
 
 function parseConstantValues(html) {
@@ -203,6 +327,12 @@ function parseConstantValues(html) {
     if (!id || id.indexOf(".") === -1) return;
     const $cell = $(el).closest(".col-first");
     const value = cleanText($cell.nextAll(".col-last").first().text());
+    if (id && value) values[id] = value;
+  });
+  $("td.colFirst a[name], td.col-first a[name]").each((_, el) => {
+    const id = $(el).attr("name");
+    if (!id || id.indexOf(".") === -1) return;
+    const value = cleanText($(el).closest("tr").find("td.colLast, td.col-last").first().text());
     if (id && value) values[id] = value;
   });
   return values;
@@ -326,7 +456,7 @@ function listSources() {
 }
 
 function commonPackagePrefix(packages) {
-  const unique = [...new Set(packages.filter(Boolean))];
+  const unique = [...new Set(packages.filter(Boolean))].sort();
   if (!unique.length) return "";
   const parts = unique.map((pkg) => pkg.split("."));
   const first = parts[0];
@@ -336,7 +466,8 @@ function commonPackagePrefix(packages) {
     i += 1;
   }
   if (i === 0) return "";
-  if (unique.length > 1 && i === first.length) i -= 1;
+  // Don't use a prefix that is itself a documented package (that becomes root.md).
+  while (i > 0 && unique.includes(first.slice(0, i).join("."))) i -= 1;
   return first.slice(0, i).join(".");
 }
 
@@ -364,6 +495,9 @@ function scrapeSource(source) {
       "legal/**",
       "resource-files/**",
       "script-files/**",
+      "**/*-frame.html",
+      "**/allclasses-noframe.html",
+      "**/index-all.html",
     ],
   }).filter((rel) => !/package-(summary|tree|use)\.html$/i.test(rel));
 
@@ -557,4 +691,8 @@ function renderEvents(types) {
   return lines.join("\n");
 }
 
-main();
+if (require.main === module) {
+  main();
+}
+
+module.exports = { parseClassPage, parseConstantValues };

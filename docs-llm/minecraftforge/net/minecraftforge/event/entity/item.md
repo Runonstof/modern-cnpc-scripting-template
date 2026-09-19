@@ -7,17 +7,18 @@
 
 *class* `net.minecraftforge.event.entity.item.ItemEvent`
 
-Base class for all ItemEntity events. Contains a reference to the
- ItemEntity of interest. For most ItemEntity events, there's little to no
+Base class for all EntityItem events. Contains a reference to the
+ EntityItem of interest. For most EntityItem events, there's little to no
  additional useful data from the firing method that isn't already contained
- within the ItemEntity instance.
-
-### Fields
-- `private final ItemEntity itemEntity`
+ within the EntityItem instance.
 
 ### Methods
-- `public ItemEntity getEntity()`
-  The relevant ItemEntity for this event.
+- `public EntityItem getEntityItem()`
+  The relevant EntityItem for this event, already cast for you.
+
+### Inherited methods
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## ItemExpireEvent
 
@@ -28,15 +29,14 @@ Event that is fired when an EntityItem's age has reached its maximum
  flagged as dead, thus staying it's removal from the world. If canceled
  it will add more time to the entities life equal to extraLife.
 
-### Fields
-- `private int extraLife`
-
 ### Methods
 - `public int getExtraLife()`
 - `public void setExtraLife(int extraLife)`
 
 ### Inherited methods
-- from `net.minecraftforge.event.entity.item.ItemEvent`: `getEntity`
+- from `net.minecraftforge.event.entity.item.ItemEvent`: `getEntityItem`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`
 
 ## ItemTossEvent
 
@@ -47,12 +47,11 @@ Event that is fired whenever a player tosses (Q) an item or drag-n-drops a
  stop the items from entering the world, but will not prevent them being
  removed from the inventory - and thus removed from the system.
 
-### Fields
-- `private final Player player`
-
 ### Methods
-- `public Player getPlayer()`
+- `public EntityPlayer getPlayer()`
   The player tossing the item.
 
 ### Inherited methods
-- from `net.minecraftforge.event.entity.item.ItemEvent`: `getEntity`
+- from `net.minecraftforge.event.entity.item.ItemEvent`: `getEntityItem`
+- from `net.minecraftforge.event.entity.EntityEvent`: `getEntity`
+- from `net.minecraftforge.fml.common.eventhandler.Event`: `getListenerList`, `getPhase`, `getResult`, `hasResult`, `isCancelable`, `isCanceled`, `setCanceled`, `setPhase`, `setResult`, `setup`

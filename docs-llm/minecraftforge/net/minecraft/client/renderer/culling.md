@@ -1,22 +1,51 @@
 # net.minecraft.client.renderer.culling
 
+- [ClippingHelper](#clippinghelper)
+- [ClippingHelperImpl](#clippinghelperimpl)
 - [Frustum](#frustum)
+- [ICamera](#icamera)
+## ClippingHelper
+
+*class* `net.minecraft.client.renderer.culling.ClippingHelper`
+
+### Fields
+- `public float[][] frustum`
+- `public float[] projectionMatrix`
+- `public float[] modelviewMatrix`
+- `public float[] clippingMatrix`
+
+### Methods
+- `public boolean isBoxInFrustum(double p_78553_1_,  double p_78553_3_,  double p_78553_5_,  double p_78553_7_,  double p_78553_9_,  double p_78553_11_)`
+
+## ClippingHelperImpl
+
+*class* `net.minecraft.client.renderer.culling.ClippingHelperImpl`
+
+### Inherited fields
+- from `net.minecraft.client.renderer.culling.ClippingHelper`: `clippingMatrix`, `frustum`, `modelviewMatrix`, `projectionMatrix`
+
+### Methods
+- `public static ClippingHelper getInstance()`
+- `public void init()`
+
+### Inherited methods
+- from `net.minecraft.client.renderer.culling.ClippingHelper`: `isBoxInFrustum`
+
 ## Frustum
 
 *class* `net.minecraft.client.renderer.culling.Frustum`
 
-### Fields
-- `public static final int OFFSET_STEP` (= 4)
-- `private final org.joml.FrustumIntersection intersection`
-- `private final org.joml.Matrix4f matrix`
-- `private org.joml.Vector4f viewVector`
-- `private double camX`
-- `private double camY`
-- `private double camZ`
+All Implemented Interfaces: ICamera
 
 ### Methods
-- `public Frustum offsetToFullyIncludeCameraCube(int p_194442_)`
-- `public void prepare(double p_113003_,  double p_113004_,  double p_113005_)`
-- `private void calculateFrustum(org.joml.Matrix4f p_253909_,  org.joml.Matrix4f p_254521_)`
-- `public boolean isVisible(AABB p_113030_)`
-- `private boolean cubeInFrustum(double p_113007_,  double p_113008_,  double p_113009_,  double p_113010_,  double p_113011_,  double p_113012_)`
+- `public void setPosition(double xIn,  double yIn,  double zIn)`
+- `public boolean isBoxInFrustum(double p_78548_1_,  double p_78548_3_,  double p_78548_5_,  double p_78548_7_,  double p_78548_9_,  double p_78548_11_)`
+- `public boolean isBoundingBoxInFrustum(AxisAlignedBB p_78546_1_)`
+
+## ICamera
+
+*interface* `net.minecraft.client.renderer.culling.ICamera`
+
+### Methods
+- `boolean isBoundingBoxInFrustum(AxisAlignedBB p_78546_1_)`
+- `void setPosition(double xIn,  double yIn,  double zIn)`

@@ -1,238 +1,165 @@
 # net.minecraft.client.tutorial
 
-- [BundleTutorial](#bundletutorial)
-- [Class TutorialSteps](#class-tutorialsteps)
-- [CompletedTutorialStepInstance](#completedtutorialstepinstance)
-- [CraftPlanksTutorialStep](#craftplankstutorialstep)
-- [FindTreeTutorialStepInstance](#findtreetutorialstepinstance)
-- [MovementTutorialStepInstance](#movementtutorialstepinstance)
-- [OpenInventoryTutorialStep](#openinventorytutorialstep)
-- [PunchTreeTutorialStepInstance](#punchtreetutorialstepinstance)
+- [CompletedTutorialStep](#completedtutorialstep)
+- [CraftPlanksStep](#craftplanksstep)
+- [FindTreeStep](#findtreestep)
+- [ITutorialStep](#itutorialstep)
+- [MovementStep](#movementstep)
+- [OpenInventoryStep](#openinventorystep)
+- [PunchTreeStep](#punchtreestep)
 - [Tutorial](#tutorial)
-- [Tutorial.TimedToast](#tutorial.timedtoast)
-- [TutorialStepInstance](#tutorialstepinstance)
-## BundleTutorial
+- [TutorialSteps](#tutorialsteps)
+## CompletedTutorialStep
 
-*class* `net.minecraft.client.tutorial.BundleTutorial`
+*class* `net.minecraft.client.tutorial.CompletedTutorialStep`
 
-### Fields
-- `private final Tutorial tutorial`
-- `private final Options options`
-- `@Nullable private TutorialToast toast`
-
-### Methods
-- `private void showToast()`
-- `private void clearToast()`
-- `public void onInventoryAction(ItemStack p_175007_,  ItemStack p_175008_,  ClickAction p_175009_)`
-
-## Class TutorialSteps
-
-*enum* `net.minecraft.client.tutorial.Class TutorialSteps`
-
-### Fields
-- `private final String name`
-- `private final Function<Tutorial,? extends TutorialStepInstance> constructor`
-
-### Methods
-- `public static TutorialSteps[] values()`
-  Returns an array containing the constants of this enum class, in
-  the order they are declared.
-  - returns: an array containing the constants of this enum class, in the order they are declared
-- `public static TutorialSteps valueOf(String name)`
-  Returns the enum constant of this class with the specified name.
-  The string must match exactly an identifier used to declare an
-  enum constant in this class. (Extraneous whitespace characters are
-  not permitted.)
-  - param: name - the name of the enum constant to be returned.
-  - returns: the enum constant with the specified name
-  - throws: IllegalArgumentException - if this enum class has no constant with the specified name
-  - throws: NullPointerException - if the argument is null
-- `public TutorialStepInstance create(Tutorial p_120641_)`
-- `public String getName()`
-- `public static TutorialSteps getByName(String p_120643_)`
+All Implemented Interfaces: ITutorialStep
 
 ### Inherited methods
-- from `java.lang.Enum`: `clone`, `compareTo`, `describeConstable`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleMouse`, `handleMovement`, `handleSetSlot`, `onHitBlock`, `onMouseHover`, `onStop`, `openInventory`, `update`
 
-## CompletedTutorialStepInstance
+## CraftPlanksStep
 
-*class* `net.minecraft.client.tutorial.CompletedTutorialStepInstance`
+*class* `net.minecraft.client.tutorial.CraftPlanksStep`
 
-### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `clear`, `onDestroyBlock`, `onGetItem`, `onInput`, `onLookAt`, `onMouse`, `onOpenInventory`, `tick`
-
-## CraftPlanksTutorialStep
-
-*class* `net.minecraft.client.tutorial.CraftPlanksTutorialStep`
-
-### Fields
-- `private static final int HINT_DELAY` (= 1200)
-- `private static final Component CRAFT_TITLE`
-- `private static final Component CRAFT_DESCRIPTION`
-- `private final Tutorial tutorial`
-- `private TutorialToast toast`
-- `private int timeWaiting`
+All Implemented Interfaces: ITutorialStep
 
 ### Methods
-- `public void tick()`
-- `public void clear()`
-- `public void onGetItem(ItemStack p_120470_)`
-- `public static boolean hasCraftedPlanksPreviously(LocalPlayer p_205663_,  TagKey<Item> p_205664_)`
+- `public void update()`
+- `public void onStop()`
+- `public void handleSetSlot(ItemStack stack)`
+- `public static boolean didPlayerCraftedPlanks(EntityPlayerSP player)`
 
 ### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `onDestroyBlock`, `onInput`, `onLookAt`, `onMouse`, `onOpenInventory`
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleMouse`, `handleMovement`, `onHitBlock`, `onMouseHover`, `openInventory`
 
-## FindTreeTutorialStepInstance
+## FindTreeStep
 
-*class* `net.minecraft.client.tutorial.FindTreeTutorialStepInstance`
+*class* `net.minecraft.client.tutorial.FindTreeStep`
 
-### Fields
-- `private static final int HINT_DELAY` (= 6000)
-- `private static final Component TITLE`
-- `private static final Component DESCRIPTION`
-- `private final Tutorial tutorial`
-- `private TutorialToast toast`
-- `private int timeWaiting`
+All Implemented Interfaces: ITutorialStep
 
 ### Methods
-- `public void tick()`
-- `public void clear()`
-- `public void onLookAt(ClientLevel p_120501_,  HitResult p_120502_)`
-- `public void onGetItem(ItemStack p_120499_)`
-- `private static boolean hasCollectedTreeItems(LocalPlayer p_235272_)`
-- `public static boolean hasPunchedTreesPreviously(LocalPlayer p_120504_)`
+- `public void update()`
+- `public void onStop()`
+- `public void onMouseHover(WorldClient worldIn,  RayTraceResult result)`
+- `public void handleSetSlot(ItemStack stack)`
+- `public static boolean hasPunchedTreesPreviously(EntityPlayerSP p_194070_0_)`
 
 ### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `onDestroyBlock`, `onInput`, `onMouse`, `onOpenInventory`
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleMouse`, `handleMovement`, `onHitBlock`, `openInventory`
 
-## MovementTutorialStepInstance
+## ITutorialStep
 
-*class* `net.minecraft.client.tutorial.MovementTutorialStepInstance`
-
-### Fields
-- `private static final int MINIMUM_TIME_MOVED` (= 40)
-- `private static final int MINIMUM_TIME_LOOKED` (= 40)
-- `private static final int MOVE_HINT_DELAY` (= 100)
-- `private static final int LOOK_HINT_DELAY` (= 20)
-- `private static final int INCOMPLETE` (= -1)
-- `private static final Component MOVE_TITLE`
-- `private static final Component MOVE_DESCRIPTION`
-- `private static final Component LOOK_TITLE`
-- `private static final Component LOOK_DESCRIPTION`
-- `private final Tutorial tutorial`
-- `private TutorialToast moveToast`
-- `private TutorialToast lookToast`
-- `private int timeWaiting`
-- `private int timeMoved`
-- `private int timeLooked`
-- `private boolean moved`
-- `private boolean turned`
-- `private int moveCompleted`
-- `private int lookCompleted`
+*interface* `net.minecraft.client.tutorial.ITutorialStep`
 
 ### Methods
-- `public void tick()`
-- `public void clear()`
-- `public void onInput(Input p_120528_)`
-- `public void onMouse(double p_120525_,  double p_120526_)`
+- `default void onStop()`
+- `default void update()`
+- `default void handleMovement(MovementInput input)`
+- `default void handleMouse(MouseHelper mouseHelperIn)`
+- `default void onMouseHover(WorldClient worldIn,  RayTraceResult result)`
+- `default void onHitBlock(WorldClient worldIn,  BlockPos pos,  IBlockState state,  float diggingStage)`
+- `default void openInventory()`
+- `default void handleSetSlot(ItemStack stack)`
 
-### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `onDestroyBlock`, `onGetItem`, `onLookAt`, `onOpenInventory`
+## MovementStep
 
-## OpenInventoryTutorialStep
+*class* `net.minecraft.client.tutorial.MovementStep`
 
-*class* `net.minecraft.client.tutorial.OpenInventoryTutorialStep`
-
-### Fields
-- `private static final int HINT_DELAY` (= 600)
-- `private static final Component TITLE`
-- `private static final Component DESCRIPTION`
-- `private final Tutorial tutorial`
-- `private TutorialToast toast`
-- `private int timeWaiting`
+All Implemented Interfaces: ITutorialStep
 
 ### Methods
-- `public void tick()`
-- `public void clear()`
-- `public void onOpenInventory()`
+- `public void update()`
+- `public void onStop()`
+- `public void handleMovement(MovementInput input)`
+- `public void handleMouse(MouseHelper mouseHelperIn)`
 
 ### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `onDestroyBlock`, `onGetItem`, `onInput`, `onLookAt`, `onMouse`
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleSetSlot`, `onHitBlock`, `onMouseHover`, `openInventory`
 
-## PunchTreeTutorialStepInstance
+## OpenInventoryStep
 
-*class* `net.minecraft.client.tutorial.PunchTreeTutorialStepInstance`
+*class* `net.minecraft.client.tutorial.OpenInventoryStep`
 
-### Fields
-- `private static final int HINT_DELAY` (= 600)
-- `private static final Component TITLE`
-- `private static final Component DESCRIPTION`
-- `private final Tutorial tutorial`
-- `private TutorialToast toast`
-- `private int timeWaiting`
-- `private int resetCount`
+All Implemented Interfaces: ITutorialStep
 
 ### Methods
-- `public void tick()`
-- `public void clear()`
-- `public void onDestroyBlock(ClientLevel p_120554_,  BlockPos p_120555_,  BlockState p_120556_,  float p_120557_)`
-- `public void onGetItem(ItemStack p_120552_)`
+- `public void update()`
+- `public void onStop()`
+- `public void openInventory()`
 
 ### Inherited methods
-- from `net.minecraft.client.tutorial.TutorialStepInstance`: `onInput`, `onLookAt`, `onMouse`, `onOpenInventory`
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleMouse`, `handleMovement`, `handleSetSlot`, `onHitBlock`, `onMouseHover`
+
+## PunchTreeStep
+
+*class* `net.minecraft.client.tutorial.PunchTreeStep`
+
+All Implemented Interfaces: ITutorialStep
+
+### Methods
+- `public void update()`
+- `public void onStop()`
+- `public void onHitBlock(WorldClient worldIn,  BlockPos pos,  IBlockState state,  float diggingStage)`
+- `public void handleSetSlot(ItemStack stack)`
+
+### Inherited methods
+- from `net.minecraft.client.tutorial.ITutorialStep`: `handleMouse`, `handleMovement`, `onMouseHover`, `openInventory`
 
 ## Tutorial
 
 *class* `net.minecraft.client.tutorial.Tutorial`
 
-### Fields
-- `private final Minecraft minecraft`
-- `@Nullable private TutorialStepInstance instance`
-- `private final List<Tutorial.TimedToast> timedToasts`
-- `private final BundleTutorial bundleTutorial`
-
 ### Methods
-- `public void onInput(Input p_120587_)`
-- `public void onMouse(double p_120566_,  double p_120567_)`
-- `public void onLookAt(@Nullable  ClientLevel p_120579_,  @Nullable  HitResult p_120580_)`
-- `public void onDestroyBlock(ClientLevel p_120582_,  BlockPos p_120583_,  BlockState p_120584_,  float p_120585_)`
-- `public void onOpenInventory()`
-- `public void onGetItem(ItemStack p_120569_)`
+- `public void handleMovement(MovementInput p_193293_1_)`
+- `public void handleMouse(MouseHelper p_193299_1_)`
+- `public void onMouseHover(WorldClient worldIn,  RayTraceResult result)`
+- `public void onHitBlock(WorldClient worldIn,  BlockPos pos,  IBlockState state,  float diggingStage)`
+- `public void openInventory()`
+- `public void handleSetSlot(ItemStack stack)`
 - `public void stop()`
-- `public void start()`
-- `public void addTimedToast(TutorialToast p_120573_,  int p_120574_)`
-- `public void removeTimedToast(TutorialToast p_120571_)`
-- `public void tick()`
-- `public void setStep(TutorialSteps p_120589_)`
+- `public void reload()`
+- `public void update()`
+- `public void setStep(TutorialSteps step)`
 - `public Minecraft getMinecraft()`
-- `public boolean isSurvival()`
-- `public static Component key(String p_120593_)`
-- `public void onInventoryAction(ItemStack p_175025_,  ItemStack p_175026_,  ClickAction p_175027_)`
+- `public GameType getGameType()`
+- `public static ITextComponent createKeybindComponent(java.lang.String keybind)`
 
-## Tutorial.TimedToast
+## TutorialSteps
 
-*class* `net.minecraft.client.tutorial.Tutorial.TimedToast`
+*enum* `net.minecraft.client.tutorial.TutorialSteps`
 
-Enclosing class: Tutorial
+All Implemented Interfaces: java.io.Serializable, java.lang.Comparable<TutorialSteps>
 
 ### Fields
-- `final TutorialToast toast`
-- `private final int durationTicks`
-- `private int progress`
+- `public static final TutorialSteps MOVEMENT`
+- `public static final TutorialSteps FIND_TREE`
+- `public static final TutorialSteps PUNCH_TREE`
+- `public static final TutorialSteps OPEN_INVENTORY`
+- `public static final TutorialSteps CRAFT_PLANKS`
+- `public static final TutorialSteps NONE`
 
 ### Methods
-- `private boolean updateProgress()`
+- `public static TutorialSteps[] values()`
+  Returns an array containing the constants of this enum type, in
+  the order they are declared. This method may be used to iterate
+  over the constants as follows:
+  for (TutorialSteps c : TutorialSteps.values())
+   System.out.println(c);
+  - returns: an array containing the constants of this enum type, in the order they are declared
+- `public static TutorialSteps valueOf(java.lang.String name)`
+  Returns the enum constant of this type with the specified name.
+  The string must match exactly an identifier used to declare an
+  enum constant in this type. (Extraneous whitespace characters are
+  not permitted.)
+  - param: name - the name of the enum constant to be returned.
+  - returns: the enum constant with the specified name
+  - throws: java.lang.IllegalArgumentException - if this enum type has no constant with the specified name
+  - throws: java.lang.NullPointerException - if the argument is null
+- `public ITutorialStep create(Tutorial tutorial)`
+- `public java.lang.String getName()`
+- `public static TutorialSteps getTutorial(java.lang.String tutorialName)`
 
-## TutorialStepInstance
-
-*interface* `net.minecraft.client.tutorial.TutorialStepInstance`
-
-### Methods
-- `default void clear()`
-- `default void tick()`
-- `default void onInput(Input p_120623_)`
-- `default void onMouse(double p_120614_,  double p_120615_)`
-- `default void onLookAt(ClientLevel p_120617_,  HitResult p_120618_)`
-- `default void onDestroyBlock(ClientLevel p_120619_,  BlockPos p_120620_,  BlockState p_120621_,  float p_120622_)`
-- `default void onOpenInventory()`
-- `default void onGetItem(ItemStack p_120616_)`
+### Inherited methods
+- from `java.lang.Enum`: `clone`, `compareTo`, `equals`, `finalize`, `getDeclaringClass`, `hashCode`, `name`, `ordinal`, `toString`, `valueOf`
