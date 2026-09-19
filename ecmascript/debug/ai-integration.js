@@ -578,6 +578,50 @@ function executeCmd(raw) {
     return API.executeCommand(player.getWorld(), cmd);
   });
 }
+function nbtCompoundList(nbt, key) {
+  if (!nbt || !nbt.has(key)) {
+    return [];
+  }
+  var list = nbt.getList(key, 10);
+  if (!list) {
+    return [];
+  }
+  return Java.from(list);
+}
+function readNpcLogs(uuid) {
+  var player = resolvePlayer();
+  if (!player) {
+    throw new Error('No player online');
+  }
+  var id = String(uuid).replace(/^\s+|\s+$/g, '');
+  if (!id) {
+    throw new Error('Missing uuid');
+  }
+  return runOnServerThread(player, function () {
+    var entity = player.getWorld().getEntity(id);
+    if (!entity) {
+      throw new Error('Entity not found: ' + id);
+    }
+    var nbt = npcGetNbt(entity);
+    var scripts = nbtCompoundList(nbt, 'Scripts');
+    var logs = [];
+    for (var i = 0; i < scripts.length; i++) {
+      var entries = nbtCompoundList(scripts[i], 'Console');
+      for (var j = 0; j < entries.length; j++) {
+        logs.push({
+          tab: i,
+          time: String(entries[j].getLong('Long')),
+          message: entries[j].getString('String')
+        });
+      }
+    }
+    return {
+      uuid: entity.getUUID(),
+      name: entity.getName(),
+      logs: logs
+    };
+  });
+}
 function executeJs(code) {
   var player = resolvePlayer();
   if (!player) {
@@ -731,6 +775,16 @@ function startServer(scriptHash) {
     send(exchange, 200, {
       ok: true,
       result: stringifyResult(result)
+    });
+  }));
+  server.createContext('/npclogs/read', route(function (exchange) {
+    var uuid = parsePayload(exchange, ['uuid', 'entity', 'id']);
+    var result = readNpcLogs(uuid);
+    send(exchange, 200, {
+      ok: true,
+      uuid: result.uuid,
+      name: result.name,
+      logs: result.logs
     });
   }));
   server.setExecutor(null);

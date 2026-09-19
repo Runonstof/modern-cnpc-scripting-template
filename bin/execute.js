@@ -8,6 +8,7 @@
  *   node bin/execute.js js "player.setMotionY(.5) || true"
  *   node bin/execute.js reload
  *   node bin/execute.js reload Vaelith now follows the player
+ *   node bin/execute.js npclogs read <uuid>
  */
 
 var http = require("http");
@@ -28,10 +29,11 @@ var OFFLINE_HINT =
 
 function printHelp() {
   process.stderr.write(
-    "Usage: node bin/execute.js <command|js|reload> [...]\n" +
+    "Usage: node bin/execute.js <command|js|reload|npclogs> [...]\n" +
       "  command [ /]time set day\n" +
       "  js \"block && block.getName()\"\n" +
       "  reload [one-sentence change note]\n" +
+      "  npclogs read <uuid>\n" +
       "Requires ai-integration.js enabled as a player script and a player online.\n"
   );
 }
@@ -149,6 +151,16 @@ if (action === "command") {
 } else if (action === "reload") {
   var note = args.slice(1).join(" ").replace(/^\s+|\s+$/g, "");
   post("/reload", note ? { note: note } : { reload: true }, printResponse);
+} else if (action === "npclogs") {
+  var sub = args[1] ? String(args[1]).toLowerCase() : "";
+  if (sub !== "read") {
+    fail("Usage: node bin/execute.js npclogs read <uuid>");
+  }
+  var uuid = args.slice(2).join(" ").replace(/^\s+|\s+$/g, "");
+  if (!uuid) {
+    fail("Missing uuid. Example: node bin/execute.js npclogs read <uuid>");
+  }
+  post("/npclogs/read", { uuid: uuid }, printResponse);
 } else {
   printHelp();
   fail("Unknown action: " + args[0]);

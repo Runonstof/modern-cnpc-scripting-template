@@ -197,7 +197,10 @@ node bin/execute.js command /time set day
 node bin/execute.js command time set day
 node bin/execute.js js "player.setMotionY(.5) || true"
 node bin/execute.js js "tempdata.get('probe')"
+node bin/execute.js npclogs read <uuid>
 ```
+
+NPC script errors land in that NPC’s entity NBT (`Scripts[].Console[]`: `Long` timestamp + `String` stack). Use `npclogs read` with the NPC UUID instead of dumping NBT. It returns `{ ok, uuid, name, logs: [{ tab, time, message }] }`. Empty `logs` means no console errors yet.
 
 `/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
 
