@@ -1,6 +1,6 @@
 
 export const API = Java.type('noppes.npcs.api.NpcAPI').Instance();
-export const world = API.getIWorld('minecraft:overworld');
+export const world = API.getIWorld(0);
 
 
 export function dd(...args) {

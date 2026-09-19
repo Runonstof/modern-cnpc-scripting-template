@@ -115,7 +115,7 @@ function _wrapNativeSuper(t) {
 }
 
 var API = Java.type('noppes.npcs.api.NpcAPI').Instance();
-var world = API.getIWorld('minecraft:overworld');
+var world = API.getIWorld(0);
 function dd() {
   for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
     args[_key] = arguments[_key];
@@ -416,7 +416,7 @@ function hex(bytes) {
   return out;
 }
 function hashScript() {
-  var file = new File(API.getLevelDir(), SCRIPT_REL);
+  var file = new File(API.getWorldDir(), SCRIPT_REL);
   if (!file.exists()) {
     return 'missing';
   }
@@ -494,11 +494,11 @@ function isLocal(exchange) {
   }
 }
 function runOnServerThread(player, fn) {
-  var mcEntity = player.getMCEntity();
-  // m_20194_ = net.minecraft.world.entity.Entity#getServer
-  var server = mcEntity.m_20194_();
-  // m_18695_ = net.minecraft.util.thread.BlockableEventLoop#isSameThread
-  if (server.m_18695_()) {
+  var mcWorld = player.getWorld().getMCWorld();
+  // func_73046_m = net.minecraft.world.World#getMinecraftServer
+  var server = mcWorld.func_73046_m();
+  // func_152345_ab = net.minecraft.server.MinecraftServer#isCallingFromMinecraftThread
+  if (server.func_152345_ab()) {
     return fn();
   }
   var box = {
@@ -506,7 +506,8 @@ function runOnServerThread(player, fn) {
     error: null
   };
   var latch = new CountDownLatch(1);
-  server.execute(function () {
+  // func_152344_a = net.minecraft.server.MinecraftServer#addScheduledTask
+  server.func_152344_a(function () {
     try {
       box.value = fn();
     } catch (err) {
@@ -541,7 +542,7 @@ function resolvePlayer() {
   if (currentPlayer) {
     return currentPlayer;
   }
-  var players = API.getIWorld('minecraft:overworld').getAllPlayers();
+  var players = API.getIWorld(0).getAllPlayers();
   if (players && players.length) {
     currentPlayer = players[0];
     return currentPlayer;

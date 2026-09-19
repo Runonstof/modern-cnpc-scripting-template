@@ -76,7 +76,7 @@ function hex(bytes) {
 }
 
 function hashScript() {
-  const file = new File(API.getLevelDir(), SCRIPT_REL);
+  const file = new File(API.getWorldDir(), SCRIPT_REL);
   if (!file.exists()) {
     return 'missing';
   }
@@ -161,16 +161,17 @@ function isLocal(exchange) {
 }
 
 function runOnServerThread(player, fn) {
-  const mcEntity = player.getMCEntity();
-  // m_20194_ = net.minecraft.world.entity.Entity#getServer
-  const server = mcEntity.m_20194_();
-  // m_18695_ = net.minecraft.util.thread.BlockableEventLoop#isSameThread
-  if (server.m_18695_()) {
+  const mcWorld = player.getWorld().getMCWorld();
+  // func_73046_m = net.minecraft.world.World#getMinecraftServer
+  const server = mcWorld.func_73046_m();
+  // func_152345_ab = net.minecraft.server.MinecraftServer#isCallingFromMinecraftThread
+  if (server.func_152345_ab()) {
     return fn();
   }
   const box = { value: null, error: null };
   const latch = new CountDownLatch(1);
-  server.execute(function () {
+  // func_152344_a = net.minecraft.server.MinecraftServer#addScheduledTask
+  server.func_152344_a(function () {
     try {
       box.value = fn();
     } catch (err) {
@@ -207,7 +208,7 @@ function resolvePlayer() {
   if (currentPlayer) {
     return currentPlayer;
   }
-  const players = API.getIWorld('minecraft:overworld').getAllPlayers();
+  const players = API.getIWorld(0).getAllPlayers();
   if (players && players.length) {
     currentPlayer = players[0];
     return currentPlayer;
