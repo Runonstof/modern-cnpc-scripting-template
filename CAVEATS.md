@@ -55,3 +55,17 @@ When replacing a clone:
 Do not trust the live NPC you just edited as proof the clone is good. `spawn` it (not only `get`) and read `Texture`, `Size`, and `getModel()` on **that** entity.
 
 `get()` can disagree with `spawn()` or with the live source. Prefer a real spawn check.
+
+## Puppeteer job and unused limbs
+
+The Puppeteer job (`NpcJob` 9, `IJobPuppet`) can pose individual parts without freezing the whole NPC.
+
+Each part (`JobPuppet.PartConfig`) has a `disabled` flag. The script API (`getPart` / `setRotation`) does not expose it; set the field with reflection. When `disabled` is true, that limb keeps its vanilla animation (walk, idle, attack). When it is false, the puppet rotation is used.
+
+`setRotation(180, 180, 180)` is the rest / “no extra pose” value. It does not by itself restore vanilla motion. Disable parts you are not driving.
+
+`whileStanding` / `whileAttacking` / `whileMoving` (`PuppetStanding`, `PuppetAttacking`, `PuppetMoving`) choose when the job applies at all. You can leave those on and still get walk cycles by disabling every part except the one you pose (for example only the left arm, part 1).
+
+Parts: 0 head, 1 left arm, 2 right arm, 3 body, 4 left leg, 5 right leg. 6–11 are the animation-keyframe copies of those.
+
+Writing `NpcJob`, `PuppetStanding` / `PuppetAttacking` / `PuppetMoving`, or `disabled` on parts via `setEntityNbt` or reflection often does not show until `npc.reset()`. The live job object and the client keep the old pose until that flush. After the first reset, later `setRotation` / `disabled` toggles can work without another reset. Do not reset every tick; do it once after the job is configured (see **Reset**).

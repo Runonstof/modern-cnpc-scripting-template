@@ -61,7 +61,7 @@ ES6 code can be written in the `src` folder and will be transpiled to the `ecmas
 CustomNPCs is the mod that leverages Nashorn to execute the scripts.
 This is the most important mod to make this project possible.
 
-The API is not always a clean write-through to what the client or a clone actually stores. Display, NBT, `reset()`, and clones have a few sharp edges; those are in [CAVEATS.md](CAVEATS.md). Read that before changing NPC appearance or saving clones.
+The API is not always a clean write-through to what the client or a clone actually stores. Display, NBT, `reset()`, and clones have a few sharp edges; those are in [CAVEATS.md](CAVEATS.md). Read that before changing NPC appearance or saving clones. Spawn-at-look, skins, and attaching scripts are in [KNOWN_RECIPES.md](KNOWN_RECIPES.md).
 
 
 In CustomNPCs, there are 5 kinds of scripts that can be created (plus a project-only `debug` entry):
@@ -89,6 +89,7 @@ The folder structure is as follows:
 - `docs/<name>`: Raw Javadoc HTML dumps. **Do not Read, Grep, or Glob `docs/`.** Use `docs-llm/` or `node bin/get-class-info.js`.
 - `docs-llm`: Scraped API reference. Prefer `node bin/get-class-info.js` over opening these files. If you must read markdown, start at `docs-llm/index.md` or `docs-llm/customnpcs/events.md`. Never load `docs-llm/api.json` into context.
 - `CAVEATS.md`: CustomNPCs quirks (display vs NBT, `reset()`, clones). See **CustomNPCs** above.
+- `KNOWN_RECIPES.md`: Look-at, spawn-at-look, skins, attach scripts. Read that instead of rediscovering via `execute.js` or old `.agent/spawn-*.js`.
 - `bin`: Project CLI helpers. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file); always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
 - `.agent`: Agent scratchpad. See **Scratchpad (`.agent`)** below.
 
@@ -96,7 +97,7 @@ So its important to note that `ecmascript/` should not be modified manually.
 
 ## Token hygiene
 
-This file is already in context every turn. Do **not** Read `AGENTS.md`, `CLAUDE.md`, `bin/execute.js`, or `src/debug/ai-integration.js` unless you are editing that file.
+This file is already in context every turn. Do **not** Read `AGENTS.md`, `CLAUDE.md`, `bin/execute.js`, or `src/debug/ai-integration.js` unless you are editing that file. For spawn / look-at / attach, read [KNOWN_RECIPES.md](KNOWN_RECIPES.md) once.
 
 - API lookup: `node bin/get-class-info.js <Name>` first. Read one `docs-llm/**/*.md` file only if that miss. Never Read/Grep/Glob `docs/` (raw HTML).
 - Grep: always set `head_limit` (40 is enough). Scope to a folder; do not grep the repo root or all of `docs-llm/`.
@@ -190,6 +191,8 @@ node bin/execute.js reload Vaelith now follows the player
 
 That talks to ai-integration, which runs `noppes script reload` in-game. Extra text after `reload` is dumped in a second in-game `ddDebug` line; use that for one sentence describing the change that was just built. It fails if ai-integration is not loaded yet or no player is online; in that case ask the user to enable the debug player script and reload once in-game.
 
+When the change is for an NPC script, always call `npc.reset()` after that reload (via `execute.js js`). Reload runs `init`, but job, faction, puppet, and other live NPC state often stay stale until `reset()`. Keep the NPC UUID and reset that entity; do not skip this because `init` already ran.
+
 Other examples (PowerShell and WSL):
 
 ```
@@ -239,4 +242,5 @@ This is useful when you are developing a script and want to see the changes imme
 So after you made all your changes:
 1. Run `npm run build` to build the scripts.
 2. Run `node bin/execute.js reload` to reload the scripts in game. Optionally pass a one-sentence note so the in-game reload dump says what changed.
+3. If you changed an NPC script, call `npc.reset()` on that NPC after the reload.
 
