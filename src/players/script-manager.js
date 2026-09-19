@@ -2,7 +2,7 @@
 // @id                 548277
 // @namespace          runonstof
 // @name               ScriptManager
-// @version            2.1.0
+// @version            2.1.2
 // @description        Download and manage CustomNPCs scripts in-game, without having to access any files!
 // @author             Runonstof
 // @license            MIT
@@ -878,7 +878,7 @@ function applyBrowseList(state) {
 function loadCatalog(player, then) {
   runJob(
     player,
-    'Looking up scripts...',
+    'Fetching scripts...',
     function (next) {
       try {
         next.authors = loadAuthors();

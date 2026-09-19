@@ -2,7 +2,7 @@
 // @id                 548277
 // @namespace          runonstof
 // @name               ScriptManager
-// @version            2.1.0
+// @version            2.1.2
 // @description        Download and manage CustomNPCs scripts in-game, without having to access any files!
 // @author             Runonstof
 // @license            MIT
@@ -258,7 +258,7 @@ var SORTS = [{
 }];
 var AUTHOR_LIST_SCRIPT_ID = 549558;
 var SCRIPT_MANAGER_ID = 548277;
-var LOCAL_VERSION = '2.1.0';
+var LOCAL_VERSION = '2.1.2';
 var REPO_BASE_URL = 'https://greasyfork.org';
 var REPO_BASE_CDN_URL = 'https://update.greasyfork.org';
 var REPO_BASE_API_URL = 'https://api.greasyfork.org';
@@ -1402,7 +1402,7 @@ function applyBrowseList(state) {
   state.filtered = filterCatalog(state.catalog, state.query, state.category);
 }
 function loadCatalog(player, then) {
-  runJob(player, 'Looking up scripts...', function (next) {
+  runJob(player, 'Fetching scripts...', function (next) {
     try {
       next.authors = loadAuthors();
     } catch (err) {

@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name               ScriptManager SP Installer
 // @version            1.0.0
-// @description        One-shot player script that downloads Script Manager and enables it
+// @description        Downloads Script Manager from a player or NPC script
 // @author             Runonstof
 // @license            MIT
 // @minecraft          1.20.1
@@ -23,6 +23,7 @@ const SCRIPT_ID = 548277;
 const SCRIPT_PATH = 'players/script-manager.js';
 const DOWNLOAD_URL = 'https://update.greasyfork.org/scripts/' + SCRIPT_ID + '/script.user.js';
 const PREFIX = '§e§l[ScriptManager] §r';
+const HINT_KEY = 'sp_installer_show_hint';
 
 function scriptsRoot() {
   return new File(API.getLevelDir(), 'scripts');
@@ -124,16 +125,18 @@ function alreadyReady() {
   return scriptFile().exists() && String(readText(playerScriptsFile())).indexOf(SCRIPT_PATH) !== -1;
 }
 
-function tell(player, message) {
-  if (player && player.message) {
-    player.message(PREFIX + message);
-  }
+function tell(message) {
+  API.getIWorld('minecraft:overworld').broadcast(PREFIX + message);
 }
 
-const HINT_KEY = 'sp_installer_show_hint';
+function tellOpenHint() {
+  tell('In creative, type §b§l!scripts§r to open Script Manager.');
+}
 
-function tellOpenHint(player) {
-  tell(player, 'In creative, type §b§l!scripts§r to open Script Manager.');
+function tellNpcHint(e) {
+  if (e && e.npc) {
+    tell('You can delete the NPC now');
+  }
 }
 
 function worldData() {
@@ -145,18 +148,20 @@ export function init(e) {
   if (alreadyReady()) {
     if (tempdata.has(HINT_KEY)) {
       tempdata.remove(HINT_KEY);
-      tellOpenHint(e.player);
+      tellOpenHint();
+      tellNpcHint(e);
     }
     return;
   }
   try {
     writeText(scriptFile(), download(DOWNLOAD_URL));
     attachPlayerScript(SCRIPT_PATH);
-    tell(e.player, 'Installed. Reloading player scripts...');
-    tellOpenHint(e.player);
+    tell('Installed. Reloading player scripts...');
+    tellOpenHint();
+    tellNpcHint(e);
     tempdata.put(HINT_KEY, true);
     API.executeCommand(API.getIWorld('minecraft:overworld'), 'noppes script reload');
   } catch (err) {
-    tell(e.player, '§cInstall failed: ' + err);
+    tell('§cInstall failed: ' + err);
   }
 }

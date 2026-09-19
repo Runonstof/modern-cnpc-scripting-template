@@ -28,7 +28,7 @@ export const SORTS = [
 ];
 export const AUTHOR_LIST_SCRIPT_ID = 549558;
 export const SCRIPT_MANAGER_ID = 548277;
-export const LOCAL_VERSION = '2.1.0';
+export const LOCAL_VERSION = '2.1.2';
 export const REPO_BASE_URL = 'https://greasyfork.org';
 export const REPO_BASE_CDN_URL = 'https://update.greasyfork.org';
 export const REPO_BASE_API_URL = 'https://api.greasyfork.org';
