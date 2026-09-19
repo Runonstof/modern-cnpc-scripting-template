@@ -4,6 +4,7 @@ var Runnable = Java.type('java.lang.Runnable');
 var THREAD_NAME = 'npc-fast-tick';
 var JOBS_KEY = 'fastTickJobs';
 var THREAD_KEY = 'fastTickThread';
+var BUSY_KEY = 'fastTickBusy';
 var ERROR_KEY = 'fastTickError';
 var SLEEP_MS = 20;
 function interruptThread(thread) {
@@ -14,13 +15,21 @@ function interruptThread(thread) {
     thread.interrupt();
   } catch (err) {}
 }
-function stopThreadsNamed(name) {
+function threadsNamed(name) {
+  var found = [];
   var threads = Java.from(Thread.getAllStackTraces().keySet().toArray());
   for (var i = 0; i < threads.length; i++) {
     var thread = threads[i];
     if (thread && thread.getName() === name && thread !== Thread.currentThread()) {
-      interruptThread(thread);
+      found.push(thread);
     }
+  }
+  return found;
+}
+function stopThreadsNamed(name) {
+  var threads = threadsNamed(name);
+  for (var i = 0; i < threads.length; i++) {
+    interruptThread(threads[i]);
   }
 }
 function getJobs(world) {
@@ -96,9 +105,17 @@ function startScheduler(world) {
           var now = System$1.nanoTime();
           var dt = Math.max(0.001, Math.min(0.05, (now - lastNanos) / 1e9));
           lastNanos = now;
-          server.execute(function () {
-            runDueJobs(world, dt);
-          });
+          var busy = world.getTempdata().get(BUSY_KEY);
+          if (!busy || now - busy > 250 * 1e6) {
+            world.getTempdata().put(BUSY_KEY, now);
+            server.execute(function () {
+              try {
+                runDueJobs(world, dt);
+              } finally {
+                world.getTempdata().remove(BUSY_KEY);
+              }
+            });
+          }
           Thread.sleep(SLEEP_MS);
         };
         while (!Thread.currentThread().isInterrupted()) {
@@ -123,6 +140,16 @@ function stopScheduler(world) {
   stopThreadsNamed(THREAD_NAME);
 }
 function ensureScheduler(world) {
+  var living = threadsNamed(THREAD_NAME);
+  if (living.length > 1) {
+    for (var i = 1; i < living.length; i++) {
+      interruptThread(living[i]);
+    }
+  }
+  if (living.length >= 1 && living[0].isAlive()) {
+    world.getTempdata().put(THREAD_KEY, living[0]);
+    return;
+  }
   var stored = world.getTempdata().get(THREAD_KEY);
   if (isThreadAlive(stored)) {
     return;
@@ -144,7 +171,6 @@ function unsubscribe(world, id) {
   }
 }
 function subscribe(world, id, entityOrUuid, periodMs, onTick) {
-  unsubscribe(world, id);
   var entity = null;
   var uuid = entityOrUuid;
   if (entityOrUuid && entityOrUuid.getUUID) {
@@ -152,6 +178,17 @@ function subscribe(world, id, entityOrUuid, periodMs, onTick) {
     uuid = entityOrUuid.getUUID();
   }
   var jobs = getJobs(world);
+  for (var i = 0; i < jobs.length; i++) {
+    if (jobs[i].id === id) {
+      jobs[i].uuid = uuid;
+      jobs[i].entity = entity;
+      jobs[i].periodMs = periodMs || SLEEP_MS;
+      jobs[i].onTick = onTick;
+      setJobs(world, jobs);
+      ensureScheduler(world);
+      return;
+    }
+  }
   jobs.push({
     id: id,
     uuid: uuid,

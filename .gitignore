@@ -1,5 +1,6 @@
 node_modules
 world_data.json
 player_scripts.json
+installed.json
 docs/
 bin/auth.json

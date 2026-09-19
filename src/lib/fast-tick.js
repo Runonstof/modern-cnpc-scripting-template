@@ -5,6 +5,7 @@ const Runnable = Java.type('java.lang.Runnable');
 const THREAD_NAME = 'npc-fast-tick';
 const JOBS_KEY = 'fastTickJobs';
 const THREAD_KEY = 'fastTickThread';
+const BUSY_KEY = 'fastTickBusy';
 const ERROR_KEY = 'fastTickError';
 const SLEEP_MS = 20;
 
@@ -17,13 +18,22 @@ function interruptThread(thread) {
   } catch (err) {}
 }
 
-export function stopThreadsNamed(name) {
+function threadsNamed(name) {
+  const found = [];
   const threads = Java.from(Thread.getAllStackTraces().keySet().toArray());
   for (let i = 0; i < threads.length; i++) {
     const thread = threads[i];
     if (thread && thread.getName() === name && thread !== Thread.currentThread()) {
-      interruptThread(thread);
+      found.push(thread);
     }
+  }
+  return found;
+}
+
+export function stopThreadsNamed(name) {
+  const threads = threadsNamed(name);
+  for (let i = 0; i < threads.length; i++) {
+    interruptThread(threads[i]);
   }
 }
 
@@ -107,9 +117,17 @@ function startScheduler(world) {
             const now = System.nanoTime();
             const dt = Math.max(0.001, Math.min(0.05, (now - lastNanos) / 1e9));
             lastNanos = now;
-            server.execute(function () {
-              runDueJobs(world, dt);
-            });
+            const busy = world.getTempdata().get(BUSY_KEY);
+            if (!busy || now - busy > 250 * 1e6) {
+              world.getTempdata().put(BUSY_KEY, now);
+              server.execute(function () {
+                try {
+                  runDueJobs(world, dt);
+                } finally {
+                  world.getTempdata().remove(BUSY_KEY);
+                }
+              });
+            }
             Thread.sleep(SLEEP_MS);
           }
         } catch (err) {
@@ -134,6 +152,16 @@ export function stopScheduler(world) {
 }
 
 function ensureScheduler(world) {
+  const living = threadsNamed(THREAD_NAME);
+  if (living.length > 1) {
+    for (let i = 1; i < living.length; i++) {
+      interruptThread(living[i]);
+    }
+  }
+  if (living.length >= 1 && living[0].isAlive()) {
+    world.getTempdata().put(THREAD_KEY, living[0]);
+    return;
+  }
   const stored = world.getTempdata().get(THREAD_KEY);
   if (isThreadAlive(stored)) {
     return;
@@ -157,7 +185,6 @@ export function unsubscribe(world, id) {
 }
 
 export function subscribe(world, id, entityOrUuid, periodMs, onTick) {
-  unsubscribe(world, id);
   let entity = null;
   let uuid = entityOrUuid;
   if (entityOrUuid && entityOrUuid.getUUID) {
@@ -165,6 +192,17 @@ export function subscribe(world, id, entityOrUuid, periodMs, onTick) {
     uuid = entityOrUuid.getUUID();
   }
   const jobs = getJobs(world);
+  for (let i = 0; i < jobs.length; i++) {
+    if (jobs[i].id === id) {
+      jobs[i].uuid = uuid;
+      jobs[i].entity = entity;
+      jobs[i].periodMs = periodMs || SLEEP_MS;
+      jobs[i].onTick = onTick;
+      setJobs(world, jobs);
+      ensureScheduler(world);
+      return;
+    }
+  }
   jobs.push({
     id: id,
     uuid: uuid,
