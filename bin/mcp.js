@@ -12,7 +12,7 @@
  *
  * Preferred query: fully.qualified.ClassName#memberName
  * Also: tiny-style Class/member, member name only, or Searge (m_20194_).
- * Call the obfuscated name from member.searge. Do not load the .tiny file into chat.
+ * Output: Class#member => searge (one line per hit). Invoke the searge name.
  */
 
 var fs = require("fs");
@@ -289,7 +289,38 @@ rl.on("line", function (line) {
   }
 });
 
+function toDotted(name) {
+  return String(name || "").replace(/\//g, ".");
+}
+
+function classLabel(cls) {
+  return toDotted(cls.mojang || cls.yarn || cls.searge || cls.intermediary || "");
+}
+
+function memberLabel(member) {
+  return member.mojang || member.yarn || member.source || member.searge || "";
+}
+
+function formatMatch(entry) {
+  var cls = classLabel(entry.class);
+  if (entry.kind === "class") {
+    return cls + " => " + toDotted(entry.class.searge || entry.class.intermediary || "?");
+  }
+  var searge = entry.member.searge || entry.member.intermediary || "?";
+  return cls + "#" + memberLabel(entry.member) + " => " + searge;
+}
+
 rl.on("close", function () {
-  process.stdout.write(JSON.stringify(matches) + "\n");
+  var lines = [];
+  var printed = {};
+  for (var i = 0; i < matches.length; i++) {
+    var line = formatMatch(matches[i]);
+    if (printed[line]) {
+      continue;
+    }
+    printed[line] = true;
+    lines.push(line);
+  }
+  process.stdout.write(lines.join("\n") + (lines.length ? "\n" : ""));
   process.exit(matches.length === 0 ? 2 : 0);
 });

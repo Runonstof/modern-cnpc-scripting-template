@@ -40,7 +40,7 @@ That includes at least:
 
 Do **not** call Mojang names such as `getServer()` on those objects. Look up the Searge name first and call that.
 
-Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with `node bin/mcp.js`. Preferred query is `fully.qualified.ClassName#memberName`; other forms also work (tiny-style `Class/member`, member name only like `isSameThread`, or reverse lookup of a Searge name like `m_20194_`). Output is minified JSON. Use `member.searge` as the name to invoke.
+Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with `node bin/mcp.js`. Preferred query is `fully.qualified.ClassName#memberName`; other forms also work (tiny-style `Class/member`, member name only like `isSameThread`, or reverse lookup of a Searge name like `m_20194_`). Output is `Class#member => searge`. Invoke the searge name.
 
 ```
 node bin/mcp.js net.minecraft.world.entity.Entity#getServer
@@ -90,7 +90,7 @@ The folder structure is as follows:
 - `docs-llm`: Scraped API reference. Prefer `node bin/get-class-info.js` over opening these files. If you must read markdown, start at `docs-llm/index.md` or `docs-llm/customnpcs/events.md`. Never load `docs-llm/api.json` into context.
 - `CAVEATS.md`: CustomNPCs quirks (display vs NBT, `reset()`, clones). See **CustomNPCs** above.
 - `KNOWN_RECIPES.md`: Look-at, spawn-at-look, skins, attach scripts. Read that instead of rediscovering via `execute.js` or old `.agent/spawn-*.js`.
-- `bin`: Project CLI helpers. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on `types[].name`, `types[].fqn`, `types[].package`, or `types[].source`; prints matching entries as JSON. Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file); always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
+- `bin`: Project CLI helpers. Talk to the running world with `node bin/execute.js` (see **In-game CLI**). Look up types with `node bin/get-class-info.js <name|fqn|package|source> [...]` (PowerShell and WSL). Exact case-insensitive match on name, fqn, package, or source; prints compact Markdown (full type, package type list, or source package index). Never load `mcp/1.20.1.tiny` (or any other `.tiny` mapping file); always use `node bin/mcp.js` as described in **Minecraft obfuscation**.
 - `.agent`: Agent scratchpad. See **Scratchpad (`.agent`)** below.
 
 So its important to note that `ecmascript/` should not be modified manually.

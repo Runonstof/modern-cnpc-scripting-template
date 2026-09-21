@@ -69,3 +69,9 @@ Each part (`JobPuppet.PartConfig`) has a `disabled` flag. The script API (`getPa
 Parts: 0 head, 1 left arm, 2 right arm, 3 body, 4 left leg, 5 right leg. 6–11 are the animation-keyframe copies of those.
 
 Writing `NpcJob`, `PuppetStanding` / `PuppetAttacking` / `PuppetMoving`, or `disabled` on parts via `setEntityNbt` or reflection often does not show until `npc.reset()`. The live job object and the client keep the old pose until that flush. After the first reset, later `setRotation` / `disabled` toggles can work without another reset. Do not reset every tick; do it once after the job is configured (see **Reset**).
+
+## Custom GUI text fields vs text areas
+
+`ICustomGui.addTextField` looks like the right control for a single-line number or string. Backspace, delete, and similar editing keys do not work there.
+
+Use `addTextArea` instead, even for one-line values. `ITextArea` extends `ITextField`, so `setText` / `getText`, `setCharacterType`, `setFloat`, and `setInteger` still apply. Keep the height small (about 16) so it reads as a field.
