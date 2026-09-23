@@ -75,3 +75,15 @@ Writing `NpcJob`, `PuppetStanding` / `PuppetAttacking` / `PuppetMoving`, or `dis
 `ICustomGui.addTextField` looks like the right control for a single-line number or string. Backspace, delete, and similar editing keys do not work there.
 
 Use `addTextArea` instead, even for one-line values. `ITextArea` extends `ITextField`, so `setText` / `getText`, `setCharacterType`, `setFloat`, and `setInteger` still apply. Keep the height small (about 16) so it reads as a field.
+
+## NPC `tick` is every 10 ticks
+
+`tick` (`NpcEvent.UpdateEvent`) does not run every game tick. CustomNPCs calls it about every 10 ticks (half a second). The same is true of item `tick`, which the event list documents as every 10 ticks.
+
+That is too coarse for motion. A ball, flight loop, or anything else that should look continuous will jump once per call. Do not drive that from `tick`.
+
+Use a daemon Java thread that sleeps a short interval and runs the update on the server thread (`server.execute`), the way `src/lib/fast-tick.js` does. Keep the work on the server thread; only the wait belongs on the Java thread.
+
+## Motion X/Y/Z scales exponentially
+
+`getMotionX` / `getMotionY` / `getMotionZ` and the matching setters do not scale in a straight line. Drag and gravity compound every tick, so distance and height change exponentially with the number you set. A small increase in `motionY` makes the entity go much higher. Change those values in small steps.

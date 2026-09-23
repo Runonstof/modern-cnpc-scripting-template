@@ -260,3 +260,9 @@ So after you made all your changes:
 1. Run `npm run build -- <entry>...` for the files you touched (full `npm run build` only if needed).
 2. Run `node bin/execute.js reload` to reload the scripts in game. Optionally pass a one-sentence note so the in-game reload dump says what changed.
 3. If you changed an NPC script, call `npc.reset()` on that NPC after the reload.
+
+## Self verification
+Do not make unproven assumptions about events and function.
+You can always put log statements in the script and ask the user to reproduce the script path in game so that you can see the log statements. This way you can prove or disprove any assumptions you have.
+
+You can also put `print()` statements in the script. Those can be read by `node bin/execute.js npclogs read <uuid>` too. (They end up in the same place as error logs.)
