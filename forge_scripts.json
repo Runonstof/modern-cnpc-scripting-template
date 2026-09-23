@@ -1,0 +1,16 @@
+{
+    "ScriptEnabled": 1b,
+    "Scripts": [
+        {
+            "Script": "",
+            "Console": [
+            ],
+            "ScriptList": [
+                {
+                    "Line": "forge/villager-trade.js"
+                }
+            ]
+        }
+    ],
+    "ScriptLanguage": "ECMAScript"
+}

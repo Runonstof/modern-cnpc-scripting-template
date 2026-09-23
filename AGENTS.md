@@ -40,10 +40,11 @@ That includes at least:
 
 Do **not** call Mojang names such as `getServer()` on those objects. Look up the Searge name first and call that.
 
-Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with `node bin/mcp.js`. Preferred query is `fully.qualified.ClassName#memberName`; other forms also work (tiny-style `Class/member`, member name only like `isSameThread`, or reverse lookup of a Searge name like `m_20194_`). Output is `Class#member => searge`. Invoke the searge name.
+Never open or load `mcp/1.20.1.tiny` (it is huge). Always look up names with `node bin/mcp.js`. Multiple arguments are allowed and each one is a separate search in the same run; any argument that matches nothing is reported as `not found: <query>`. Preferred query is `fully.qualified.ClassName#memberName`; other forms also work (tiny-style `Class/member`, member name only like `isSameThread`). Reverse lookup is allowed: pass an obfuscated Searge name such as `m_20194_` and the tool prints the full class and method or field name (`Class#member => searge`). Invoke the searge name.
 
 ```
-node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+node bin/mcp.js net.minecraft.world.entity.Entity#getServer net.minecraft.world.entity.Entity#isAlive
+node bin/mcp.js m_20194_
 ```
 
 At every callsite that uses an obfuscated method or field, put an inline comment mapping Searge back to the Mojang member. One comment line per obfuscated name, directly above the code. If one line of code uses several obfuscated names, use several comment lines. Splitting into variables is often better so each name can be commented clearly.
@@ -215,9 +216,9 @@ node bin/execute.js npclogs read <uuid>
 
 NPC script errors land in that NPC’s entity NBT (`Scripts[].Console[]`: `Long` timestamp + `String` stack). Use `npclogs read` with the NPC UUID instead of dumping NBT. It returns `{ ok, uuid, name, logs: [{ tab, time, message }] }`. Empty `logs` means no console errors yet.
 
-`/js` always evaluates an **expression** (wrapped as `return (...)`). Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
+`/js` first evaluates the source as an expression (`return (...)`). If that fails with a syntax error, it runs the source as the function body instead, so statements such as `var name = ...` work. A statement body returns only what you `return`. Available names: `player`, `world`, `API`, `dd`, `storeddata`, `tempdata` (those storeddata and tempdata instances belong to `world`), `target` (entity the player is looking at), `block` (block the player is looking at). Nashorn `Java.type` still works.
 
-To keep values between `execute.js js` calls, put them on world `tempdata`. Each `/js` run is a fresh expression: locals from the previous call are gone, but `tempdata` is the same world object and stays readable on the next call (until script reload or world restart). Prefer that over trying to stash state in conversation text or one-off files.
+To keep values between `execute.js js` calls, put them on world `tempdata`. Each `/js` run is fresh: locals from the previous call are gone, but `tempdata` is the same world object and stays readable on the next call (until script reload or world restart). Prefer that over trying to stash state in conversation text or one-off files.
 
 `tempdata` is `IData` (`noppes.npcs.api.entity.data.IData`):
 
@@ -259,4 +260,3 @@ So after you made all your changes:
 1. Run `npm run build -- <entry>...` for the files you touched (full `npm run build` only if needed).
 2. Run `node bin/execute.js reload` to reload the scripts in game. Optionally pass a one-sentence note so the in-game reload dump says what changed.
 3. If you changed an NPC script, call `npc.reset()` on that NPC after the reload.
-

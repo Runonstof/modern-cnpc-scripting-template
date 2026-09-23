@@ -5,6 +5,7 @@
  *
  * Usage (PowerShell or WSL):
  *   node bin/mcp.js net.minecraft.world.entity.Entity#getServer
+ *   node bin/mcp.js net.minecraft.world.entity.Entity#getServer Entity#isAlive
  *   node bin/mcp.js net/minecraft/world/entity/Entity/getServer
  *   node bin/mcp.js isSameThread
  *   node bin/mcp.js m_20194_
@@ -12,7 +13,10 @@
  *
  * Preferred query: fully.qualified.ClassName#memberName
  * Also: tiny-style Class/member, member name only, or Searge (m_20194_).
- * Output: Class#member => searge (one line per hit). Invoke the searge name.
+ * Several arguments search several names in one pass.
+ * A Searge argument is a reverse lookup: output is the full class and member.
+ * Other hits print Class#member => searge. Invoke the searge name.
+ * Each argument with no hit is reported on stderr as "not found: <query>".
  */
 
 var fs = require("fs");
@@ -24,8 +28,10 @@ var defaultMap = path.join(root, "mcp", "1.20.1.tiny");
 
 function printHelp() {
   process.stderr.write(
-    "Usage: node bin/mcp.js [--file mcp/1.20.1.tiny] <query> [...]\n" +
-      "Queries: Class.path#member, Class/member, member name (isSameThread), or Searge (m_20194_).\n"
+    "Usage: node bin/mcp.js [--file mcp/1.20.1.tiny] <query> [query...]\n" +
+      "Queries: Class.path#member, Class/member, member name (isSameThread), or Searge (m_20194_).\n" +
+      "Each argument is a separate search. A Searge name reverse-looks up to Class#member.\n" +
+      "Arguments with no hit are reported as: not found: <query>\n"
   );
 }
 
@@ -313,7 +319,9 @@ function formatMatch(entry) {
 rl.on("close", function () {
   var lines = [];
   var printed = {};
+  var foundQueries = {};
   for (var i = 0; i < matches.length; i++) {
+    foundQueries[matches[i].query] = true;
     var line = formatMatch(matches[i]);
     if (printed[line]) {
       continue;
@@ -322,5 +330,14 @@ rl.on("close", function () {
     lines.push(line);
   }
   process.stdout.write(lines.join("\n") + (lines.length ? "\n" : ""));
-  process.exit(matches.length === 0 ? 2 : 0);
+
+  var missing = 0;
+  for (var q = 0; q < queries.length; q++) {
+    if (foundQueries[queries[q]]) {
+      continue;
+    }
+    process.stderr.write("not found: " + queries[q] + "\n");
+    missing += 1;
+  }
+  process.exit(missing ? 2 : 0);
 });

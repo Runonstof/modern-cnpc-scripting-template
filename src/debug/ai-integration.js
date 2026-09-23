@@ -395,6 +395,50 @@ function readNpcLogs(uuid) {
   });
 }
 
+function isSyntaxError(err) {
+  if (!err) {
+    return false;
+  }
+  if (err.name === 'SyntaxError') {
+    return true;
+  }
+  let text = '';
+  try {
+    if (err.getClass) {
+      text = String(err.getClass().getName());
+    }
+  } catch (ignored) {
+    text = '';
+  }
+  text += ' ' + String(err);
+  return text.indexOf('SyntaxError') !== -1 || text.indexOf('ParserException') !== -1;
+}
+
+function compileJs(body) {
+  return new Function(
+    'player',
+    'world',
+    'API',
+    'dd',
+    'storeddata',
+    'tempdata',
+    'target',
+    'block',
+    body
+  );
+}
+
+function compileJsSource(src) {
+  try {
+    return compileJs('return (' + src + ');');
+  } catch (err) {
+    if (!isSyntaxError(err)) {
+      throw err;
+    }
+  }
+  return compileJs(src);
+}
+
 function executeJs(code) {
   const player = resolvePlayer();
   if (!player) {
@@ -410,17 +454,7 @@ function executeJs(code) {
     const tempdata = world.tempdata;
     const target = resolveLookTarget(player);
     const block = resolveLookBlock(player);
-    const fn = new Function(
-      'player',
-      'world',
-      'API',
-      'dd',
-      'storeddata',
-      'tempdata',
-      'target',
-      'block',
-      'return (' + src + ');'
-    );
+    const fn = compileJsSource(src);
     return fn(player, world, API, debugDd, storeddata, tempdata, target, block);
   });
 }
